@@ -154,7 +154,7 @@ export default function WishlistPage() {
                     title="Add to cart"
                     className="flex h-8 w-8 items-center justify-center rounded-full border border-ink/10 bg-white text-ink shadow-sm transition hover:border-rust/30 hover:text-rust"
                   >
-                    <ShoppingCart className="h-3.5 w-3.5" />
+                    <ShoppingCart className="h-4.5 w-4.5" />
                   </button>
                   <button
                     type="button"
@@ -162,7 +162,7 @@ export default function WishlistPage() {
                     title="Remove from wishlist"
                     className="flex h-8 w-8 items-center justify-center rounded-full border border-ink/10 bg-white text-ink/60 shadow-sm transition hover:border-red-200 hover:text-red-600"
                   >
-                    <Trash2 className="h-3.5 w-3.5" />
+                    <Trash2 className="h-4.5 w-4.5" />
                   </button>
                 </div>
               </motion.div>
