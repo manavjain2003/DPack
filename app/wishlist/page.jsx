@@ -143,7 +143,6 @@ export default function WishlistPage() {
                 className="relative"
               >
                 <ProductCard product={product} index={index} />
-               ```tsx
 <div className="absolute right-3 top-[13.5rem] z-20 sm:top-[13.25rem]">
   <button
     type="button"
@@ -177,7 +176,6 @@ export default function WishlistPage() {
     />
   </button>
 </div>
-```
 
               </motion.div>
             ))}
