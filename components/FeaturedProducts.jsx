@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import gsap from "gsap";
@@ -86,6 +86,13 @@ export default function FeaturedProducts({ products = [] }) {
     };
   }, [maxIndex, perView, list.length]);
 
+  const dragStateRef = useRef({
+    active: false,
+    dragging: false,
+    pointerId: null,
+    lastX: 0,
+  });
+
   const goTo = (i) => {
     const st = scrollTriggerRef.current;
     if (!st || maxIndex === 0) return;
@@ -102,6 +109,59 @@ export default function FeaturedProducts({ products = [] }) {
   const next = () => goTo(index + 1);
   const atStart = index === 0;
   const atEnd = index >= maxIndex;
+
+  // Drag support: let people swipe/click-drag the row directly instead of
+  // only using the arrow buttons, dots, or the mouse wheel. Since the row's
+  // horizontal position is driven by the page's vertical scroll (via the
+  // ScrollTrigger scrub above), a horizontal drag is translated into an
+  // equivalent vertical scroll delta — that way it reuses the exact same
+  // animation, snapping and index tracking as normal scrolling, with no risk
+  // of the drag position and the scroll-linked position drifting apart.
+  const DRAG_THRESHOLD = 6;
+
+  const handlePointerDown = useCallback(
+    (e) => {
+      if (maxIndex === 0) return;
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+
+      const state = dragStateRef.current;
+      state.active = true;
+      state.dragging = false;
+      state.pointerId = e.pointerId;
+      state.lastX = e.clientX;
+    },
+    [maxIndex]
+  );
+
+  const handlePointerMove = useCallback((e) => {
+    const state = dragStateRef.current;
+    if (!state.active || state.pointerId !== e.pointerId) return;
+
+    const delta = e.clientX - state.lastX;
+
+    if (!state.dragging) {
+      if (Math.abs(delta) < DRAG_THRESHOLD) return;
+      state.dragging = true;
+      try {
+        e.currentTarget.setPointerCapture(e.pointerId);
+      } catch {}
+    }
+
+    e.preventDefault();
+    state.lastX = e.clientX;
+
+    // Dragging left should reveal the next products (mirrors scrolling
+    // down), so a leftward drag maps to a forward scroll.
+    window.scrollBy({ top: -delta, left: 0, behavior: "auto" });
+  }, []);
+
+  const endDrag = useCallback((e) => {
+    const state = dragStateRef.current;
+    if (state.pointerId !== e.pointerId) return;
+    state.active = false;
+    state.dragging = false;
+    state.pointerId = null;
+  }, []);
 
   return (
     <section className="relative py-16 sm:py-20 lg:py-24">
@@ -169,7 +229,10 @@ export default function FeaturedProducts({ products = [] }) {
       </div>
 
       <div ref={pinRef} className="relative">
-        <div ref={containerRef} className="mx-auto max-w-8xl px-5 pt-8 sm:px-8 sm:pt-10">
+        <div
+          ref={containerRef}
+          className="mx-auto max-w-8xl px-5 pt-8 sm:px-8 sm:pt-10"
+        >
           <div className="overflow-hidden">
             <div
               ref={trackRef}
