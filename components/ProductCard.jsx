@@ -2,8 +2,9 @@
 
 import { memo, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingCart, Check, Zap, Play } from "lucide-react";
+import { ShoppingCart, Check, Zap, Play, Heart } from "lucide-react";
 import { addToCart } from "@/lib/cartBus";
+import { useAuth } from "@/app/context/AuthContext";
 
 const PRODUCT_VIDEOS = [
   "https://www.pexels.com/download/video/3927676/",
@@ -16,8 +17,12 @@ function ProductCard({ product, index = 0 }) {
   const [hovered, setHovered] = useState(false);
   const [added, setAdded] = useState(false);
   const [ripples, setRipples] = useState([]);
+  const [wishAnim, setWishAnim] = useState(false);
   const videoRef = useRef(null);
   const btnRef = useRef(null);
+
+  const { isWishlisted, toggleWishlist, isLoggedIn } = useAuth();
+  const wishlisted = product?.id ? isWishlisted(product.id) : false;
 
   if (!product) return null;
 
@@ -51,7 +56,8 @@ function ProductCard({ product, index = 0 }) {
   const discountPercent =
     product.compareAtPrice && product.compareAtPrice > product.price
       ? Math.round(
-          ((product.compareAtPrice - product.price) / product.compareAtPrice) * 100
+          ((product.compareAtPrice - product.price) / product.compareAtPrice) *
+            100
         )
       : null;
 
@@ -75,6 +81,19 @@ function ProductCard({ product, index = 0 }) {
       addToCart(product);
     },
     [added, product]
+  );
+
+  const handleWishlist = useCallback(
+    (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const result = toggleWishlist(product);
+      if (result.added) {
+        setWishAnim(true);
+        setTimeout(() => setWishAnim(false), 500);
+      }
+    },
+    [product, toggleWishlist]
   );
 
   return (
@@ -136,6 +155,28 @@ function ProductCard({ product, index = 0 }) {
             {discountPercent}% off
           </span>
         )}
+
+        {/* Wishlist heart */}
+        <button
+          type="button"
+          onClick={handleWishlist}
+          aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+          className={`absolute bottom-3 left-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border transition-all duration-200 ${
+            wishlisted
+              ? "border-rust/30 bg-rust text-white shadow-[0_4px_14px_-2px_rgba(224,92,42,0.45)]"
+              : "border-white/20 bg-black/45 text-white backdrop-blur-md hover:bg-black/60"
+          }`}
+        >
+          <motion.span
+            animate={wishAnim ? { scale: [1, 1.35, 1] } : { scale: 1 }}
+            transition={{ duration: 0.35 }}
+          >
+            <Heart
+              className={`h-4 w-4 ${wishlisted ? "fill-current" : ""}`}
+              strokeWidth={wishlisted ? 0 : 2}
+            />
+          </motion.span>
+        </button>
 
         <AnimatePresence>
           {hovered && (

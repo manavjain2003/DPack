@@ -201,12 +201,6 @@ function CategoryCircle({ cat }) {
             />
           </div>
 
-          <span
-            className="absolute -right-0.5 -top-0.5 flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold text-white shadow-sm"
-            style={{ background: cat.tint }}
-          >
-            {cat.count}
-          </span>
         </div>
 
         <span className="max-w-[9rem] text-center text-[13px] font-semibold leading-tight text-ink/70">

@@ -42,7 +42,7 @@ export default function CartPage() {
         >
           <Link
             href="/products"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-ink/50 transition-colors hover:text-ink"
+            className="rounded-xl border border-gray-300 bg-white inline-flex items-center gap-1.5 text-sm font-medium text-ink/200 transition-colors hover:text-ink/50 px-4 py-2"
           >
             <ArrowLeft className="h-4 w-4" />
             Continue shopping

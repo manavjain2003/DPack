@@ -1,6 +1,9 @@
 import { Sora, Inter } from "next/font/google";
 import "./globals.css";
+
 import CartSidebar from "@/components/CartSidebar";
+import LoginSidebar from "@/components/LoginSidebar";
+import { AuthProvider } from "./context/AuthContext";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -23,9 +26,14 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>
-        {children}
-        <CartSidebar />
+      <body
+        className={`${sora.variable} ${inter.variable}`}
+      >
+        <AuthProvider>
+          {children}
+          <LoginSidebar />
+          <CartSidebar />
+        </AuthProvider>
       </body>
     </html>
   );
