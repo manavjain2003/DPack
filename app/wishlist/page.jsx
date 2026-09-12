@@ -13,6 +13,8 @@ import {
 import { useAuth } from "@/app/context/AuthContext";
 import { addToCart } from "@/lib/cartBus";
 import ProductCard from "@/components/ProductCard";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 function formatPrice(price) {
   if (price == null) return null;
@@ -80,22 +82,25 @@ export default function WishlistPage() {
     );
   }
 
-  return (
-    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+  return ( 
+    <>
+    <Navbar/>
+    <main className="min-h-screen bg-cream pt-24 pb-20 sm:pt-28">
+      <div className="mx-auto max-w-8xl px-5 sm:px-8">
       {/* Header */}
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <Link
-            href="/"
-            className="mb-3 inline-flex items-center gap-1.5 text-[13px] font-semibold text-ink/45 hover:text-ink"
+           <Link
+            href="/products"
+            className="rounded-xl border border-gray-300 bg-white inline-flex items-center gap-1.5 text-sm font-medium text-ink/200 transition-colors hover:text-ink/50 px-4 py-2 mb-4"
           >
-            <ArrowLeft className="h-3.5 w-3.5" />
+            <ArrowLeft className="h-4 w-4" />
             Continue shopping
           </Link>
           <h1 className="font-display text-2xl font-bold text-ink sm:text-3xl">
             Wishlist
           </h1>
-          <p className="mt-1 text-[14px] text-ink/50">
+          {/* <p className="mt-1 text-[14px] text-ink/50">
             {wishlistCount === 0
               ? "No items saved yet"
               : `${wishlistCount} item${wishlistCount === 1 ? "" : "s"} saved`}
@@ -104,7 +109,7 @@ export default function WishlistPage() {
                 · +91 {user.mobile}
               </span>
             )}
-          </p>
+          </p> */}
         </div>
       </div>
 
@@ -166,5 +171,8 @@ export default function WishlistPage() {
         </div>
       )}
     </div>
+    </main>
+    <Footer/>
+    </>
   );
 }

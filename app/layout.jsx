@@ -21,6 +21,9 @@ export const metadata = {
   title: "Dpack — Protective Packaging That Safeguards Your Products",
   description:
     "Air cushion machines, air column rolls, honeycomb sleeves, pallet belts and corrugation shredders. Everything you need to ship fragile goods damage-free.",
+  icons: {
+    icon: "https://packingairbag.com/_next/image?url=%2Flogo.png&w=256&q=75", 
+  },
 };
 
 export default function RootLayout({ children }) {

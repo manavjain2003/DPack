@@ -1,6 +1,7 @@
 "use client";
 
 import { memo, useRef, useState, useCallback } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart, Check, Zap, Play, Heart } from "lucide-react";
 import { addToCart } from "@/lib/cartBus";
@@ -25,6 +26,8 @@ function ProductCard({ product, index = 0 }) {
   const wishlisted = product?.id ? isWishlisted(product.id) : false;
 
   if (!product) return null;
+
+  const href = product.slug ? `/products/${product.slug}` : null;
 
   const videoSrc =
     product.videoSrc ?? PRODUCT_VIDEOS[index % PRODUCT_VIDEOS.length];
@@ -106,7 +109,14 @@ function ProductCard({ product, index = 0 }) {
       onMouseLeave={handleMouseLeave}
       className="group relative flex h-full w-full flex-col overflow-hidden rounded-2xl bg-white border border-ink/8 transition-all duration-300 hover:border-ink/20 hover:shadow-[0_16px_40px_-8px_rgba(0,0,0,0.13)]"
     >
-      <div className="relative h-48 shrink-0 overflow-hidden bg-[#F5F3EF]">
+      <Link
+        href={href ?? "#"}
+        aria-label={product.name}
+        onClick={(e) => {
+          if (!href) e.preventDefault();
+        }}
+        className="relative block h-48 shrink-0 overflow-hidden bg-[#F5F3EF]"
+      >
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,rgba(255,255,255,0.85)_0%,rgba(245,243,239,0)_100%)]" />
 
         <div
@@ -195,16 +205,18 @@ function ProductCard({ product, index = 0 }) {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </Link>
 
       <div className="flex flex-1 flex-col px-5 py-4">
-        <h3 className="font-display text-[15px] font-bold leading-tight text-ink">
-          {product.name}
-        </h3>
+        <Link href={href ?? "#"} onClick={(e) => { if (!href) e.preventDefault(); }}>
+          <h3 className="font-display text-[15px] font-bold leading-tight text-ink transition-colors hover:text-rust">
+            {product.name}
+          </h3>
 
-        <p className="mt-1.5 text-[13px] leading-relaxed text-ink/50 line-clamp-2">
-          {product.description}
-        </p>
+          <p className="mt-1.5 text-[13px] leading-relaxed text-ink/50 line-clamp-2">
+            {product.description}
+          </p>
+        </Link>
 
         {product.sizes?.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-1">
