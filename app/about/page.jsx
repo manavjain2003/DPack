@@ -42,7 +42,7 @@ export default function AboutPage() {
       />
 
       <section className="pb-20">
-        <div className="mx-auto grid max-w-7xl gap-5 px-5 sm:px-8 md:grid-cols-3">
+        <div className="mx-auto grid max-w-8xl gap-5 px-5 sm:px-8 md:grid-cols-3">
           {values.map((v) => (
             <div
               key={v.title}
