@@ -9,7 +9,6 @@ import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
 import { products, getProductBySlug, getRelatedProducts } from "@/lib/products";
 
-/* ─── Static generation ──────────────────────────────────── */
 export function generateStaticParams() {
   return products.map((p) => ({ slug: p.slug }));
 }
@@ -39,12 +38,8 @@ export default function ProductDetailPage({ params }) {
     <main className="overflow-x-clip">
       <Navbar />
 
-      {/* ── Hero breadcrumb banner ─────────────────────────
-          Full-width image background (the product image),
-          tinted with a dark overlay so white text reads clearly.
-          "Shop Details" heading + breadcrumb trail centred.       */}
-      <div className="relative mt-[72px] h-[220px] w-full overflow-hidden sm:h-[260px]">
-        {/* Background: product image, blurred & darkened */}
+
+      <div className="relative mt-[90px] h-[220px] w-full overflow-hidden sm:h-[260px]">
         {product.image && (
           <img
             src={product.image}
@@ -53,11 +48,8 @@ export default function ProductDetailPage({ params }) {
             className="absolute inset-0 h-full w-full object-cover object-center scale-110 blur-[2px]"
           />
         )}
-        {/* Colour overlay — teal-ish tone like reference, but using
-            an ink overlay so it adapts to any product image         */}
         <div className="absolute inset-0 bg-[#3d7a72]/80" />
 
-        {/* Content */}
         <div className="relative z-10 flex h-full flex-col items-center justify-center gap-3 px-4 text-center">
           <h1 className="font-display text-[32px] font-extrabold tracking-tight text-white drop-shadow-sm sm:text-[42px]">
             Shop Details
@@ -81,14 +73,12 @@ export default function ProductDetailPage({ params }) {
         </div>
       </div>
 
-      {/* ── Product content ────────────────────────────────── */}
       <section className="pb-16 pt-12 sm:pb-20 sm:pt-16">
         <div className="mx-auto max-w-8xl px-5 sm:px-8">
           <ProductDetail product={product} />
         </div>
       </section>
 
-      {/* ── Related products ─────────────────────────────── */}
       {related.length > 0 && (
         <section className="pb-20 sm:pb-24">
           <div className="mx-auto max-w-8xl px-5 sm:px-8">
