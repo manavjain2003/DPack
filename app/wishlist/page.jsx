@@ -100,16 +100,11 @@ export default function WishlistPage() {
           <h1 className="font-display text-2xl font-bold text-ink sm:text-3xl">
             Wishlist
           </h1>
-          {/* <p className="mt-1 text-[14px] text-ink/50">
+          <p className="mt-1 text-[14px] text-ink/50">
             {wishlistCount === 0
               ? "No items saved yet"
               : `${wishlistCount} item${wishlistCount === 1 ? "" : "s"} saved`}
-            {user?.mobile && (
-              <span className="ml-1.5 text-ink/35">
-                · +91 {user.mobile}
-              </span>
-            )}
-          </p> */}
+          </p>
         </div>
       </div>
 
