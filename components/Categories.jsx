@@ -251,7 +251,6 @@ export default function CategorySection() {
 
   const visible = CATEGORIES.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
 
-  // Heading + underline entrance (runs once on scroll into view)
   useEffect(() => {
     const ctx = gsap.context(() => {
       const heading = headingRef.current;

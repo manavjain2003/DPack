@@ -30,7 +30,7 @@ function useSlidesPerView() {
 
 export default function FeaturedProducts({ products = [] }) {
   const perView = useSlidesPerView();
-  const pinRef = useRef(null); // only the cards block is pinned
+  const pinRef = useRef(null);
   const containerRef = useRef(null);
   const trackRef = useRef(null);
   const scrollTriggerRef = useRef(null);
@@ -55,7 +55,6 @@ export default function FeaturedProducts({ products = [] }) {
         ease: "none",
         scrollTrigger: {
           trigger: pinRef.current,
-          // Pin when the cards row reaches the top (heading already scrolled up)
           start: "top top+=88",
           end: () => `+=${getDistance()}`,
           scrub: 1,
@@ -106,7 +105,6 @@ export default function FeaturedProducts({ products = [] }) {
 
   return (
     <section className="relative py-16 sm:py-20 lg:py-24">
-      {/* Header — scrolls away normally, not pinned */}
       <div className="mx-auto max-w-8xl px-5 sm:px-8">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-6 sm:mb-10">
           <div className="max-w-xl">

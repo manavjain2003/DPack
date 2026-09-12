@@ -46,7 +46,6 @@ export default function ContactPage() {
 
       <section className="pb-24">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-[0.9fr_1.1fr]">
-          {/* info cards */}
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
             {cards.map((c) => (
               <div
@@ -72,7 +71,6 @@ export default function ContactPage() {
           <ContactForm />
         </div>
 
-        {/* disclaimer — verbatim from dpackshop.com */}
         <div className="mx-auto mt-14 max-w-7xl px-5 sm:px-8">
           <div className="rounded-3xl border border-ink/10 bg-cream-dark/50 p-6 text-sm leading-relaxed text-ink/60">
             <span className="font-display font-bold text-ink">Disclaimer — </span>

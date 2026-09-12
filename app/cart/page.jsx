@@ -34,7 +34,7 @@ export default function CartPage() {
     <>
     <Navbar/>
     <main className="min-h-screen bg-cream pt-24 pb-20 sm:pt-28">
-      <div className="mx-auto max-w-6xl px-5 sm:px-8">
+      <div className="mx-auto max-w-8xl px-5 sm:px-8">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}

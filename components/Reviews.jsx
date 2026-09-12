@@ -83,7 +83,6 @@ export default function Testimonials() {
   const [index, setIndex] = useState(0);
   const autoplayRef = useRef(null);
 
-  // Responsive cards-per-view: 1 on mobile, 2 on tablet, 3 on desktop.
   useEffect(() => {
     const updatePerView = () => {
       if (window.innerWidth < 640) setPerView(1);
@@ -114,7 +113,6 @@ export default function Testimonials() {
     [maxIndex]
   );
 
-  // Autoplay, paused on hover/focus.
   const [paused, setPaused] = useState(false);
   useEffect(() => {
     if (paused || maxIndex === 0) return;

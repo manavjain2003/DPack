@@ -26,7 +26,6 @@ function ProductCard({ product, index = 0 }) {
 
   const handleMouseEnter = useCallback(() => {
     setHovered(true);
-    // small delay so the video element is ready (same as your original)
     setTimeout(() => {
       videoRef.current?.play().catch(() => {});
     }, 50);
@@ -88,7 +87,6 @@ function ProductCard({ product, index = 0 }) {
       onMouseLeave={handleMouseLeave}
       className="group relative flex h-full w-full flex-col overflow-hidden rounded-2xl bg-white border border-ink/8 transition-all duration-300 hover:border-ink/20 hover:shadow-[0_16px_40px_-8px_rgba(0,0,0,0.13)]"
     >
-      {/* Media area */}
       <div className="relative h-48 shrink-0 overflow-hidden bg-[#F5F3EF]">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,rgba(255,255,255,0.85)_0%,rgba(245,243,239,0)_100%)]" />
 
@@ -98,7 +96,6 @@ function ProductCard({ product, index = 0 }) {
           }`}
         />
 
-        {/* Product image */}
         <img
           src={product.image}
           alt={product.name}
@@ -111,7 +108,6 @@ function ProductCard({ product, index = 0 }) {
           }`}
         />
 
-        {/* Video – always in DOM like your original working version */}
         <video
           ref={videoRef}
           src={videoSrc}
@@ -124,19 +120,16 @@ function ProductCard({ product, index = 0 }) {
           }`}
         />
 
-        {/* Gradient overlay */}
         <div
           className={`absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent transition-opacity duration-300 ${
             hovered ? "opacity-100" : "opacity-0"
           }`}
         />
 
-        {/* Category badge */}
         <span className="absolute left-3 top-3 z-10 rounded-full bg-ink px-2.5 py-1 text-[9px] font-bold uppercase tracking-widest text-cream">
           {product.category}
         </span>
 
-        {/* Discount badge */}
         {discountPercent && (
           <span className="absolute right-3 top-3 z-10 flex items-center gap-1 rounded-full bg-rust px-2.5 py-1 text-[9px] font-bold text-white">
             <Zap className="h-2.5 w-2.5" />
@@ -144,7 +137,6 @@ function ProductCard({ product, index = 0 }) {
           </span>
         )}
 
-        {/* Product demo badge – now stuck to the RIGHT */}
         <AnimatePresence>
           {hovered && (
             <motion.div
@@ -164,7 +156,6 @@ function ProductCard({ product, index = 0 }) {
         </AnimatePresence>
       </div>
 
-      {/* Content */}
       <div className="flex flex-1 flex-col px-5 py-4">
         <h3 className="font-display text-[15px] font-bold leading-tight text-ink">
           {product.name}

@@ -41,7 +41,6 @@ export default function AboutPage() {
         subtitle="Dpackshop.com is the official online store of Dpack, offering a wide range of cargo securing and industrial packaging products tailored to meet the demands of logistics, warehousing, and e-commerce businesses."
       />
 
-      {/* values */}
       <section className="pb-20">
         <div className="mx-auto grid max-w-7xl gap-5 px-5 sm:px-8 md:grid-cols-3">
           {values.map((v) => (
@@ -56,7 +55,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* in-action gallery */}
       <section className="bg-cream-dark/60 py-20">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <p className="mb-3 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.28em] text-rust">

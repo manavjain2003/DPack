@@ -188,14 +188,12 @@ export default function Hero() {
           </motion.div>
         </motion.div>
 
-        {/* ── Right column — tiltable card with auto-sliding images ────────── */}
         <motion.div
           initial={{ opacity: 0, scale: 0.94, y: 40 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
           className="relative"
         >
-          {/* Tilt wrapper */}
           <motion.div
             ref={cardRef}
             onMouseMove={onCardMove}
@@ -218,7 +216,6 @@ export default function Hero() {
             <div className="pointer-events-none absolute -right-14 -top-14 h-52 w-52 rounded-full bg-rust/15 blur-3xl" />
             <div className="bg-grid pointer-events-none absolute inset-0 opacity-60" />
 
-            {/* ── Crossfading image carousel ─────────────────────────────── */}
             <div className="relative mx-auto h-72 w-full">
               <AnimatePresence mode="sync">
                 <motion.img
@@ -234,7 +231,6 @@ export default function Hero() {
               </AnimatePresence>
             </div>
 
-            {/* ── Slide meta + dot indicators ───────────────────────────── */}
             <div className="relative mt-8 flex items-end justify-between">
               <div>
                 <AnimatePresence mode="wait">
@@ -262,14 +258,13 @@ export default function Hero() {
                   </motion.p>
                 </AnimatePresence>
 
-                {/* dot indicators */}
                 <div className="mt-3 flex gap-1.5">
                   {SLIDES.map((_, i) => (
                     <button
                       key={i}
                       onClick={() => {
                         setIndex(i);
-                        startTimer(); // reset timer on manual pick
+                        startTimer(); 
                       }}
                       aria-label={`Go to slide ${i + 1}`}
                       className={`h-1.5 rounded-full transition-all duration-300 ${
@@ -292,7 +287,6 @@ export default function Hero() {
             </div>
           </motion.div>
 
-          {/* ── Floating chips (unchanged) ──────────────────────────────────── */}
           <motion.div
             animate={{ y: [0, -10, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}

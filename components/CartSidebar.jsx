@@ -18,21 +18,18 @@ export default function CartSidebar() {
   const count = cartCount(items);
   const total = cartSubtotal(items);
 
-  // Open sidebar whenever something is added
   useEffect(() => {
     const handler = () => setOpen(true);
     window.addEventListener("cart:added", handler);
     return () => window.removeEventListener("cart:added", handler);
   }, []);
 
-  // Escape key
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && setOpen(false);
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, []);
 
-  // Lock body scroll
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => {
@@ -42,7 +39,6 @@ export default function CartSidebar() {
 
   return (
     <>
-      {/* Floating bag button */}
       <motion.button
         type="button"
         onClick={() => setOpen(true)}
@@ -70,7 +66,6 @@ export default function CartSidebar() {
       <AnimatePresence>
         {open && (
           <>
-            {/* Backdrop */}
             <motion.div
               key="overlay"
               initial={{ opacity: 0 }}
@@ -82,7 +77,6 @@ export default function CartSidebar() {
               aria-hidden="true"
             />
 
-            {/* Sidebar */}
             <motion.aside
               key="sidebar"
               role="dialog"
@@ -94,7 +88,6 @@ export default function CartSidebar() {
               transition={{ type: "spring", stiffness: 340, damping: 36, mass: 0.9 }}
               className="fixed inset-y-0 right-0 z-50 flex w-full max-w-[400px] flex-col bg-[#FDFCFA] shadow-[-20px_0_60px_-10px_rgba(0,0,0,0.15)]"
             >
-              {/* Header */}
               <div className="flex items-center justify-between border-b border-ink/8 px-6 py-5">
                 <div className="flex items-center gap-2.5">
                   <ShoppingBag className="h-4 w-4 text-ink/60" />
@@ -117,7 +110,6 @@ export default function CartSidebar() {
                 </button>
               </div>
 
-              {/* Items */}
               <div className="flex-1 overflow-y-auto px-6 py-4">
                 <AnimatePresence initial={false}>
                   {items.length === 0 ? (
@@ -206,7 +198,6 @@ export default function CartSidebar() {
                 </AnimatePresence>
               </div>
 
-              {/* Footer */}
               <AnimatePresence>
                 {items.length > 0 && (
                   <motion.div

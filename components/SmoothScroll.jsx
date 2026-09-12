@@ -16,14 +16,14 @@ export default function SmoothScroll({ children }) {
       touchMultiplier: 1.2,
     });
 
-    // Tell ScrollTrigger to use Lenis as the scroller
+
     lenis.on("scroll", ScrollTrigger.update);
 
     gsap.ticker.add((time) => {
-      lenis.raf(time * 1000); // Lenis expects milliseconds
+      lenis.raf(time * 1000); 
     });
 
-    gsap.ticker.lagSmoothing(0); // important for smooth feel
+    gsap.ticker.lagSmoothing(0);
 
     return () => {
       lenis.destroy();

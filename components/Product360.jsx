@@ -42,10 +42,8 @@ export default function Product360({
     const angleStep = 360 / COLUMN_COUNT;
     const rawWidth = 2 * RADIUS * Math.tan(Math.PI / COLUMN_COUNT);
 
-    // Columns
     const columnWidth = rawWidth * 0.88;
 
-    // Plastic film – wider + more visible
     const filmWidth = rawWidth * 0.28;
 
     const columns = Array.from({ length: COLUMN_COUNT }).map((_, i) => ({
@@ -54,7 +52,6 @@ export default function Product360({
       transform: `rotateY(${i * angleStep}deg) translateZ(${RADIUS}px)`,
     }));
 
-    // Films sit between columns and slightly inward so they read as the connecting web
     const films = Array.from({ length: COLUMN_COUNT }).map((_, i) => ({
       id: i,
       width: filmWidth,
@@ -101,7 +98,6 @@ export default function Product360({
                 transformStyle: "preserve-3d",
               }}
             >
-              {/* Thin transparent plastic film (render first so it sits behind columns) */}
               {films.map((f) => (
                 <div
                   key={`film-${f.id}`}
@@ -122,7 +118,6 @@ export default function Product360({
                 />
               ))}
 
-              {/* Air columns */}
               {columns.map((c) => (
                 <div
                   key={`col-${c.id}`}
@@ -143,7 +138,6 @@ export default function Product360({
                 />
               ))}
 
-              {/* Top cap */}
               <div
                 className="absolute left-1/2 top-0 rounded-full"
                 style={{

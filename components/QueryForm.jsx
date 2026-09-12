@@ -24,12 +24,6 @@ export default function QueryForm() {
     setStatus("submitting");
 
     try {
-      // Replace with a real API call, e.g.:
-      // await fetch("/api/query", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(form),
-      // });
       await new Promise((resolve) => setTimeout(resolve, 800));
 
       setStatus("success");

@@ -38,7 +38,6 @@ const cartCount = cartItems.reduce((n, i) => n + i.qty, 0);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Close mobile menu whenever route changes
   useEffect(() => setOpen(false), [pathname]);
 
   return (
@@ -56,7 +55,6 @@ const cartCount = cartItems.reduce((n, i) => n + i.qty, 0);
       }`}
     >
       <nav className="mx-auto flex max-w-8xl items-center px-5 py-4 sm:px-8">
-        {/* Logo — left */}
         <div className="flex flex-1 items-center">
           <Link href="/" className="group flex items-center gap-3">
             <img
@@ -67,7 +65,6 @@ const cartCount = cartItems.reduce((n, i) => n + i.qty, 0);
           </Link>
         </div>
 
-        {/* Desktop Navigation — center */}
         <ul className="hidden items-center gap-8 md:flex">
           {links.map((l) => {
             const active = pathname === l.href;
@@ -93,11 +90,8 @@ const cartCount = cartItems.reduce((n, i) => n + i.qty, 0);
           })}
         </ul>
 
-        {/* Icons + mobile button — always right */}
         <div className="flex flex-1 items-center justify-end gap-1 sm:gap-2">
-          {/* Desktop Icons */}
           <div className="hidden items-center gap-1 sm:gap-2 md:flex">
-            {/* Search */}
             <Link
               href="/search"
               aria-label="Search"
@@ -111,7 +105,6 @@ const cartCount = cartItems.reduce((n, i) => n + i.qty, 0);
               />
             </Link>
 
-            {/* User */}
             <Link
               href="/account"
               aria-label="Account"
@@ -125,7 +118,6 @@ const cartCount = cartItems.reduce((n, i) => n + i.qty, 0);
               />
             </Link>
 
-            {/* Cart */}
             <Link
               href="/cart"
               aria-label="Shopping Cart"
@@ -170,7 +162,6 @@ const cartCount = cartItems.reduce((n, i) => n + i.qty, 0);
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
           <button
             onClick={() => setOpen((v) => !v)}
             className="grid h-10 w-10 place-items-center rounded-xl
@@ -186,7 +177,6 @@ const cartCount = cartItems.reduce((n, i) => n + i.qty, 0);
         </div>
       </nav>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -217,7 +207,6 @@ const cartCount = cartItems.reduce((n, i) => n + i.qty, 0);
                 </li>
               ))}
 
-              {/* Mobile Actions */}
               <li className="mt-3 border-t border-ink/10 pt-3">
                 <div className="flex items-center gap-3 px-4">
                   <Link
