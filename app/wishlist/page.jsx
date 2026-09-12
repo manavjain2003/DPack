@@ -97,7 +97,7 @@ export default function WishlistPage() {
             <ArrowLeft className="h-4 w-4" />
             Continue shopping
           </Link>
-          <h1 className="font-display text-2xl font-bold text-ink sm:text-3xl">
+          <h1 className="font-display text-3xl font-bold text-ink sm:text-3xl">
             Wishlist
           </h1>
           <p className="mt-1 text-[14px] text-ink/50">
