@@ -68,7 +68,7 @@ export default function ProductDetailPage({ params }) {
 
       {related.length > 0 && (
         <section className="pb-20 sm:pb-24">
-          <div className="mx-auto max-w-7xl px-5 sm:px-8">
+          <div className="mx-auto max-w-8xl px-5 sm:px-8">
             <h2 className="font-display text-2xl font-bold tracking-tight text-ink sm:text-3xl">
               You might also like
             </h2>
