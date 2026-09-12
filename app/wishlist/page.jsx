@@ -143,17 +143,42 @@ export default function WishlistPage() {
                 className="relative"
               >
                 <ProductCard product={product} index={index} />
+               ```tsx
+<div className="absolute right-3 top-[13.5rem] z-20 sm:top-[13.25rem]">
+  <button
+    type="button"
+    onClick={() => removeWishlistItem(product.id)}
+    title="Remove from wishlist"
+    aria-label="Remove from wishlist"
+    className="
+      group flex h-11 w-11 items-center justify-center
+      rounded-full
+      border border-red-100
+      bg-white
+      text-ink/55
+      shadow-md
+      backdrop-blur-sm
+      transition-all duration-200
+      hover:scale-110
+      hover:border-red-200
+      hover:bg-red-50
+      hover:text-red-600
+      hover:shadow-lg
+      active:scale-95
+    "
+  >
+    <Trash2
+      className="
+        h-5 w-5
+        transition-transform duration-200
+        group-hover:scale-110
+      "
+      strokeWidth={2.2}
+    />
+  </button>
+</div>
+```
 
-                <div className="absolute right-3 top-[13.5rem] z-20 flex gap-1.5 sm:top-[13.25rem]">                 
-                  <button
-                    type="button"
-                    onClick={() => removeWishlistItem(product.id)}
-                    title="Remove from wishlist"
-                    className="flex h-8 w-8 items-center justify-center rounded-full border border-ink/10 bg-white text-ink/60 shadow-sm transition hover:border-red-200 hover:text-red-600"
-                  >
-                    <Trash2 className="h-4.5 w-4.5" />
-                  </button>
-                </div>
               </motion.div>
             ))}
           </AnimatePresence>
