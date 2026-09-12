@@ -169,7 +169,7 @@ export default function FeaturedProducts({ products = [] }) {
       </div>
 
       <div ref={pinRef} className="relative">
-        <div ref={containerRef} className="mx-auto max-w-8xl px-5 sm:px-8">
+        <div ref={containerRef} className="mx-auto max-w-8xl px-5 pt-8 sm:px-8 sm:pt-10">
           <div className="overflow-hidden">
             <div
               ref={trackRef}
