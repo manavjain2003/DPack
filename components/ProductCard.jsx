@@ -101,7 +101,7 @@ function ProductCard({ product, index = 0 }) {
           alt={product.name}
           loading={index < 3 ? "eager" : "lazy"}
           decoding="async"
-          className={`absolute inset-0 m-auto h-full w-full object-contain p-6 transition-all duration-500 ${
+          className={`absolute inset-0 m-auto h-full w-full transition-all duration-500 ${
             hovered
               ? "opacity-0 scale-105"
               : "opacity-100 scale-100 group-hover:scale-[1.06]"
