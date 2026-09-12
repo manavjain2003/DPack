@@ -45,7 +45,7 @@ export default function ProductDetailPage({ params }) {
       <Navbar />
 
       <section className="pb-16 pt-28 sm:pb-20 sm:pt-36">
-        <div className="mx-auto max-w-7xl px-5 sm:px-8">
+        <div className="mx-auto max-w-8xl px-5 sm:px-8">
           {/* Breadcrumb */}
           <nav
             aria-label="Breadcrumb"

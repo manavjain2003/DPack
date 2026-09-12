@@ -93,7 +93,7 @@ export default function ProductDetail({ product }) {
         <img
           src={product.image}
           alt={product.name}
-          className={`absolute inset-0 m-auto h-full w-full object-contain p-10 transition-all duration-500 ${
+          className={`absolute inset-0 m-auto h-full w-full object-fill p-10 transition-all duration-500 ${
             hovered ? "opacity-0 scale-105" : "opacity-100 scale-100"
           }`}
         />
