@@ -45,7 +45,7 @@ export default function ContactPage() {
       />
 
       <section className="pb-24">
-        <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="mx-auto grid max-w-8xl gap-10 px-5 sm:px-8 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
             {cards.map((c) => (
               <div
