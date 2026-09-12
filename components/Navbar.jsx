@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { products } from "@/lib/products";
 
 import {
   Menu,
@@ -31,7 +32,8 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [cartPulse, setCartPulse] = useState(0);
   const [accountOpen, setAccountOpen] = useState(false);
-
+const [searchOpen, setSearchOpen] = useState(false);
+const [searchQuery, setSearchQuery] = useState("");
   const pathname = usePathname();
 
   const cartItems = useCart();
@@ -64,7 +66,19 @@ export default function Navbar() {
       window.removeEventListener("cart:added", onAdded);
     };
   }, []);
+const searchResults = searchQuery.trim()
+  ? products
+      .filter((product) => {
+        const query = searchQuery.toLowerCase();
 
+        return (
+          product.name.toLowerCase().includes(query) ||
+          product.category.toLowerCase().includes(query) ||
+          product.description.toLowerCase().includes(query)
+        );
+      })
+      .slice(0, 6)
+  : [];
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 24);
@@ -148,19 +162,167 @@ export default function Navbar() {
 
           <div className="hidden items-center gap-1 sm:gap-2 md:flex">
 
-            <Link
-              href="/search"
-              aria-label="Search"
-              className="group grid h-10 w-10 place-items-center
-                         rounded-full text-ink/70
-                         transition-all duration-300
-                         hover:bg-ink hover:text-cream"
+           <div className="relative">
+  <AnimatePresence mode="wait">
+    {!searchOpen ? (
+      <motion.button
+        key="search-button"
+        type="button"
+        onClick={() => setSearchOpen(true)}
+        aria-label="Open search"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.9 }}
+        className="group grid h-10 w-10 place-items-center
+                   rounded-full text-ink/70
+                   transition-all duration-300
+                   hover:bg-ink hover:text-cream"
+      >
+        <Search
+          className="h-5 w-5 transition-transform duration-300
+                     group-hover:scale-110"
+        />
+      </motion.button>
+    ) : (
+      <motion.div
+        key="search-input"
+        initial={{ width: 40, opacity: 0 }}
+        animate={{ width: 300, opacity: 1 }}
+        exit={{ width: 40, opacity: 0 }}
+        transition={{
+          duration: 0.25,
+          ease: "easeOut",
+        }}
+        className="relative"
+      >
+        <div
+          className="flex h-10 items-center gap-2
+                     rounded-full border border-ink/10
+                     bg-cream px-3 shadow-sm"
+        >
+          <Search className="h-4 w-4 shrink-0 text-ink/50" />
+
+          <input
+            autoFocus
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search products..."
+            className="min-w-0 flex-1 bg-transparent
+                       text-sm text-ink outline-none
+                       placeholder:text-ink/40"
+          />
+
+          <button
+            type="button"
+            onClick={() => {
+              setSearchOpen(false);
+              setSearchQuery("");
+            }}
+            aria-label="Close search"
+            className="grid h-7 w-7 shrink-0 place-items-center
+                       rounded-full text-ink/50
+                       transition-colors
+                       hover:bg-ink/10 hover:text-ink"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        {/* Search Results */}
+        <AnimatePresence>
+          {searchQuery.trim() && (
+            <motion.div
+              initial={{
+                opacity: 0,
+                y: -8,
+                scale: 0.98,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                y: -8,
+                scale: 0.98,
+              }}
+              transition={{ duration: 0.18 }}
+              className="absolute right-0 top-12 z-[60]
+                         w-[360px] overflow-hidden
+                         rounded-2xl border border-ink/10
+                         bg-cream shadow-2xl"
             >
-              <Search
-                className="h-5 w-5 transition-transform duration-300
-                           group-hover:scale-110"
-              />
-            </Link>
+              {searchResults.length > 0 ? (
+                <div className="max-h-[420px] overflow-y-auto p-2">
+                  {searchResults.map((product) => (
+                    <Link
+                      key={product.id}
+                      href={`/products/${product.slug}`}
+                      onClick={() => {
+                        setSearchOpen(false);
+                        setSearchQuery("");
+                      }}
+                      className="flex items-center gap-3
+                                 rounded-xl p-3
+                                 transition-colors
+                                 hover:bg-ink/5"
+                    >
+                      <div
+                        className="h-14 w-14 shrink-0
+                                   overflow-hidden rounded-lg
+                                   bg-white"
+                      >
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="h-full w-full object-contain"
+                        />
+                      </div>
+
+                      <div className="min-w-0 flex-1">
+                        <p
+                          className="truncate text-sm
+                                     font-semibold text-ink"
+                        >
+                          {product.name}
+                        </p>
+
+                        <p className="mt-0.5 text-xs text-ink/50">
+                          {product.category}
+                        </p>
+
+                        <p className="mt-1 text-sm font-medium text-rust">
+                          ₹{product.price.toLocaleString("en-IN")}
+                        </p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="px-5 py-8 text-center">
+                  <Search
+                    className="mx-auto h-8 w-8
+                               text-ink/20"
+                  />
+
+                  <p className="mt-3 text-sm font-semibold text-ink">
+                    No products found
+                  </p>
+
+                  <p className="mt-1 text-xs text-ink/50">
+                    Try searching for another product.
+                  </p>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    )}
+  </AnimatePresence>
+</div>
 
   
 
