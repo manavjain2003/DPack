@@ -1,8 +1,8 @@
 "use client";
 
+import { memo, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingCart, Check, Zap } from "lucide-react";
-import { useRef, useState, useCallback } from "react";
+import { ShoppingCart, Check, Zap, Play } from "lucide-react";
 import { addToCart } from "@/lib/cartBus";
 
 const PRODUCT_VIDEOS = [
@@ -12,7 +12,7 @@ const PRODUCT_VIDEOS = [
   "https://www.pexels.com/download/video/4269132/",
 ];
 
-export default function ProductCard({ product, index = 0 }) {
+function ProductCard({ product, index = 0 }) {
   const [hovered, setHovered] = useState(false);
   const [added, setAdded] = useState(false);
   const [ripples, setRipples] = useState([]);
@@ -24,18 +24,21 @@ export default function ProductCard({ product, index = 0 }) {
   const videoSrc =
     product.videoSrc ?? PRODUCT_VIDEOS[index % PRODUCT_VIDEOS.length];
 
-  const handleMouseEnter = () => {
+  const handleMouseEnter = useCallback(() => {
     setHovered(true);
-    setTimeout(() => videoRef.current?.play().catch(() => {}), 50);
-  };
+    // small delay so the video element is ready (same as your original)
+    setTimeout(() => {
+      videoRef.current?.play().catch(() => {});
+    }, 50);
+  }, []);
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = useCallback(() => {
     setHovered(false);
     if (videoRef.current) {
       videoRef.current.pause();
       videoRef.current.currentTime = 0;
     }
-  };
+  }, []);
 
   const formatPrice = (price) => {
     if (price == null) return null;
@@ -63,7 +66,6 @@ export default function ProductCard({ product, index = 0 }) {
         const y = e.clientY - rect.top;
         const id = Date.now() + Math.random();
         setRipples((prev) => [...prev, { id, x, y }]);
-
         setTimeout(() => {
           setRipples((prev) => prev.filter((r) => r.id !== id));
         }, 600);
@@ -71,22 +73,22 @@ export default function ProductCard({ product, index = 0 }) {
 
       setAdded(true);
       setTimeout(() => setAdded(false), 2200);
-
       addToCart(product);
     },
-    [added]
+    [added, product]
   );
 
   return (
     <motion.article
-      initial={{ opacity: 0, y: 28 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.5, delay: (index % 4) * 0.07 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.4, delay: Math.min(index % 6, 5) * 0.05 }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       className="group relative flex h-full w-full flex-col overflow-hidden rounded-2xl bg-white border border-ink/8 transition-all duration-300 hover:border-ink/20 hover:shadow-[0_16px_40px_-8px_rgba(0,0,0,0.13)]"
     >
+      {/* Media area */}
       <div className="relative h-48 shrink-0 overflow-hidden bg-[#F5F3EF]">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,rgba(255,255,255,0.85)_0%,rgba(245,243,239,0)_100%)]" />
 
@@ -96,48 +98,45 @@ export default function ProductCard({ product, index = 0 }) {
           }`}
         />
 
-        <AnimatePresence>
-          {!hovered && (
-            <motion.img
-              key="image"
-              src={product.image}
-              alt={product.name}
-              initial={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.05 }}
-              transition={{ duration: 0.3 }}
-              className="absolute inset-0 m-auto h-full w-full object-contain p-6 transition-transform duration-500 group-hover:scale-[1.06]"
-            />
-          )}
-        </AnimatePresence>
+        {/* Product image */}
+        <img
+          src={product.image}
+          alt={product.name}
+          loading={index < 3 ? "eager" : "lazy"}
+          decoding="async"
+          className={`absolute inset-0 m-auto h-full w-full object-contain p-6 transition-all duration-500 ${
+            hovered
+              ? "opacity-0 scale-105"
+              : "opacity-100 scale-100 group-hover:scale-[1.06]"
+          }`}
+        />
 
-        <motion.video
+        {/* Video – always in DOM like your original working version */}
+        <video
           ref={videoRef}
           src={videoSrc}
           muted
           loop
           playsInline
           preload="metadata"
-          animate={{ opacity: hovered ? 1 : 0 }}
-          transition={{ duration: 0.4 }}
-          className="absolute inset-0 h-full w-full object-cover"
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-400 ${
+            hovered ? "opacity-100" : "opacity-0"
+          }`}
         />
 
-        <AnimatePresence>
-          {hovered && (
-            <motion.div
-              key="overlay"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent"
-            />
-          )}
-        </AnimatePresence>
+        {/* Gradient overlay */}
+        <div
+          className={`absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent transition-opacity duration-300 ${
+            hovered ? "opacity-100" : "opacity-0"
+          }`}
+        />
 
+        {/* Category badge */}
         <span className="absolute left-3 top-3 z-10 rounded-full bg-ink px-2.5 py-1 text-[9px] font-bold uppercase tracking-widest text-cream">
           {product.category}
         </span>
 
+        {/* Discount badge */}
         {discountPercent && (
           <span className="absolute right-3 top-3 z-10 flex items-center gap-1 rounded-full bg-rust px-2.5 py-1 text-[9px] font-bold text-white">
             <Zap className="h-2.5 w-2.5" />
@@ -145,22 +144,27 @@ export default function ProductCard({ product, index = 0 }) {
           </span>
         )}
 
+        {/* Product demo badge – now stuck to the RIGHT */}
         <AnimatePresence>
           {hovered && (
-            <motion.span
-              key="hint"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 4 }}
-              transition={{ duration: 0.22 }}
-              className="absolute bottom-3 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full bg-white/15 px-3 py-1 text-[10px] font-semibold tracking-wide text-white backdrop-blur-sm"
+            <motion.div
+              key="play-hint"
+              initial={{ opacity: 0, x: 8 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 6 }}
+              transition={{ duration: 0.2 }}
+              className="absolute bottom-3 right-3 z-10"
             >
-              ▶ Product demo
-            </motion.span>
+              <div className="flex items-center gap-1.5 rounded-full bg-black/55 px-3 py-1.5 text-[11px] font-semibold text-white backdrop-blur-md border border-white/15 shadow-sm">
+                <Play className="h-3 w-3 fill-white" />
+                <span>Product demo</span>
+              </div>
+            </motion.div>
           )}
         </AnimatePresence>
       </div>
 
+      {/* Content */}
       <div className="flex flex-1 flex-col px-5 py-4">
         <h3 className="font-display text-[15px] font-bold leading-tight text-ink">
           {product.name}
@@ -284,3 +288,5 @@ export default function ProductCard({ product, index = 0 }) {
     </motion.article>
   );
 }
+
+export default memo(ProductCard);

@@ -13,6 +13,7 @@ import FAQSection from "@/components/FAQSection";
 import QueryForm from "@/components/QueryForm";
 import SmoothScroll from "@/components/SmoothScroll";
 import Product360 from "@/components/Product360";
+import ProductsClient from "@/components/ProductsClient";
 
 export default function Home() {
   const featured = products.filter((p) => p.featured);
@@ -26,6 +27,7 @@ export default function Home() {
         <Categories />
         <FeaturedProducts products={featured} />
         <Product360/>
+        <ProductsClient products={products} />
         <WhyUs />
         <Reviews />
         <Stats />

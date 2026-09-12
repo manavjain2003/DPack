@@ -1,18 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { categories } from "@/lib/products";
 import ProductCard from "@/components/ProductCard";
 
 export default function ProductsClient({ products }) {
   const [active, setActive] = useState("All");
-  const visible =
-    active === "All" ? products : products.filter((p) => p.category === active);
+
+  const visible = useMemo(
+    () =>
+      active === "All"
+        ? products
+        : products.filter((p) => p.category === active),
+    [active, products]
+  );
 
   return (
-    <div>
-      {/* category filter */}
+    <div className="m-8">
       <div className="mb-12 flex flex-wrap gap-2.5">
         {categories.map((c) => {
           const isActive = active === c;
@@ -37,13 +42,14 @@ export default function ProductsClient({ products }) {
         })}
       </div>
 
-      <motion.div layout className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {/* Removed layout prop + simplified AnimatePresence to reduce layout thrashing */}
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         <AnimatePresence mode="popLayout">
           {visible.map((p, i) => (
             <ProductCard key={p.slug} product={p} index={i} />
           ))}
         </AnimatePresence>
-      </motion.div>
+      </div>
 
       <p className="mt-12 text-center text-sm text-ink/50">
         Looking for ratchet belts, lashing systems, cord straps, dunnage paper,

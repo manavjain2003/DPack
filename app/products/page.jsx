@@ -21,7 +21,7 @@ export default function ProductsPage() {
         subtitle="From air column bags, gap fillers and air bags to ratchet belts, lashing systems, bubble wrap and packaging tapes — we've got it all under one roof."
       />
       <section className="pb-24">
-        <div className="mx-auto max-w-7xl px-5 sm:px-8">
+        <div className="mx-auto max-w-8xl px-5 sm:px-8">
           <ProductsClient products={products} />
         </div>
       </section>

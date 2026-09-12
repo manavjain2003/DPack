@@ -1,5 +1,6 @@
 import { Sora, Inter } from "next/font/google";
 import "./globals.css";
+import CartSidebar from "@/components/CartSidebar";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -21,8 +22,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${sora.variable} ${inter.variable}`}>
-      <body>{children}</body>
+    <html lang="en">
+      <body>
+        {children}
+        <CartSidebar />
+      </body>
     </html>
   );
 }

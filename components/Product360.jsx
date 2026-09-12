@@ -38,16 +38,30 @@ export default function Product360({
   const sectionRef = useRef(null);
   const ringRef = useRef(null);
 
-  const columns = useMemo(() => {
+  const { columns, films } = useMemo(() => {
     const angleStep = 360 / COLUMN_COUNT;
     const rawWidth = 2 * RADIUS * Math.tan(Math.PI / COLUMN_COUNT);
-    const width = rawWidth * 0.86;
 
-    return Array.from({ length: COLUMN_COUNT }).map((_, i) => ({
+    // Columns
+    const columnWidth = rawWidth * 0.88;
+
+    // Plastic film – wider + more visible
+    const filmWidth = rawWidth * 0.28;
+
+    const columns = Array.from({ length: COLUMN_COUNT }).map((_, i) => ({
       id: i,
-      width,
+      width: columnWidth,
       transform: `rotateY(${i * angleStep}deg) translateZ(${RADIUS}px)`,
     }));
+
+    // Films sit between columns and slightly inward so they read as the connecting web
+    const films = Array.from({ length: COLUMN_COUNT }).map((_, i) => ({
+      id: i,
+      width: filmWidth,
+      transform: `rotateY(${(i + 0.5) * angleStep}deg) translateZ(${RADIUS * 0.97}px)`,
+    }));
+
+    return { columns, films };
   }, []);
 
   useLayoutEffect(() => {
@@ -87,9 +101,31 @@ export default function Product360({
                 transformStyle: "preserve-3d",
               }}
             >
+              {/* Thin transparent plastic film (render first so it sits behind columns) */}
+              {films.map((f) => (
+                <div
+                  key={`film-${f.id}`}
+                  className="absolute left-1/2 top-1/2"
+                  style={{
+                    width: f.width,
+                    height: CYLINDER_HEIGHT,
+                    marginLeft: -f.width / 2,
+                    marginTop: -CYLINDER_HEIGHT / 2,
+                    transform: f.transform,
+                    background:
+                      "linear-gradient(90deg, rgba(226,232,240,0.45) 0%, rgba(241,245,249,0.7) 45%, rgba(226,232,240,0.4) 100%)",
+                    opacity: 0.75,
+                    borderLeft: "1px solid rgba(255,255,255,0.35)",
+                    borderRight: "1px solid rgba(255,255,255,0.2)",
+                    boxShadow: "inset 0 0 12px rgba(255,255,255,0.25)",
+                  }}
+                />
+              ))}
+
+              {/* Air columns */}
               {columns.map((c) => (
                 <div
-                  key={c.id}
+                  key={`col-${c.id}`}
                   className="absolute left-1/2 top-1/2 rounded-[999px]"
                   style={{
                     width: c.width,
@@ -107,6 +143,7 @@ export default function Product360({
                 />
               ))}
 
+              {/* Top cap */}
               <div
                 className="absolute left-1/2 top-0 rounded-full"
                 style={{
