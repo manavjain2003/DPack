@@ -52,10 +52,9 @@ export default function ProductDetailPage({ params }) {
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center gap-3 px-4 text-center">
           <h1 className="font-display text-[32px] font-extrabold tracking-tight text-white drop-shadow-sm sm:text-[42px]">
-            Shop Details
+           {product.name}
           </h1>
 
-          {/* Breadcrumb */}
           <nav
             aria-label="Breadcrumb"
             className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 text-[13px] font-medium text-white/80"
@@ -65,7 +64,7 @@ export default function ProductDetailPage({ params }) {
             </Link>
             <ChevronRight className="h-3.5 w-3.5 text-white/50" />
             <Link href="/products" className="transition hover:text-white">
-              Shop
+             {product.category}
             </Link>
             <ChevronRight className="h-3.5 w-3.5 text-white/50" />
             <span className="text-white">{product.name}</span>
