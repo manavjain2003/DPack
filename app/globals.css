@@ -57,3 +57,7 @@ body {
 .animate-spin-slow {
   animation: spin-slow 18s linear infinite;
 }
+
+.custom-height{
+  height: 100vh;
+}

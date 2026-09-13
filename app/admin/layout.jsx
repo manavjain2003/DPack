@@ -64,7 +64,7 @@ export default function AdminLayout({ children }) {
     <div className="flex min-h-screen bg-[#F4F6FA]">
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-ink text-cream shadow-xl transition-transform duration-300
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-ink text-cream shadow-xl transition-transform duration-300 custom-height
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:relative lg:translate-x-0`}
       >
         <div className="flex h-16 items-center gap-3 border-b border-white/10 px-6">
