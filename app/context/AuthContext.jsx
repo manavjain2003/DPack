@@ -8,21 +8,13 @@ import {
   useMemo,
   useState,
 } from "react";
-
 import {
-  getStoredUser,
-  setStoredUser,
-  clearStoredUser,
-  requestOtp,
-  verifyOtp,
-} from "@/lib/auth";
-
-import {
-  getWishlist,
-  addToWishlist,
-  removeFromWishlist,
-  toggleWishlist as toggleWishlistLib,
-} from "@/lib/wishlist";
+  authAPI,
+  userAPI,
+  setToken,
+  getToken,
+  clearToken,
+} from "@/lib/apiClient";
 
 const AuthContext = createContext(null);
 
@@ -33,242 +25,167 @@ export function AuthProvider({ children }) {
   const [loginOpen, setLoginOpen] = useState(false);
   const [loginIntent, setLoginIntent] = useState(null);
 
-  // Hydrate user from localStorage
+  // Hydrate from token on mount
   useEffect(() => {
-    const storedUser = getStoredUser();
-
-    setUser(storedUser);
-
-    if (storedUser?.mobile) {
-      setWishlistState(getWishlist(storedUser.mobile));
-    }
-
-    setHydrated(true);
-
-    const onAuth = (event) => {
-      const nextUser = event.detail;
-
-      setUser(nextUser);
-
-      setWishlistState(
-        nextUser?.mobile ? getWishlist(nextUser.mobile) : []
-      );
-    };
-
-    const onWishlist = (event) => {
-      const items = event.detail?.items;
-
-      if (items) {
-        setWishlistState(items);
+    const init = async () => {
+      const token = getToken();
+      if (token) {
+        try {
+          const data = await authAPI.me();
+          setUser(data.user);
+          // Load wishlist from server
+          try {
+            const wl = await userAPI.getWishlist();
+            setWishlistState(wl.wishlist || []);
+          } catch {
+            setWishlistState([]);
+          }
+        } catch {
+          clearToken();
+        }
       }
+      setHydrated(true);
     };
-
-    window.addEventListener("auth-change", onAuth);
-    window.addEventListener("wishlist-change", onWishlist);
-
-    return () => {
-      window.removeEventListener("auth-change", onAuth);
-      window.removeEventListener("wishlist-change", onWishlist);
-    };
+    init();
   }, []);
 
-  // Keep wishlist synchronized when logged-in user changes
-  useEffect(() => {
-    if (!hydrated) return;
-
-    if (user?.mobile) {
-      setWishlistState(getWishlist(user.mobile));
-    } else {
-      setWishlistState([]);
-    }
-  }, [user?.mobile, hydrated]);
-
-  // Open login sidebar
   const openLogin = useCallback((intent = null) => {
     setLoginIntent(intent);
     setLoginOpen(true);
   }, []);
 
-  // Close login sidebar
   const closeLogin = useCallback(() => {
     setLoginOpen(false);
     setLoginIntent(null);
   }, []);
 
-  // Logout
   const logout = useCallback(() => {
-    clearStoredUser();
+    clearToken();
     setUser(null);
     setWishlistState([]);
   }, []);
 
-  // Send OTP
-  const sendOtp = useCallback(
-    (mobile) => requestOtp(mobile),
-    []
-  );
+  const sendOtp = useCallback(async (mobile) => {
+    try {
+      const res = await authAPI.sendOtp(mobile);
+      return { ok: true, message: res.message, devOtp: res.devOtp };
+    } catch (e) {
+      return { ok: false, error: e.message };
+    }
+  }, []);
 
-  // Login using OTP
   const loginWithOtp = useCallback(
-    (mobile, otp) => {
-      const result = verifyOtp(mobile, otp);
+    async (mobile, otp) => {
+      try {
+        const res = await authAPI.verifyOtp(mobile, otp);
+        setToken(res.token);
+        setUser(res.user);
 
-      if (result.ok) {
-        setStoredUser(result.user);
-        setUser(result.user);
+        // Load wishlist after login
+        try {
+          const wl = await userAPI.getWishlist();
+          setWishlistState(wl.wishlist || []);
+        } catch {
+          setWishlistState([]);
+        }
 
-        const userWishlist = getWishlist(result.user.mobile);
-
-        setWishlistState(userWishlist);
-
-        // If login was opened because user
-        // wanted to add a product to wishlist
-        if (
-          loginIntent?.type === "wishlist" &&
-          loginIntent.product
-        ) {
-          addToWishlist(
-            result.user.mobile,
-            loginIntent.product
-          );
-
-          setWishlistState(
-            getWishlist(result.user.mobile)
-          );
+        // Handle deferred wishlist intent
+        if (loginIntent?.type === "wishlist" && loginIntent.productId) {
+          try {
+            await userAPI.addToWishlist(loginIntent.productId);
+            const wl = await userAPI.getWishlist();
+            setWishlistState(wl.wishlist || []);
+          } catch {}
         }
 
         closeLogin();
+        return { ok: true, user: res.user };
+      } catch (e) {
+        return { ok: false, error: e.message };
       }
-
-      return result;
     },
     [loginIntent, closeLogin]
   );
 
-  // Check whether a product is in wishlist
   const isWishlisted = useCallback(
-    (productId) => {
-      if (!user?.mobile) {
-        return false;
-      }
-
-      return wishlist.some(
-        (product) => product.id === productId
-      );
-    },
-    [user?.mobile, wishlist]
+    (productId) => wishlist.some((p) => p._id === productId || p.id === productId),
+    [wishlist]
   );
 
-  // Add/remove product from wishlist
   const toggleWishlist = useCallback(
-    (product) => {
-      // User is not logged in
-      if (!user?.mobile) {
-        openLogin({
-          type: "wishlist",
-          product,
-        });
-
-        return {
-          added: false,
-          requiresLogin: true,
-        };
+    async (product) => {
+      if (!user) {
+        openLogin({ type: "wishlist", productId: product._id || product.id });
+        return { added: false, requiresLogin: true };
       }
 
-      // User is logged in
-      const { list, added } = toggleWishlistLib(
-        user.mobile,
-        product
-      );
+      const productId = product._id || product.id;
+      const alreadyIn = isWishlisted(productId);
 
-      setWishlistState(list);
-
-      return {
-        added,
-        requiresLogin: false,
-      };
+      try {
+        if (alreadyIn) {
+          await userAPI.removeFromWishlist(productId);
+          setWishlistState((prev) =>
+            prev.filter((p) => p._id !== productId && p.id !== productId)
+          );
+          return { added: false, requiresLogin: false };
+        } else {
+          await userAPI.addToWishlist(productId);
+          const wl = await userAPI.getWishlist();
+          setWishlistState(wl.wishlist || []);
+          return { added: true, requiresLogin: false };
+        }
+      } catch {
+        return { added: false, requiresLogin: false };
+      }
     },
-    [user?.mobile, openLogin]
+    [user, isWishlisted, openLogin]
   );
 
-  // Remove product from wishlist
   const removeWishlistItem = useCallback(
-    (productId) => {
-      if (!user?.mobile) {
-        return;
-      }
-
-      const next = removeFromWishlist(
-        user.mobile,
-        productId
-      );
-
-      setWishlistState(next);
+    async (productId) => {
+      if (!user) return;
+      try {
+        await userAPI.removeFromWishlist(productId);
+        setWishlistState((prev) =>
+          prev.filter((p) => p._id !== productId && p.id !== productId)
+        );
+      } catch {}
     },
-    [user?.mobile]
+    [user]
   );
 
-  // Context value
   const value = useMemo(
     () => ({
       user,
       hydrated,
-
-      isLoggedIn: !!user?.mobile,
-
+      isLoggedIn: !!user,
       wishlist,
       wishlistCount: wishlist.length,
-
       isWishlisted,
       toggleWishlist,
       removeWishlistItem,
-
       loginOpen,
       openLogin,
       closeLogin,
       loginIntent,
-
       sendOtp,
       loginWithOtp,
-
       logout,
     }),
     [
-      user,
-      hydrated,
-      wishlist,
-
-      isWishlisted,
-      toggleWishlist,
-      removeWishlistItem,
-
-      loginOpen,
-      openLogin,
-      closeLogin,
-      loginIntent,
-
-      sendOtp,
-      loginWithOtp,
-
-      logout,
+      user, hydrated, wishlist,
+      isWishlisted, toggleWishlist, removeWishlistItem,
+      loginOpen, openLogin, closeLogin, loginIntent,
+      sendOtp, loginWithOtp, logout,
     ]
   );
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
   const ctx = useContext(AuthContext);
-
-  if (!ctx) {
-    throw new Error(
-      "useAuth must be used within AuthProvider"
-    );
-  }
-
+  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
   return ctx;
 }

@@ -6,7 +6,6 @@ import WhyUs from "@/components/WhyUs";
 import Stats from "@/components/Stats";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
-import { products } from "@/lib/products";
 import Categories from "@/components/Categories";
 import Reviews from "@/components/Reviews";
 import FAQSection from "@/components/FAQSection";
@@ -14,9 +13,21 @@ import QueryForm from "@/components/QueryForm";
 import SmoothScroll from "@/components/SmoothScroll";
 import Product360 from "@/components/Product360";
 import ProductsClient from "@/components/ProductsClient";
+import { getProducts, getFeaturedProducts } from "@/lib/products";
 
-export default function Home() {
-  const featured = products.filter((p) => p.featured);
+export default async function Home() {
+  let featured = [];
+  let allProducts = [];
+
+  try {
+    [featured, allProducts] = await Promise.all([
+      getFeaturedProducts(),
+      getProducts(),
+    ]);
+  } catch (e) {
+    // DB not connected yet — graceful degradation
+    console.warn("Could not fetch products from DB:", e.message);
+  }
 
   return (
     <SmoothScroll>
@@ -26,8 +37,8 @@ export default function Home() {
         <Marquee />
         <Categories />
         <FeaturedProducts products={featured} />
-        <Product360/>
-        <ProductsClient products={products} />
+        <Product360 />
+        <ProductsClient products={allProducts} />
         <WhyUs />
         <Reviews />
         <Stats />

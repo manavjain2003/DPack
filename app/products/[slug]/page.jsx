@@ -7,37 +7,52 @@ import ProductDetail from "@/components/ProductDetail";
 import ProductCard from "@/components/ProductCard";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
-import { products, getProductBySlug, getRelatedProducts } from "@/lib/products";
+import { getProductBySlug, getRelatedProducts, getAllSlugs } from "@/lib/products";
 
-export function generateStaticParams() {
-  return products.map((p) => ({ slug: p.slug }));
+export const dynamic = "force-dynamic";
+
+export async function generateStaticParams() {
+  try {
+    const slugs = await getAllSlugs();
+    return slugs.map((slug) => ({ slug }));
+  } catch {
+    return [];
+  }
 }
 
-export function generateMetadata({ params }) {
-  const product = getProductBySlug(params.slug);
-  if (!product) return { title: "Product not found — Dpack" };
-  return {
-    title: `${product.name} — Dpack`,
-    description: product.description,
-    openGraph: {
-      title: product.name,
+export async function generateMetadata({ params }) {
+  try {
+    const product = await getProductBySlug(params.slug);
+    if (!product) return { title: "Product not found — Dpack" };
+    return {
+      title: `${product.name} — Dpack`,
       description: product.description,
-      images: product.image ? [product.image] : undefined,
-    },
-  };
+      openGraph: {
+        title: product.name,
+        description: product.description,
+        images: product.image ? [product.image] : undefined,
+      },
+    };
+  } catch {
+    return { title: "Product — Dpack" };
+  }
 }
 
-/* ─── Page ───────────────────────────────────────────────── */
-export default function ProductDetailPage({ params }) {
-  const product = getProductBySlug(params.slug);
-  if (!product) notFound();
+export default async function ProductDetailPage({ params }) {
+  let product = null;
+  let related = [];
 
-  const related = getRelatedProducts(product, 4);
+  try {
+    product = await getProductBySlug(params.slug);
+    if (!product) notFound();
+    related = await getRelatedProducts(product, 4);
+  } catch {
+    notFound();
+  }
 
   return (
     <main className="overflow-x-clip">
       <Navbar />
-
 
       <div className="relative mt-[90px] h-[220px] w-full overflow-hidden sm:h-[260px]">
         {product.image && (
@@ -52,20 +67,15 @@ export default function ProductDetailPage({ params }) {
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center gap-3 px-4 text-center">
           <h1 className="font-display text-[32px] font-extrabold tracking-tight text-white drop-shadow-sm sm:text-[42px]">
-           {product.name}
+            {product.name}
           </h1>
-
           <nav
             aria-label="Breadcrumb"
             className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 text-[13px] font-medium text-white/80"
           >
-            <Link href="/" className="transition hover:text-white">
-              Home
-            </Link>
+            <Link href="/" className="transition hover:text-white">Home</Link>
             <ChevronRight className="h-3.5 w-3.5 text-white/50" />
-            <Link href="/products" className="transition hover:text-white">
-             {product.category}
-            </Link>
+            <Link href="/products" className="transition hover:text-white">{product.category}</Link>
             <ChevronRight className="h-3.5 w-3.5 text-white/50" />
             <span className="text-white">{product.name}</span>
           </nav>
@@ -84,10 +94,7 @@ export default function ProductDetailPage({ params }) {
             <h2 className="font-display text-2xl font-bold tracking-tight text-ink sm:text-3xl">
               You might also like
             </h2>
-            <p className="mt-1.5 text-[14px] text-ink/50">
-              More from {product.category}
-            </p>
-
+            <p className="mt-1.5 text-[14px] text-ink/50">More from {product.category}</p>
             <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {related.map((p, i) => (
                 <ProductCard key={p.slug} product={p} index={i} />

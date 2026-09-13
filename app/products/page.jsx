@@ -3,7 +3,7 @@ import PageHeader from "@/components/PageHeader";
 import ProductsClient from "@/components/ProductsClient";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
-import { products } from "@/lib/products";
+import { getProducts } from "@/lib/products";
 
 export const metadata = {
   title: "Products — Dpack | Protective Packaging & Cargo Securing",
@@ -11,7 +11,16 @@ export const metadata = {
     "Air column bags, gap fillers, air bags, e-commerce pouches, ratchet belts, lashing systems, bubble wrap, straps and packaging tapes — all under one roof.",
 };
 
-export default function ProductsPage() {
+export const dynamic = "force-dynamic"; // always fresh from DB
+
+export default async function ProductsPage() {
+  let products = [];
+  try {
+    products = await getProducts();
+  } catch (e) {
+    console.warn("Could not fetch products:", e.message);
+  }
+
   return (
     <main className="overflow-x-clip">
       <Navbar />

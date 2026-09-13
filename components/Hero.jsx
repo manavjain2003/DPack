@@ -13,19 +13,19 @@ import { useEffect, useRef, useState } from "react";
 
 const SLIDES = [
   {
-    src: "/images/air-cushion-machine.png",
+    src: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
     alt: "Dpack air cushion machine producing inflatable cushions",
     title: "Air Cushion Machine",
     subtitle: "The smart replacement for bubble wrap rolls",
   },
   {
-    src: "/images/air-column-bags.png",
+    src: "https://images.unsplash.com/photo-1609709295948-17d77cb2a69b?w=800&q=80",
     alt: "Dpack column air bags protecting fragile products",
     title: "Column Air Bags",
     subtitle: "Inflatable columns that cradle every corner",
   },
   {
-    src: "/images/box-void-fill.png",
+    src: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=80",
     alt: "Dpack paper void-fill system",
     title: "Paper Void Fill",
     subtitle: "Sustainable fill for retail & e-commerce",
