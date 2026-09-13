@@ -24,15 +24,18 @@ export function AuthProvider({ children }) {
   const [wishlist, setWishlistState] = useState([]);
   const [loginOpen, setLoginOpen] = useState(false);
   const [loginIntent, setLoginIntent] = useState(null);
-const loginWithToken = useCallback(async (token) => {
-  setToken(token);
-  try {
-    const data = await authAPI.me();
-    setUser(data.user);
-  } catch {
-    clearToken();
-  }
-}, []);
+
+  const loginWithToken = useCallback(async (token) => {
+    setToken(token);
+    try {
+      const data = await authAPI.me();
+      setUser(data.user);
+    } catch {
+      clearToken();
+      throw new Error("Failed to verify token");
+    }
+  }, []);
+
   // Hydrate from token on mount
   useEffect(() => {
     const init = async () => {
@@ -179,13 +182,14 @@ const loginWithToken = useCallback(async (token) => {
       loginIntent,
       sendOtp,
       loginWithOtp,
+      loginWithToken,
       logout,
     }),
     [
       user, hydrated, wishlist,
       isWishlisted, toggleWishlist, removeWishlistItem,
       loginOpen, openLogin, closeLogin, loginIntent,
-      sendOtp, loginWithOtp, logout,
+      sendOtp, loginWithOtp, loginWithToken, logout,
     ]
   );
 
