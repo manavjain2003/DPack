@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Loader2, Lock, User, BarChart3, AlertCircle } from "lucide-react";
 import { setToken } from "@/lib/apiClient";
+import { useAuth } from "@/app/context/AuthContext";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -12,7 +13,7 @@ export default function AdminLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+const { loginWithToken } = useAuth();
   // If already logged in as admin, redirect
   useEffect(() => {
     const token = localStorage.getItem("dpack_token");
@@ -49,9 +50,8 @@ export default function AdminLoginPage() {
         return;
       }
 
-      // Store token and redirect
-      setToken(data.token);
-      router.replace("/admin");
+await loginWithToken(data.token);
+router.replace("/admin");
     } catch (e) {
       setError("Something went wrong. Please try again.");
     } finally {

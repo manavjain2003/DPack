@@ -24,7 +24,15 @@ export function AuthProvider({ children }) {
   const [wishlist, setWishlistState] = useState([]);
   const [loginOpen, setLoginOpen] = useState(false);
   const [loginIntent, setLoginIntent] = useState(null);
-
+const loginWithToken = useCallback(async (token) => {
+  setToken(token);
+  try {
+    const data = await authAPI.me();
+    setUser(data.user);
+  } catch {
+    clearToken();
+  }
+}, []);
   // Hydrate from token on mount
   useEffect(() => {
     const init = async () => {
