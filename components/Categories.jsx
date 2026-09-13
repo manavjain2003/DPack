@@ -53,7 +53,6 @@ function buildCategories(names) {
 }
 
 const PAGE_SIZE = 6;
-const totalPages = Math.ceil(CATEGORIES.length / PAGE_SIZE);
 
 function CategoryCircle({ cat }) {
   const circleRef = useRef(null);
@@ -213,20 +212,20 @@ export default function CategorySection() {
   const [page, setPage] = useState(0);
   const [categories, setCategories] = useState(FALLBACK_CATEGORIES);
 
-  // Fetch real categories from DB on mount
   useEffect(() => {
     fetch("/api/categories")
       .then((r) => r.json())
       .then((data) => {
         if (data?.categories?.length > 0) {
           setCategories(buildCategories(data.categories));
-          setPage(0); // reset page when categories change
+          setPage(0); 
         }
       })
-      .catch(() => {}); // keep fallback on error
+      .catch(() => {}); 
   }, []);
 
-  const totalPages = Math.ceil(categories.length / PAGE_SIZE);
+  const totalPages = Math.ceil(categories.length / PAGE_SIZE); 
+
   const canPrev = page > 0;
   const canNext = page < totalPages - 1;
 
