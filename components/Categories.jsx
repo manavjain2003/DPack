@@ -11,71 +11,46 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const CATEGORIES = [
-  {
-    slug: "air-cushion",
-    label: "Air Cushion",
-    image: "https://packaging.shiprocket.in/cdn/shop/products/SR-B18.jpg?v=1676466221&width=480",
-    count: 6,
-    tint: "#E2591B",
-    bg: "#FDF0EA",
-    border: "#F5C4AA",
-  },
-  {
-    slug: "column-bags",
-    label: "Column Bags",
-    image: "https://images.unsplash.com/photo-1591370874773-6702e8f12fd8?auto=format&fit=crop&w=400&q=80",
-    count: 7,
-    tint: "#7C6A52",
-    bg: "#F5F0E8",
-    border: "#D4C4A8",
-  },
-  {
-    slug: "paper-void-fill",
-    label: "Paper Void Fill",
-    image: "https://images.unsplash.com/photo-1600857544200-b2f666a9a2ec?auto=format&fit=crop&w=400&q=80",
-    count: 4,
-    tint: "#4A7C6B",
-    bg: "#EBF3F0",
-    border: "#A8CCBF",
-  },
-  {
-    slug: "foam-inserts",
-    label: "Foam Inserts",
-    image: "https://packaging.shiprocket.in/cdn/shop/files/Honeycomb3.png?v=1726138738&width=480",
-    count: 9,
-    tint: "#3B6B99",
-    bg: "#EAF0F7",
-    border: "#A8C0DA",
-  },
-  {
-    slug: "mailer-boxes",
-    label: "Mailer Boxes",
-    image: "https://images.unsplash.com/photo-1607166452427-7e4477079cb9?auto=format&fit=crop&w=400&q=80",
-    count: 11,
-    tint: "#1A1A1A",
-    bg: "#EFEFEF",
-    border: "#C0C0C0",
-  },
-  {
-    slug: "plastic-bubbles",
-    label: "Plastic bubbles",
-    image: "https://images.unsplash.com/photo-1607166452427-7e4477079cb9?auto=format&fit=crop&w=400&q=80",
-    count: 11,
-    tint: "#1A1A1A",
-    bg: "#EFEFEF",
-    border: "#C0C0C0",
-  },
-  {
-    slug: "bubble-wrap",
-    label: "Bubble Wrap",
-    image: "https://images.unsplash.com/photo-1615870216519-2f9fa575fa5c?auto=format&fit=crop&w=400&q=80",
-    count: 5,
-    tint: "#5A4FCF",
-    bg: "#EEECFB",
-    border: "#B8B3E8",
-  },
+// Rotating palette so each category gets a distinct visual style
+const PALETTE = [
+  { tint: "#E2591B", bg: "#FDF0EA", border: "#F5C4AA" },
+  { tint: "#7C6A52", bg: "#F5F0E8", border: "#D4C4A8" },
+  { tint: "#4A7C6B", bg: "#EBF3F0", border: "#A8CCBF" },
+  { tint: "#3B6B99", bg: "#EAF0F7", border: "#A8C0DA" },
+  { tint: "#1A1A1A", bg: "#EFEFEF", border: "#C0C0C0" },
+  { tint: "#5A4FCF", bg: "#EEECFB", border: "#B8B3E8" },
+  { tint: "#B5452A", bg: "#FBF0EE", border: "#E8B8AE" },
+  { tint: "#2D7D52", bg: "#EAF5EF", border: "#A8D4BA" },
 ];
+
+// Fallback category list shown while API loads
+const FALLBACK_CATEGORIES = [
+  { slug: "machines", label: "Machines" },
+  { slug: "films-rolls", label: "Films & Rolls" },
+  { slug: "void-fill", label: "Void Fill" },
+  { slug: "wrap", label: "Wrap" },
+  { slug: "securing", label: "Securing" },
+  { slug: "boxes", label: "Boxes" },
+].map((c, i) => ({
+  ...c,
+  image: "https://images.unsplash.com/photo-1607166452427-7e4477079cb9?auto=format&fit=crop&w=400&q=80",
+  ...PALETTE[i % PALETTE.length],
+}));
+
+function buildSlug(label) {
+  return label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
+function buildCategories(names) {
+  return names
+    .filter((n) => n !== "All")
+    .map((label, i) => ({
+      slug: buildSlug(label),
+      label,
+      image: "https://images.unsplash.com/photo-1607166452427-7e4477079cb9?auto=format&fit=crop&w=400&q=80",
+      ...PALETTE[i % PALETTE.length],
+    }));
+}
 
 const PAGE_SIZE = 6;
 const totalPages = Math.ceil(CATEGORIES.length / PAGE_SIZE);
@@ -236,14 +211,29 @@ export default function CategorySection() {
   const lineRef = useRef(null);
   const gridRef = useRef(null);
   const [page, setPage] = useState(0);
+  const [categories, setCategories] = useState(FALLBACK_CATEGORIES);
 
+  // Fetch real categories from DB on mount
+  useEffect(() => {
+    fetch("/api/categories")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.categories?.length > 0) {
+          setCategories(buildCategories(data.categories));
+          setPage(0); // reset page when categories change
+        }
+      })
+      .catch(() => {}); // keep fallback on error
+  }, []);
+
+  const totalPages = Math.ceil(categories.length / PAGE_SIZE);
   const canPrev = page > 0;
   const canNext = page < totalPages - 1;
 
   const goPrev = () => canPrev && setPage((p) => p - 1);
   const goNext = () => canNext && setPage((p) => p + 1);
 
-  const visible = CATEGORIES.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
+  const visible = categories.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
 
   useEffect(() => {
     const ctx = gsap.context(() => {

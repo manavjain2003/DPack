@@ -2,11 +2,15 @@
 
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { categories } from "@/lib/products";
 import ProductCard from "@/components/ProductCard";
 
 export default function ProductsClient({ products }) {
   const [active, setActive] = useState("All");
+
+  const categories = useMemo(() => {
+    const unique = [...new Set(products.map((p) => p.category).filter(Boolean))].sort();
+    return ["All", ...unique];
+  }, [products]);
 
   const visible = useMemo(
     () =>

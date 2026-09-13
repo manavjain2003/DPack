@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Upload, X, Plus, Trash2, Loader2 } from "lucide-react";
+import { categoriesAPI } from "@/lib/apiClient";
 
-const CATEGORIES = [
+const FALLBACK_CATEGORIES = [
   "Machines", "Films & Rolls", "Void Fill", "Wrap",
   "Securing", "Boxes", "Tapes", "Pouches", "Bags", "Strapping",
 ];
@@ -40,10 +41,24 @@ function ImageUploadZone({ label, preview, onFile, onClear }) {
 }
 
 export default function ProductForm({ initial = {}, onSubmit, loading, submitLabel = "Save Product" }) {
+  const [categories, setCategories] = useState(FALLBACK_CATEGORIES);
+  const [newCategory, setNewCategory] = useState("");
+  const [showNewCategory, setShowNewCategory] = useState(false);
+
+  useEffect(() => {
+    categoriesAPI.list()
+      .then((data) => {
+        // Strip "All" from the dropdown list
+        const cats = (data.categories || []).filter((c) => c !== "All");
+        if (cats.length > 0) setCategories(cats);
+      })
+      .catch(() => {}); // fall back to static list on error
+  }, []);
+
   const [form, setForm] = useState({
     name: initial.name || "",
     slug: initial.slug || "",
-    category: initial.category || CATEGORIES[0],
+    category: initial.category || FALLBACK_CATEGORIES[0],
     description: initial.description || "",
     price: initial.price || "",
     compareAtPrice: initial.compareAtPrice || "",
@@ -148,13 +163,74 @@ export default function ProductForm({ initial = {}, onSubmit, loading, submitLab
           </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-gray-700">Category *</label>
-            <select
-              value={form.category}
-              onChange={(e) => set("category", e.target.value)}
-              className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-rust focus:ring-2 focus:ring-rust/20"
-            >
-              {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
-            </select>
+            {showNewCategory ? (
+              <div className="flex gap-2">
+                <input
+                  autoFocus
+                  value={newCategory}
+                  onChange={(e) => setNewCategory(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      const cat = newCategory.trim();
+                      if (cat) {
+                        setCategories((prev) => [...prev, cat]);
+                        set("category", cat);
+                      }
+                      setNewCategory("");
+                      setShowNewCategory(false);
+                    }
+                    if (e.key === "Escape") {
+                      setShowNewCategory(false);
+                      setNewCategory("");
+                    }
+                  }}
+                  placeholder="Type new category, press Enter"
+                  className="flex-1 rounded-xl border border-rust px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-rust/20"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const cat = newCategory.trim();
+                    if (cat) {
+                      setCategories((prev) => [...prev, cat]);
+                      set("category", cat);
+                    }
+                    setNewCategory("");
+                    setShowNewCategory(false);
+                  }}
+                  className="rounded-xl bg-rust px-3 py-2.5 text-sm font-semibold text-white hover:bg-rust/90"
+                >
+                  Add
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setShowNewCategory(false); setNewCategory(""); }}
+                  className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-500 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <select
+                  value={form.category}
+                  onChange={(e) => set("category", e.target.value)}
+                  className="flex-1 rounded-xl border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-rust focus:ring-2 focus:ring-rust/20"
+                >
+                  {categories.map((c) => <option key={c}>{c}</option>)}
+                </select>
+                <button
+                  type="button"
+                  onClick={() => setShowNewCategory(true)}
+                  title="Add new category"
+                  className="flex items-center gap-1.5 rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-500 hover:border-rust hover:text-rust transition-colors"
+                >
+                  <Plus className="h-4 w-4" />
+                  New
+                </button>
+              </div>
+            )}
           </div>
           <div className="sm:col-span-2">
             <label className="mb-1.5 block text-sm font-medium text-gray-700">Description *</label>
