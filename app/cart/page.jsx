@@ -216,13 +216,13 @@ export default function CartPage() {
                 </div>
               </dl>
 
-              <button
-                type="button"
+              <Link
+                href="/checkout"
                 className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-rust px-6 py-3.5 text-sm font-bold text-white transition-all hover:bg-rust/90 hover:shadow-[0_4px_18px_-2px_rgba(224,92,42,0.45)] active:scale-[0.97]"
               >
                 Proceed to checkout
                 <ArrowRight className="h-4 w-4" />
-              </button>
+              </Link>
 
               <p className="mt-4 flex items-center justify-center gap-1.5 text-[11px] text-ink/40">
                 <Lock className="h-3 w-3" />

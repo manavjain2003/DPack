@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { X, ShoppingBag, Trash2, Plus, Minus, ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   useCart,
   updateQty,
@@ -217,13 +218,14 @@ export default function CartSidebar() {
                       Shipping and taxes calculated at checkout.
                     </p>
 
-                    <button
-                      type="button"
+                    <Link
+                      href="/checkout"
+                      onClick={() => setOpen(false)}
                       className="group flex w-full items-center justify-center gap-2 rounded-full bg-ink py-3.5 text-[13px] font-bold text-cream transition-all duration-200 hover:bg-ink/85 hover:shadow-[0_6px_24px_-4px_rgba(0,0,0,0.3)] active:scale-[0.98]"
                     >
                       Proceed to checkout
                       <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
-                    </button>
+                    </Link>
 
                     <button
                       type="button"

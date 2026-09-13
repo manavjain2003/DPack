@@ -15,6 +15,7 @@ import {
   getToken,
   clearToken,
 } from "@/lib/apiClient";
+import { syncCartFromServer } from "@/lib/cartBus";
 
 const AuthContext = createContext(null);
 
@@ -51,6 +52,8 @@ export function AuthProvider({ children }) {
           } catch {
             setWishlistState([]);
           }
+          // Reconcile local (guest) cart with the server cart
+          syncCartFromServer();
         } catch {
           clearToken();
         }
@@ -108,6 +111,9 @@ export function AuthProvider({ children }) {
             setWishlistState(wl.wishlist || []);
           } catch {}
         }
+
+        // Reconcile local (guest) cart with the server cart
+        syncCartFromServer();
 
         closeLogin();
         return { ok: true, user: res.user };

@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { User, Mail, Phone, MapPin, Building2, ReceiptText, Loader2, CheckCircle2 } from "lucide-react";
+import { User, Mail, Phone, MapPin, Building2, ReceiptText, Loader2, CheckCircle2, Package } from "lucide-react";
 import { useAuth } from "@/app/context/AuthContext";
-import { userAPI } from "@/lib/apiClient";
+import { userAPI, ordersAPI } from "@/lib/apiClient";
+import { formatINR } from "@/lib/cartBus";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 
@@ -19,6 +20,18 @@ export default function AccountPage() {
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+
+  const [orders, setOrders] = useState([]);
+  const [ordersLoading, setOrdersLoading] = useState(true);
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    ordersAPI
+      .list()
+      .then((data) => setOrders(data.orders || []))
+      .catch(() => setOrders([]))
+      .finally(() => setOrdersLoading(false));
+  }, [isLoggedIn]);
 
   useEffect(() => {
     if (user) {
@@ -97,6 +110,50 @@ export default function AccountPage() {
           <div className="mb-8">
             <h1 className="mt-1 text-3xl font-bold tracking-tight text-gray-900">My Account</h1>
             <p className="mt-2 text-sm text-gray-500">Manage your personal, contact and billing information.</p>
+          </div>
+
+          <div className="mb-8 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+            <section className="p-6 sm:p-8">
+              <div className="mb-6 flex items-center gap-2">
+                <Package className="h-5 w-5 text-gray-400" />
+                <h2 className="text-lg font-semibold text-gray-900">Recent Orders</h2>
+              </div>
+
+              {ordersLoading ? (
+                <div className="flex items-center gap-2 text-sm text-gray-400">
+                  <Loader2 className="h-4 w-4 animate-spin" /> Loading orders…
+                </div>
+              ) : orders.length === 0 ? (
+                <p className="text-sm text-gray-500">You haven't placed any orders yet.</p>
+              ) : (
+                <ul className="divide-y divide-gray-100">
+                  {orders.map((o) => (
+                    <li key={o._id} className="flex flex-wrap items-center justify-between gap-3 py-4 first:pt-0 last:pb-0">
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">
+                          Order #{String(o._id).slice(-8)}
+                        </p>
+                        <p className="mt-0.5 text-xs text-gray-500">
+                          {new Date(o.createdAt).toLocaleDateString("en-IN", {
+                            day: "numeric", month: "short", year: "numeric",
+                          })}
+                          {" · "}
+                          {o.items?.length || 0} item{(o.items?.length || 0) === 1 ? "" : "s"}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold capitalize text-gray-700">
+                          {o.status}
+                        </span>
+                        <span className="font-display text-sm font-bold text-gray-900">
+                          {formatINR(o.total)}
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
           </div>
 
           <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
