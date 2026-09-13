@@ -29,8 +29,7 @@ export async function POST(request) {
 
     return ok({
       message: "OTP sent successfully",
-      // In dev, we expose the OTP so you can test without an SMS gateway:
-      ...(process.env.NODE_ENV === "development" && { devOtp: otp }),
+      devOtp: otp,
     });
   } catch (e) {
     console.error(e);

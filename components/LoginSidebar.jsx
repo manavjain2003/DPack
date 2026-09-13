@@ -127,7 +127,7 @@ export default function LoginSidebar() {
                   {devOtp && (
                     <div className="flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
                       <Info className="h-4 w-4 shrink-0" />
-                      Dev mode OTP: <strong className="font-mono">{devOtp}</strong>
+                      Your OTP: <strong className="font-mono">{devOtp}</strong>
                     </div>
                   )}
                   <div>
