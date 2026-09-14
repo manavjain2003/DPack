@@ -7,6 +7,8 @@ import { ShoppingCart, Check, Zap, Play, Heart } from "lucide-react";
 import { addToCart } from "@/lib/cartBus";
 import { useAuth } from "@/app/context/AuthContext";
 
+
+
 function ProductCard({ product, index = 0 }) {
   const [hovered, setHovered] = useState(false);
   const [added, setAdded] = useState(false);
@@ -127,7 +129,7 @@ function ProductCard({ product, index = 0 }) {
           loading={index < 3 ? "eager" : "lazy"}
           decoding="async"
           className={`absolute inset-0 m-auto h-full w-full transition-all duration-500 ${
-            hovered
+            hovered && hasVideo
               ? "opacity-0 scale-105"
               : "opacity-100 scale-100 group-hover:scale-[1.06]"
           }`}
@@ -149,7 +151,7 @@ function ProductCard({ product, index = 0 }) {
 
         <div
           className={`absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent transition-opacity duration-300 ${
-            hovered ? "opacity-100" : "opacity-0"
+            hovered && hasVideo ? "opacity-100" : "opacity-0"
           }`}
         />
 
