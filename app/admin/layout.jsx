@@ -8,7 +8,7 @@ import {
   ChevronRight, BarChart3, Grid3x3,
 } from "lucide-react";
 import { useAuth } from "@/app/context/AuthContext";
-
+     
 const NAV = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/products", label: "Products", icon: Package },
