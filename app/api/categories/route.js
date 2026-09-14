@@ -3,6 +3,8 @@ import Product from "@/lib/models/Product";
 import Category from "@/lib/models/Category";
 import { ok, err } from "@/lib/apiHelpers";
 
+export const dynamic = "force-dynamic"; 
+
 export async function GET() {
   try {
     await connectDB();
