@@ -147,7 +147,7 @@ export default function AdminLayout({ children }) {
             )}
           </nav>
           <div className="ml-auto flex items-center gap-3">
-            <span className="text-xs text-gray-400">Admin</span>
+            <span className="text-xs text-gray-400">Hello Mr. Admin</span>
             <Link
               href="/"
               target="_blank"
