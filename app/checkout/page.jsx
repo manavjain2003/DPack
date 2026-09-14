@@ -13,7 +13,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useAuth } from "@/app/context/AuthContext";
-import { ordersAPI } from "@/lib/apiClient";
+import { ordersAPI, paymentsAPI } from "@/lib/apiClient";
 import {
   useCart,
   clearCart,
@@ -25,6 +25,22 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 const OBJECT_ID_RE = /^[0-9a-fA-F]{24}$/;
+
+let razorpayScriptPromise = null;
+function loadRazorpayScript() {
+  if (typeof window === "undefined") return Promise.resolve(false);
+  if (window.Razorpay) return Promise.resolve(true);
+  if (razorpayScriptPromise) return razorpayScriptPromise;
+
+  razorpayScriptPromise = new Promise((resolve) => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+  return razorpayScriptPromise;
+}
 
 function emptyAddress() {
   return { line1: "", line2: "", city: "", state: "", pincode: "", country: "India" };
@@ -118,6 +134,7 @@ export default function CheckoutPage() {
     }
     setError("");
     setSubmitting(true);
+
     try {
       const res = await ordersAPI.create({
         items: orderableItems.map((i) => ({ productId: i.key, qty: i.qty, name: i.name })),
@@ -130,11 +147,61 @@ export default function CheckoutPage() {
         gstNumber,
         notes,
       });
-      setPlacedOrder(res.order);
-      clearCart();
+
+      const { order, razorpay } = res;
+
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded || !razorpay) {
+        setError("Couldn't load the payment gateway. Please check your connection and try again.");
+        setSubmitting(false);
+        return;
+      }
+
+      const rzp = new window.Razorpay({
+        key: razorpay.keyId,
+        amount: razorpay.amount,
+        currency: razorpay.currency,
+        order_id: razorpay.orderId,
+        name: "DPack",
+        description: `Order #${String(order._id).slice(-8)}`,
+        prefill: { name, email, contact: mobile },
+        theme: { color: "#E2591B" },
+        handler: async (response) => {
+          try {
+            const verifyRes = await paymentsAPI.verify({
+              orderId: order._id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            });
+            setPlacedOrder(verifyRes.order);
+            clearCart();
+          } catch (verifyErr) {
+            setError(
+              verifyErr.message || "We couldn't verify your payment. If money was deducted, contact support with your order ID."
+            );
+          } finally {
+            setSubmitting(false);
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            paymentsAPI.markFailed(order._id).catch(() => {});
+            setError("Payment was cancelled. Your order was not placed.");
+            setSubmitting(false);
+          },
+        },
+      });
+
+      rzp.on("payment.failed", () => {
+        paymentsAPI.markFailed(order._id).catch(() => {});
+        setError("Payment failed. Please try again.");
+        setSubmitting(false);
+      });
+
+      rzp.open();
     } catch (err) {
       setError(err.message || "Something went wrong placing your order.");
-    } finally {
       setSubmitting(false);
     }
   };
@@ -475,11 +542,11 @@ export default function CheckoutPage() {
                 {submitting ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Placing order…
+                    Processing…
                   </>
                 ) : (
                   <>
-                    Place order
+                    Pay & place order
                     <ArrowRight className="h-4 w-4" />
                   </>
                 )}
@@ -487,7 +554,7 @@ export default function CheckoutPage() {
 
               <p className="mt-4 flex items-center justify-center gap-1.5 text-[11px] text-ink/40">
                 <Lock className="h-3 w-3" />
-                Cash on delivery · Prices include all taxes
+                Secure payment via Razorpay · Prices include all taxes
               </p>
             </motion.aside>
           </form>

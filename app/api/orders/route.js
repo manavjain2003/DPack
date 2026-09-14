@@ -1,8 +1,8 @@
 import { connectDB } from "@/lib/db/mongoose";
-import User from "@/lib/models/User";
 import Product from "@/lib/models/Product";
 import Order from "@/lib/models/Order";
 import { requireAuth, ok, err } from "@/lib/apiHelpers";
+import { getRazorpay } from "@/lib/razorpay";
 
 function cleanAddress(addr = {}) {
   return {
@@ -47,7 +47,6 @@ export async function POST(request) {
 
   await connectDB();
 
-
   const orderItems = [];
   let subtotal = 0;
 
@@ -75,12 +74,16 @@ export async function POST(request) {
     ? cleanAddress(shippingAddress)
     : cleanAddress(billingAddress || shippingAddress);
 
+  const total = subtotal; 
+
   const order = await Order.create({
     userId: authUser._id,
     items: orderItems,
     subtotal,
-    total: subtotal, 
+    total,
     status: "pending",
+    paymentStatus: "pending",
+    paymentMethod: "razorpay",
     customerName: customerName.trim(),
     customerEmail: customerEmail?.trim() || "",
     customerMobile: customerMobile || authUser.mobile,
@@ -90,16 +93,37 @@ export async function POST(request) {
     notes: notes?.trim() || "",
   });
 
-  for (const item of orderItems) {
-    await Product.findOneAndUpdate(
-      { _id: item.productId, trackInventory: true },
-      { $inc: { stock: -item.qty } }
-    );
+  let razorpayOrder;
+  try {
+    razorpayOrder = await getRazorpay().orders.create({
+      amount: Math.round(total * 100), 
+      currency: "INR",
+      receipt: String(order._id),
+      notes: { orderId: String(order._id), userId: String(authUser._id) },
+    });
+  } catch (e) {
+    console.error("Razorpay order creation failed:", e);
+    order.paymentStatus = "failed";
+    await order.save();
+    return err("Could not start payment. Please try again.", 502);
   }
 
-  await User.findByIdAndUpdate(authUser._id, { $set: { cart: [] } });
+  order.razorpayOrderId = razorpayOrder.id;
+  await order.save();
 
-  return ok({ message: "Order placed", order }, 201);
+  return ok(
+    {
+      message: "Order created, awaiting payment",
+      order,
+      razorpay: {
+        orderId: razorpayOrder.id,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        keyId: process.env.RAZORPAY_KEY_ID,
+      },
+    },
+    201
+  );
 }
 
 export async function GET(request) {

@@ -141,10 +141,20 @@ export default function AccountPage() {
                           {o.items?.length || 0} item{(o.items?.length || 0) === 1 ? "" : "s"}
                         </p>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold capitalize text-gray-700">
-                          {o.status}
-                        </span>
+                      <div className="flex items-center gap-2">
+                        {o.paymentStatus === "paid" ? (
+                          <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold capitalize text-gray-700">
+                            {o.status}
+                          </span>
+                        ) : o.paymentStatus === "failed" ? (
+                          <span className="rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-600">
+                            Payment failed
+                          </span>
+                        ) : (
+                          <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+                            Payment pending
+                          </span>
+                        )}
                         <span className="font-display text-sm font-bold text-gray-900">
                           {formatINR(o.total)}
                         </span>
