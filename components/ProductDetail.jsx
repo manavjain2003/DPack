@@ -277,7 +277,7 @@ export default function ProductDetail({ product }) {
         <div className="flex flex-col">
 
           <span className="inline-flex w-fit items-center rounded-full border border-rust/25 bg-rust/8 px-3 py-1 text-[11.5px] font-bold uppercase tracking-widest text-rust">
-            {product.category}
+            {product?.category}
           </span>
 
           <h1 className="mt-3 font-display text-[26px] font-bold leading-tight tracking-tight text-ink sm:text-[30px]">

@@ -156,7 +156,7 @@ function ProductCard({ product, index = 0 }) {
         />
 
         <span className="absolute left-3 top-3 z-10 rounded-full bg-ink px-2.5 py-1 text-[9px] font-bold uppercase tracking-widest text-cream">
-          {product.category}
+          {product?.category}
         </span>
 
         {discountPercent && (

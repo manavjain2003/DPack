@@ -75,7 +75,7 @@ export default async function ProductDetailPage({ params }) {
           >
             <Link href="/" className="transition hover:text-white">Home</Link>
             <ChevronRight className="h-3.5 w-3.5 text-white/50" />
-            <Link href="/products" className="transition hover:text-white">{product.category}</Link>
+            <Link href="/products" className="transition hover:text-white">{product.category ?? "Products"}</Link>
             <ChevronRight className="h-3.5 w-3.5 text-white/50" />
             <span className="text-white">{product.name}</span>
           </nav>
@@ -94,7 +94,7 @@ export default async function ProductDetailPage({ params }) {
             <h2 className="font-display text-2xl font-bold tracking-tight text-ink sm:text-3xl">
               You might also like
             </h2>
-            <p className="mt-1.5 text-[14px] text-ink/50">More from {product.category}</p>
+            <p className="mt-1.5 text-[14px] text-ink/50">More from {product.category ?? "our catalogue"}</p>
             <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {related.map((p, i) => (
                 <ProductCard key={p.slug} product={p} index={i} />

@@ -78,14 +78,14 @@ const searchResults = searchQuery.trim()
         if (!product) return false; // guard against undefined entries
         const query = searchQuery.toLowerCase();
         return (
-          product.name?.toLowerCase().includes(query) ||
-          product.category?.toLowerCase().includes(query) ||
-          product.description?.toLowerCase().includes(query)
+        product.name?.toLowerCase()?.includes(query) ||
+product.category?.toLowerCase()?.includes(query) ||
+product.description?.toLowerCase()?.includes(query)
         );
       })
       .slice(0, 6)
   : [];
-  
+
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 24);
@@ -294,7 +294,7 @@ const searchResults = searchQuery.trim()
                         </p>
 
                         <p className="mt-0.5 text-xs text-ink/50">
-                          {product.category}
+                         {product?.category}
                         </p>
 
                         <p className="mt-1 text-sm font-medium text-rust">

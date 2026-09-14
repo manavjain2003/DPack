@@ -8,7 +8,7 @@ export default function ProductsClient({ products }) {
   const [active, setActive] = useState("All");
 
   const categories = useMemo(() => {
-    const unique = [...new Set(products.map((p) => p.category).filter(Boolean))].sort();
+    const unique = [...new Set((products ?? []).filter(Boolean).map((p) => p?.category).filter(Boolean))].sort();
     return ["All", ...unique];
   }, [products]);
 
@@ -16,7 +16,7 @@ export default function ProductsClient({ products }) {
     () =>
       active === "All"
         ? products
-        : products.filter((p) => p.category === active),
+       : (products ?? []).filter((p) => p?.category === active),
     [active, products]
   );
 
@@ -48,8 +48,8 @@ export default function ProductsClient({ products }) {
 
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         <AnimatePresence mode="popLayout">
-          {visible.map((p, i) => (
-            <ProductCard key={p.slug} product={p} index={i} />
+        {visible.filter(Boolean).map((p, i) => (
+  <ProductCard key={p.slug} product={p} index={i} />
           ))}
         </AnimatePresence>
       </div>
