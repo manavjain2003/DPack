@@ -11,6 +11,7 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+// Rotating palette so each category gets a distinct visual style
 const PALETTE = [
   { tint: "#E2591B", bg: "#FDF0EA", border: "#F5C4AA" },
   { tint: "#7C6A52", bg: "#F5F0E8", border: "#D4C4A8" },
@@ -22,6 +23,10 @@ const PALETTE = [
   { tint: "#2D7D52", bg: "#EAF5EF", border: "#A8D4BA" },
 ];
 
+const DEFAULT_CATEGORY_IMAGE =
+  "https://images.unsplash.com/photo-1607166452427-7e4477079cb9?auto=format&fit=crop&w=400&q=80";
+
+// Fallback category list shown while API loads
 const FALLBACK_CATEGORIES = [
   { slug: "machines", label: "Machines" },
   { slug: "films-rolls", label: "Films & Rolls" },
@@ -31,7 +36,7 @@ const FALLBACK_CATEGORIES = [
   { slug: "boxes", label: "Boxes" },
 ].map((c, i) => ({
   ...c,
-  image: "https://images.unsplash.com/photo-1607166452427-7e4477079cb9?auto=format&fit=crop&w=400&q=80",
+  image: DEFAULT_CATEGORY_IMAGE,
   ...PALETTE[i % PALETTE.length],
 }));
 
@@ -39,13 +44,13 @@ function buildSlug(label) {
   return label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
-function buildCategories(names) {
+function buildCategories(names, categoryImages = {}) {
   return names
     .filter((n) => n !== "All")
     .map((label, i) => ({
       slug: buildSlug(label),
       label,
-      image: "https://images.unsplash.com/photo-1607166452427-7e4477079cb9?auto=format&fit=crop&w=400&q=80",
+      image: categoryImages[label] || DEFAULT_CATEGORY_IMAGE,
       ...PALETTE[i % PALETTE.length],
     }));
 }
@@ -210,20 +215,20 @@ export default function CategorySection() {
   const [page, setPage] = useState(0);
   const [categories, setCategories] = useState(FALLBACK_CATEGORIES);
 
+  // Fetch real categories from DB on mount
   useEffect(() => {
     fetch("/api/categories")
       .then((r) => r.json())
       .then((data) => {
         if (data?.categories?.length > 0) {
-          setCategories(buildCategories(data.categories));
-          setPage(0); 
+          setCategories(buildCategories(data.categories, data.categoryImages));
+          setPage(0); // reset page when categories change
         }
       })
-      .catch(() => {}); 
+      .catch(() => {}); // keep fallback on error
   }, []);
 
-  const totalPages = Math.ceil(categories.length / PAGE_SIZE); 
-
+  const totalPages = Math.ceil(categories.length / PAGE_SIZE);
   const canPrev = page > 0;
   const canNext = page < totalPages - 1;
 
