@@ -25,7 +25,6 @@ const PALETTE = [
 const DEFAULT_CATEGORY_IMAGE =
   "https://images.unsplash.com/photo-1607166452427-7e4477079cb9?auto=format&fit=crop&w=400&q=80";
 
-// Fallback category list shown while API loads
 const FALLBACK_CATEGORIES = [
   { slug: "machines", label: "Machines" },
   { slug: "films-rolls", label: "Films & Rolls" },
@@ -54,7 +53,8 @@ function buildCategories(names, categoryImages = {}) {
     }));
 }
 
-const PAGE_SIZE = 6;
+// Always show exactly 5 per page
+const PAGE_SIZE = 5;
 
 function CategoryCircle({ cat }) {
   const circleRef = useRef(null);
@@ -142,7 +142,7 @@ function CategoryCircle({ cat }) {
       <Link href={`/categories/${cat.slug}`} className="flex flex-col items-center gap-4">
         <div className="relative">
           <div
-            className="cat-circle-inner relative flex h-44 w-44 items-center justify-center overflow-hidden rounded-full sm:h-56 sm:w-56"
+            className="cat-circle-inner relative flex h-44 w-44 items-center justify-center overflow-hidden rounded-full sm:h-48 sm:w-48"
             style={{
               border: `1.5px solid ${cat.border}`,
               boxShadow: `0 6px 28px 0 ${cat.tint}28, inset 0 1.5px 0 rgba(255,255,255,0.92)`,
@@ -176,7 +176,6 @@ function CategoryCircle({ cat }) {
               }}
             />
           </div>
-
         </div>
 
         <span className="max-w-[9rem] text-center text-[13px] font-semibold leading-tight text-ink/70">
@@ -214,17 +213,16 @@ export default function CategorySection() {
   const [page, setPage] = useState(0);
   const [categories, setCategories] = useState(FALLBACK_CATEGORIES);
 
-  // Fetch real categories from DB on mount
   useEffect(() => {
     fetch("/api/categories")
       .then((r) => r.json())
       .then((data) => {
         if (data?.categories?.length > 0) {
           setCategories(buildCategories(data.categories, data.categoryImages));
-          setPage(0); // reset page when categories change
+          setPage(0);
         }
       })
-      .catch(() => {}); // keep fallback on error
+      .catch(() => {});
   }, []);
 
   const totalPages = Math.ceil(categories.length / PAGE_SIZE);
@@ -306,6 +304,7 @@ export default function CategorySection() {
   return (
     <section ref={sectionRef} className="overflow-hidden pt-24 sm:pt-32">
       <div className="mx-auto max-w-8xl">
+        {/* Header row */}
         <div className="mb-14 flex flex-wrap items-end justify-between gap-6 px-6">
           <div>
             <div className="mb-4 flex items-center gap-3">
@@ -324,33 +323,45 @@ export default function CategorySection() {
               Every protection need, covered
             </h2>
           </div>
-
-          {totalPages > 1 && (
-            <div className="flex items-center gap-3">
-              <ArrowBtn dir="left" onClick={goPrev} disabled={!canPrev} />
-              <ArrowBtn dir="right" onClick={goNext} disabled={!canNext} />
-            </div>
-          )}
         </div>
 
-        <div className="relative overflow-hidden">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={page}
-              ref={gridRef}
-              initial={{ opacity: 0, x: 24 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -24 }}
-              transition={{ duration: 0.35, ease: "easeOut" }}
-              className="grid grid-cols-2 gap-x-4 gap-y-10 pb-6 pt-6 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5"
-            >
-              {visible.map((cat) => (
-                <CategoryCircle key={cat.slug} cat={cat} />
-              ))}
-            </motion.div>
-          </AnimatePresence>
+        {/*
+          Carousel row: left arrow | 5-column grid | right arrow
+          The arrows sit in the same flex row as the grid so they appear
+          centred vertically on either side of the circles.
+        */}
+        <div className="flex items-center gap-4 px-6">
+          {/* Left arrow — always rendered, invisible when only 1 page */}
+          <div className={totalPages > 1 ? "shrink-0" : "shrink-0 invisible"}>
+            <ArrowBtn dir="left" onClick={goPrev} disabled={!canPrev} />
+          </div>
+
+          {/* Grid — always 5 columns */}
+          <div className="relative min-w-0 flex-1 overflow-hidden">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={page}
+                ref={gridRef}
+                initial={{ opacity: 0, x: 24 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -24 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+                className="grid grid-cols-5 gap-x-4 gap-y-10 pb-6 pt-6"
+              >
+                {visible.map((cat) => (
+                  <CategoryCircle key={cat.slug} cat={cat} />
+                ))}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Right arrow */}
+          <div className={totalPages > 1 ? "shrink-0" : "shrink-0 invisible"}>
+            <ArrowBtn dir="right" onClick={goNext} disabled={!canNext} />
+          </div>
         </div>
 
+        {/* Dot pagination */}
         {totalPages > 1 && (
           <div className="mt-6 flex justify-center gap-1.5">
             {Array.from({ length: totalPages }).map((_, i) => (
