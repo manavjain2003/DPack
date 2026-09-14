@@ -16,6 +16,7 @@ const PRODUCT_VIDEOS = [
 
 function ProductCard({ product, index = 0 }) {
   const [hovered, setHovered] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
   const [added, setAdded] = useState(false);
   const [ripples, setRipples] = useState([]);
   const [wishAnim, setWishAnim] = useState(false);
