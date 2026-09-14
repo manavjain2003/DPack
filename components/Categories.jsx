@@ -342,7 +342,7 @@ export default function CategorySection() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -24 }}
               transition={{ duration: 0.35, ease: "easeOut" }}
-              className="grid grid-cols-2 gap-x-4 gap-y-10 pb-6 pt-6 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6"
+              className="grid grid-cols-2 gap-x-4 gap-y-10 pb-6 pt-6 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5"
             >
               {visible.map((cat) => (
                 <CategoryCircle key={cat.slug} cat={cat} />
