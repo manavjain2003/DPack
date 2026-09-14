@@ -226,7 +226,7 @@ export default function Hero() {
                   initial="enter"
                   animate="center"
                   exit="exit"
-                  className="absolute inset-0 mx-auto max-h-72 w-full object-contain"
+                  className="absolute inset-0 mx-auto max-h-72 w-full object-fill"
                 />
               </AnimatePresence>
             </div>
