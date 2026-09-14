@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { products } from "@/lib/products";
 
 import {
   Menu,
@@ -34,7 +33,8 @@ export default function Navbar() {
   const [accountOpen, setAccountOpen] = useState(false);
 const [searchOpen, setSearchOpen] = useState(false);
 const [searchQuery, setSearchQuery] = useState("");
-  const pathname = usePathname();
+const [allProducts, setAllProducts] = useState([]); 
+const pathname = usePathname();
 
   const cartItems = useCart();
 
@@ -54,6 +54,13 @@ const [searchQuery, setSearchQuery] = useState("");
   const userInitial =
     user?.name?.trim()?.charAt(0)?.toUpperCase() || "U";
 
+    useEffect(() => {
+  fetch("/api/products?limit=200")
+    .then((r) => r.json())
+    .then((data) => setAllProducts(data.products || []))
+    .catch(() => {});
+}, []);
+
   useEffect(() => {
     const onAdded = () => {
       setCartPulse((p) => p + 1);
@@ -66,18 +73,19 @@ const [searchQuery, setSearchQuery] = useState("");
     };
   }, []);
 const searchResults = searchQuery.trim()
-  ? products
+  ? allProducts
       .filter((product) => {
+        if (!product) return false; // guard against undefined entries
         const query = searchQuery.toLowerCase();
-
         return (
-          product.name.toLowerCase().includes(query) ||
-          product.category.toLowerCase().includes(query) ||
-          product.description.toLowerCase().includes(query)
+          product.name?.toLowerCase().includes(query) ||
+          product.category?.toLowerCase().includes(query) ||
+          product.description?.toLowerCase().includes(query)
         );
       })
       .slice(0, 6)
   : [];
+  
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 24);
