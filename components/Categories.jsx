@@ -11,7 +11,6 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-// Rotating palette so each category gets a distinct visual style
 const PALETTE = [
   { tint: "#E2591B", bg: "#FDF0EA", border: "#F5C4AA" },
   { tint: "#7C6A52", bg: "#F5F0E8", border: "#D4C4A8" },
