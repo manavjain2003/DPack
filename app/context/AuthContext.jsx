@@ -6,7 +6,6 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
 import {
@@ -17,7 +16,7 @@ import {
   clearToken,
 } from "@/lib/apiClient";
 import { syncCartFromServer } from "@/lib/cartBus";
-import { auth, RecaptchaVerifier, signInWithPhoneNumber } from "@/lib/firebase";
+import { sendFirebaseOtp, verifyFirebaseOtp } from "@/lib/firebase";
 
 const AuthContext = createContext(null);
 
@@ -27,7 +26,6 @@ export function AuthProvider({ children }) {
   const [wishlist, setWishlistState] = useState([]);
   const [loginOpen, setLoginOpen] = useState(false);
   const [loginIntent, setLoginIntent] = useState(null);
-  const confirmationResultRef = useRef(null);
 
   const loginWithToken = useCallback(async (token) => {
     setToken(token);
@@ -79,44 +77,25 @@ export function AuthProvider({ children }) {
     setWishlistState([]);
   }, []);
 
-  const setupRecaptcha = useCallback(() => {
-    if (typeof window === "undefined") return null;
-    if (!window.recaptchaVerifier) {
-      window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
-        size: "invisible",
-      });
-    }
-    return window.recaptchaVerifier;
-  }, []);
+  const sendOtp = useCallback(async (mobile) => {
+    const phone = `+91${mobile}`;
+    const result = await sendFirebaseOtp(phone, "recaptcha-container");
 
-  const sendOtp = useCallback(
-    async (mobile) => {
-      try {
-        const verifier = setupRecaptcha();
-        const result = await signInWithPhoneNumber(auth, `+91${mobile}`, verifier);
-        confirmationResultRef.current = result;
-        return { ok: true, message: "OTP sent" };
-      } catch (e) {
-        if (typeof window !== "undefined" && window.recaptchaVerifier) {
-          window.recaptchaVerifier.clear();
-          window.recaptchaVerifier = null;
-        }
-        return { ok: false, error: e.message || "Failed to send OTP" };
-      }
-    },
-    [setupRecaptcha]
-  );
+    if (!result.success) {
+      return { ok: false, error: result.error?.message || "Failed to send OTP" };
+    }
+    return { ok: true, message: "OTP sent" };
+  }, []);
 
   const loginWithOtp = useCallback(
     async (mobile, otp) => {
+      const result = await verifyFirebaseOtp(otp);
+      if (!result.success) {
+        return { ok: false, error: result.error?.message || "Invalid OTP" };
+      }
+
       try {
-        if (!confirmationResultRef.current) {
-          return { ok: false, error: "OTP session expired. Please request a new OTP." };
-        }
-
-        const cred = await confirmationResultRef.current.confirm(otp);
-        const idToken = await cred.user.getIdToken();
-
+        const idToken = await result.user.getIdToken();
         const res = await authAPI.firebaseLogin(idToken);
         setToken(res.token);
         setUser(res.user);
@@ -138,10 +117,9 @@ export function AuthProvider({ children }) {
 
         syncCartFromServer();
         closeLogin();
-        confirmationResultRef.current = null;
         return { ok: true, user: res.user };
       } catch (e) {
-        return { ok: false, error: e.message || "Invalid OTP" };
+        return { ok: false, error: e.message || "Login failed" };
       }
     },
     [loginIntent, closeLogin]
