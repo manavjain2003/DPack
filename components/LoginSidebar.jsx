@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Smartphone, KeyRound, Loader2, CheckCircle2, Info } from "lucide-react";
+import { X, Smartphone, KeyRound, Loader2, CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/app/context/AuthContext";
 
 export default function LoginSidebar() {
@@ -13,14 +13,13 @@ export default function LoginSidebar() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [info, setInfo] = useState("");
-  const [devOtp, setDevOtp] = useState("");
   const otpRefs = useRef([]);
 
   useEffect(() => {
     if (!loginOpen) {
       const t = setTimeout(() => {
         setStep("mobile"); setMobile(""); setOtp(["","","","","",""]);
-        setError(""); setInfo(""); setLoading(false); setDevOtp("");
+        setError(""); setInfo(""); setLoading(false);
       }, 300);
       return () => clearTimeout(t);
     }
@@ -28,13 +27,12 @@ export default function LoginSidebar() {
 
   const handleRequestOtp = useCallback(async (e) => {
     e?.preventDefault();
-    setError(""); setInfo(""); setDevOtp("");
+    setError(""); setInfo("");
     setLoading(true);
     const result = await sendOtp(mobile);
     setLoading(false);
     if (!result.ok) { setError(result.error); return; }
     setInfo(result.message || "OTP sent");
-    if (result.devOtp) setDevOtp(result.devOtp);
     setStep("otp");
     setTimeout(() => otpRefs.current[0]?.focus(), 50);
   }, [mobile, sendOtp]);
@@ -122,12 +120,6 @@ export default function LoginSidebar() {
                       {info}
                     </div>
                   )}
-                  {devOtp && (
-                    <div className="flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                      <Info className="h-4 w-4 shrink-0" />
-                      Your OTP: <strong className="font-mono">{devOtp}</strong>
-                    </div>
-                  )}
                   <div>
                     <label className="mb-3 block text-sm font-medium text-ink">Enter 6-digit OTP</label>
                     <div className="flex gap-2.5" onPaste={onOtpPaste}>
@@ -151,7 +143,7 @@ export default function LoginSidebar() {
                     Verify & Sign In
                   </button>
                   <button
-                    type="button" onClick={() => { setStep("mobile"); setOtp(["","","","","",""]); setError(""); setDevOtp(""); }}
+                    type="button" onClick={() => { setStep("mobile"); setOtp(["","","","","",""]); setError(""); }}
                     className="w-full text-center text-sm text-ink/50 hover:text-ink"
                   >
                     ← Change number
@@ -165,6 +157,9 @@ export default function LoginSidebar() {
                 By signing in you agree to our Terms & Privacy Policy
               </p>
             </div>
+
+            {/* Required by Firebase's invisible reCAPTCHA verifier */}
+            <div id="recaptcha-container" />
           </motion.aside>
         </>
       )}

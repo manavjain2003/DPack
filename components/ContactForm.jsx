@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Send } from "lucide-react";
+import axios from "axios";
 import { EMAIL } from "@/lib/products";
 
 const inputCls =
@@ -15,18 +16,80 @@ export default function ContactForm() {
     phone: "",
     message: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const onChange = (e) =>
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
-    const subject = encodeURIComponent(`Website enquiry from ${form.name}`);
-    const body = encodeURIComponent(
-      `Name: ${form.name}\nEmail: ${form.email}\nPhone: ${form.phone}\n\n${form.message}`
-    );
-    window.location.href = `mailto:${EMAIL}?subject=${subject}&body=${body}`;
+
+    // Phone validation (10 digits) — only if a phone is provided
+    if (form.phone && !/^\d{10}$/.test(form.phone.trim())) {
+      return alert("Enter a valid 10-digit phone number");
+    }
+
+    const data = {
+      platform: "DPACK Contact Page",
+      supplierToken: "6a266629a0e54917311a8ce5",
+      platformEmail: "dpacksolutionindia@gmail.com",
+      name: form.name,
+      email: form.email,
+      company: "NA",
+      phone: form.phone || "NA",
+      product: "Dunnage Bag",
+      place: "NA", // no city field in this form
+      message: form.message,
+    };
+
+    try {
+      setLoading(true);
+
+      const res = await axios.post(
+        "https://brandbnalo.com/api/form/add",
+        data,
+        { validateStatus: (status) => status >= 200 && status < 500 }
+      );
+
+      if (res.status >= 200 && res.status < 300) {
+        setSubmitted(true);
+        setForm({ name: "", email: "", phone: "", message: "" });
+
+        // hide thank-you message after 3 seconds
+        setTimeout(() => {
+          setSubmitted(false);
+        }, 3000);
+      } else {
+        alert("Something went wrong");
+      }
+    } catch (err) {
+      console.log("ERROR:", err?.response || err.message);
+      alert("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (submitted) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="rounded-[2rem] border border-ink/10 bg-cream-dark/40 p-7 shadow-card sm:p-9 text-center"
+      >
+        <h3 className="font-display text-2xl font-bold text-rust">
+          🎉 Thank You!
+        </h3>
+        <p className="mt-2 text-ink/70">
+          Your enquiry has been submitted successfully.
+        </p>
+        <p className="mt-1 text-sm text-ink/55">
+          Our team will contact you shortly.
+        </p>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.form
@@ -39,7 +102,7 @@ export default function ContactForm() {
     >
       <h3 className="font-display text-2xl font-bold">Send us a message</h3>
       <p className="mt-1.5 text-sm text-ink/55">
-        Fill this in and your email app will open — or write to us directly at{" "}
+        Fill this in and we’ll get back to you soon — or write to us directly at{" "}
         <a href={`mailto:${EMAIL}`} className="font-semibold text-rust">
           {EMAIL}
         </a>
@@ -84,10 +147,13 @@ export default function ContactForm() {
 
       <button
         type="submit"
-        className="group mt-6 inline-flex items-center gap-2 rounded-full bg-rust px-8 py-3.5 font-semibold text-cream shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:bg-rust-dark"
+        disabled={loading}
+        className="group mt-6 inline-flex items-center gap-2 rounded-full bg-rust px-8 py-3.5 font-semibold text-cream shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:bg-rust-dark disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
       >
-        Send enquiry
-        <Send className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+        {loading ? "Submitting..." : "Send enquiry"}
+        {!loading && (
+          <Send className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+        )}
       </button>
     </motion.form>
   );

@@ -32,7 +32,7 @@ export default function NewProductPage() {
   };
 
   return (
-    <div className="max-w-4xl space-y-6">
+    <div className="max-w-6xl space-y-6">
       <div className="flex items-center gap-4">
         <Link
           href="/admin/products"
