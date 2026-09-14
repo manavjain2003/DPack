@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X, ShoppingBag, Trash2, Plus, Minus, ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   useCart,
   updateQty,
@@ -14,6 +15,7 @@ import {
 } from "@/lib/cartBus";
 
 export default function CartSidebar() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const items = useCart();
   const count = cartCount(items);
@@ -37,6 +39,8 @@ export default function CartSidebar() {
       document.body.style.overflow = "";
     };
   }, [open]);
+
+  if (pathname?.startsWith("/admin")) return null;
 
   return (
     <>
