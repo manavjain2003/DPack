@@ -6,10 +6,13 @@ import { ok, err } from "@/lib/apiHelpers";
 export async function GET() {
   try {
     await connectDB();
-    const cats = await Product.distinct("category", { isActive: true });
-    const sorted = cats.sort();
+    const productNames = await Product.distinct("category", { isActive: true });
+    const categoryDocs = await Category.find({}).lean();
 
-    const categoryDocs = await Category.find({ name: { $in: sorted } }).lean();
+    const sorted = Array.from(
+      new Set([...productNames, ...categoryDocs.map((c) => c.name)])
+    ).sort();
+
     const categoryImages = {};
     for (const c of categoryDocs) {
       if (c.image) categoryImages[c.name] = c.image;
@@ -20,4 +23,4 @@ export async function GET() {
     console.error(e);
     return err("Failed to fetch categories", 500);
   }
-} 
+}

@@ -11,29 +11,27 @@ function buildSlug(name) {
     .replace(/(^-|-$)/g, "");
 }
 
-// GET every category currently used by a product, merged with its saved
-// image (if an admin has uploaded one). Categories without a Product.category
-// match yet still show up here once a product references them.
 export async function GET(request) {
   const { error } = await requireAdmin(request);
   if (error) return error;
 
   await connectDB();
-  const names = (await Product.distinct("category", { isActive: true })).sort();
-  const docs = await Category.find({ name: { $in: names } }).lean();
+  const productNames = await Product.distinct("category", { isActive: true });
+  const docs = await Category.find({}).lean();
   const byName = Object.fromEntries(docs.map((d) => [d.name, d]));
 
-  const categories = names.map((name) => ({
+  const allNames = Array.from(new Set([...productNames, ...docs.map((d) => d.name)])).sort();
+
+  const categories = allNames.map((name) => ({
     name,
     slug: byName[name]?.slug || buildSlug(name),
     image: byName[name]?.image || null,
+    inUse: productNames.includes(name),
   }));
 
   return ok({ categories });
 }
 
-// POST upload or replace the image for a category (multipart/form-data:
-// fields { name }, file { image })
 export async function POST(request) {
   const { error } = await requireAdmin(request);
   if (error) return error;
@@ -43,9 +41,17 @@ export async function POST(request) {
     const { fields, files } = await parseFormData(request);
     const name = fields.name?.trim();
     if (!name) return err("Category name is required");
-    if (!files.image) return err("An image file is required");
 
     const existing = await Category.findOne({ name });
+    if (!existing && !files.image) {
+      const category = await Category.create({ name, slug: buildSlug(name) });
+      return ok({ category }, 201);
+    }
+
+    if (!files.image) {
+      return ok({ category: existing });
+    }
+
     if (existing?.imagePublicId) {
       await deleteFromCloudinary(existing.imagePublicId);
     }
@@ -64,12 +70,12 @@ export async function POST(request) {
     return ok({ category });
   } catch (e) {
     console.error(e);
-    return err("Failed to save category image", 500);
+    if (e.code === 11000) return err("A category with this name already exists");
+    return err("Failed to save category", 500);
   }
 }
 
-// DELETE remove a category's custom image, reverting it to the default
-// placeholder. Body: { name }
+
 export async function DELETE(request) {
   const { error } = await requireAdmin(request);
   if (error) return error;

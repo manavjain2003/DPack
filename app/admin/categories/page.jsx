@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { RefreshCw, Upload, X, Loader2, ImageOff } from "lucide-react";
+import { RefreshCw, Upload, X, Loader2, ImageOff, Plus } from "lucide-react";
 import { adminAPI } from "@/lib/apiClient";
 
-function CategoryCard({ category, onUploaded, onRemoved }) {
+function CategoryCard({ category, onUploaded, onDeleted }) {
   const fileRef = useRef(null);
   const [busy, setBusy] = useState(false);
   const [preview, setPreview] = useState(null);
@@ -32,15 +32,18 @@ function CategoryCard({ category, onUploaded, onRemoved }) {
     }
   };
 
-  const handleRemove = async () => {
-    if (!category.image) return;
-    if (!confirm(`Remove the image for "${category.name}"? It'll fall back to the default.`)) return;
+  const handleDelete = async () => {
+    const message = category.inUse
+      ? `Remove the image for "${category.name}"? It'll fall back to the default — the category stays since products still use it.`
+      : `Delete "${category.name}"? No products use it yet, so this removes it entirely.`;
+    if (!confirm(message)) return;
+
     setBusy(true);
     try {
       await adminAPI.removeCategoryImage(category.name);
-      onRemoved(category.name);
+      onDeleted(category.name, category.inUse);
     } catch (err) {
-      alert("Failed to remove: " + err.message);
+      alert("Failed: " + err.message);
     } finally {
       setBusy(false);
     }
@@ -58,6 +61,11 @@ function CategoryCard({ category, onUploaded, onRemoved }) {
             <ImageOff className="h-8 w-8" />
             <span className="text-xs font-medium">No image set</span>
           </div>
+        )}
+        {!category.inUse && (
+          <span className="absolute left-2 top-2 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
+            No products yet
+          </span>
         )}
         {busy && (
           <div className="absolute inset-0 grid place-items-center bg-white/70">
@@ -87,11 +95,12 @@ function CategoryCard({ category, onUploaded, onRemoved }) {
             <Upload className="h-3.5 w-3.5" />
             {category.image ? "Replace" : "Upload"}
           </button>
-          {category.image && (
+          {(category.image || !category.inUse) && (
             <button
               type="button"
-              onClick={handleRemove}
+              onClick={handleDelete}
               disabled={busy}
+              title={category.inUse ? "Remove image" : "Delete category"}
               className="flex items-center justify-center rounded-xl border border-gray-200 px-3 py-2 text-xs font-medium text-red-500 transition-colors hover:border-red-300 hover:bg-red-50 disabled:opacity-50"
             >
               <X className="h-3.5 w-3.5" />
@@ -103,9 +112,114 @@ function CategoryCard({ category, onUploaded, onRemoved }) {
   );
 }
 
+function NewCategoryForm({ onCreated, onCancel }) {
+  const [name, setName] = useState("");
+  const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const fileRef = useRef(null);
+
+  const handleFile = (e) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    setFile(f);
+    setPreview(URL.createObjectURL(f));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!name.trim()) {
+      setError("Category name is required");
+      return;
+    }
+    setError("");
+    setSaving(true);
+    try {
+      const formData = new FormData();
+      formData.append("name", name.trim());
+      if (file) formData.append("image", file);
+      const res = await adminAPI.uploadCategoryImage(formData);
+      onCreated(res.category);
+    } catch (err) {
+      setError(err.message || "Failed to create category");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="mb-6 rounded-2xl border border-gray-200 bg-white p-5"
+    >
+      <div className="flex flex-wrap items-end gap-4">
+        <div className="flex-1 min-w-[200px]">
+          <label className="mb-1.5 block text-sm font-medium text-gray-700">
+            Category name
+          </label>
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="e.g. Strapping"
+            autoFocus
+            className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-rust focus:ring-2 focus:ring-rust/20"
+          />
+        </div>
+
+        <div>
+          <label className="mb-1.5 block text-sm font-medium text-gray-700">
+            Image (optional)
+          </label>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFile}
+            className="hidden"
+          />
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            className="flex items-center gap-2 rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50"
+          >
+            {preview ? (
+              <img src={preview} alt="" className="h-5 w-5 rounded object-cover" />
+            ) : (
+              <Upload className="h-4 w-4" />
+            )}
+            {file ? file.name : "Choose file"}
+          </button>
+        </div>
+
+        <div className="flex gap-2">
+          <button
+            type="submit"
+            disabled={saving}
+            className="flex items-center gap-2 rounded-xl bg-rust px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-rust/90 disabled:opacity-60"
+          >
+            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+            Create
+          </button>
+          <button
+            type="button"
+            onClick={onCancel}
+            className="rounded-xl border border-gray-200 px-5 py-2.5 text-sm text-gray-600 hover:bg-gray-50"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+
+      {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+    </form>
+  );
+}
+
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showNew, setShowNew] = useState(false);
 
   const load = () => {
     setLoading(true);
@@ -122,8 +236,21 @@ export default function AdminCategoriesPage() {
     setCategories((prev) => prev.map((c) => (c.name === name ? { ...c, image } : c)));
   };
 
-  const handleRemoved = (name) => {
-    setCategories((prev) => prev.map((c) => (c.name === name ? { ...c, image: null } : c)));
+  const handleDeleted = (name, wasInUse) => {
+    if (wasInUse) {
+      setCategories((prev) => prev.map((c) => (c.name === name ? { ...c, image: null } : c)));
+    } else {
+      setCategories((prev) => prev.filter((c) => c.name !== name));
+    }
+  };
+
+  const handleCreated = (category) => {
+    setCategories((prev) =>
+      [...prev.filter((c) => c.name !== category.name), { ...category, inUse: false }].sort(
+        (a, b) => a.name.localeCompare(b.name)
+      )
+    );
+    setShowNew(false);
   };
 
   return (
@@ -132,17 +259,32 @@ export default function AdminCategoriesPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
           <p className="mt-1 text-sm text-gray-500">
-            Set the image shown for each category on the homepage
+            Create categories and set the image shown for each on the homepage
           </p>
         </div>
-        <button
-          onClick={load}
-          className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 hover:bg-gray-50"
-        >
-          <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-          Refresh
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={load}
+            className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 hover:bg-gray-50"
+          >
+            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+            Refresh
+          </button>
+          {!showNew && (
+            <button
+              onClick={() => setShowNew(true)}
+              className="flex items-center gap-2 rounded-xl bg-rust px-4 py-2 text-sm font-semibold text-white hover:bg-rust/90"
+            >
+              <Plus className="h-4 w-4" />
+              New Category
+            </button>
+          )}
+        </div>
       </div>
+
+      {showNew && (
+        <NewCategoryForm onCreated={handleCreated} onCancel={() => setShowNew(false)} />
+      )}
 
       {loading ? (
         <div className="flex items-center gap-2 text-sm text-gray-400">
@@ -150,7 +292,7 @@ export default function AdminCategoriesPage() {
         </div>
       ) : categories.length === 0 ? (
         <div className="rounded-2xl border border-gray-100 bg-white p-10 text-center text-sm text-gray-500">
-          No categories yet — categories are created automatically once a product uses one.
+          No categories yet — create one above, or add a product with a new category name.
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
@@ -159,7 +301,7 @@ export default function AdminCategoriesPage() {
               key={c.name}
               category={c}
               onUploaded={handleUploaded}
-              onRemoved={handleRemoved}
+              onDeleted={handleDeleted}
             />
           ))}
         </div>
