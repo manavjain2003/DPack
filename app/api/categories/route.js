@@ -20,4 +20,4 @@ export async function GET() {
     console.error(e);
     return err("Failed to fetch categories", 500);
   }
-}
+} 

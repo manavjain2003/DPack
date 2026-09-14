@@ -11,7 +11,9 @@ function buildSlug(name) {
     .replace(/(^-|-$)/g, "");
 }
 
-
+// GET every category currently used by a product, merged with its saved
+// image (if an admin has uploaded one). Categories without a Product.category
+// match yet still show up here once a product references them.
 export async function GET(request) {
   const { error } = await requireAdmin(request);
   if (error) return error;
@@ -30,7 +32,8 @@ export async function GET(request) {
   return ok({ categories });
 }
 
-
+// POST upload or replace the image for a category (multipart/form-data:
+// fields { name }, file { image })
 export async function POST(request) {
   const { error } = await requireAdmin(request);
   if (error) return error;
