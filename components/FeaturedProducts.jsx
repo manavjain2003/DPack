@@ -110,13 +110,7 @@ export default function FeaturedProducts({ products = [] }) {
   const atStart = index === 0;
   const atEnd = index >= maxIndex;
 
-  // Drag support: let people swipe/click-drag the row directly instead of
-  // only using the arrow buttons, dots, or the mouse wheel. Since the row's
-  // horizontal position is driven by the page's vertical scroll (via the
-  // ScrollTrigger scrub above), a horizontal drag is translated into an
-  // equivalent vertical scroll delta — that way it reuses the exact same
-  // animation, snapping and index tracking as normal scrolling, with no risk
-  // of the drag position and the scroll-linked position drifting apart.
+
   const DRAG_THRESHOLD = 6;
 
   const handlePointerDown = useCallback(
@@ -150,8 +144,6 @@ export default function FeaturedProducts({ products = [] }) {
     e.preventDefault();
     state.lastX = e.clientX;
 
-    // Dragging left should reveal the next products (mirrors scrolling
-    // down), so a leftward drag maps to a forward scroll.
     window.scrollBy({ top: -delta, left: 0, behavior: "auto" });
   }, []);
 

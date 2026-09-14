@@ -26,7 +26,6 @@ import {
 import { addToCart } from "@/lib/cartBus";
 import { useAuth } from "@/app/context/AuthContext";
 
-/* ── helpers ──────────────────────────────────────────────── */
 function formatPrice(price) {
   if (price == null) return null;
   return new Intl.NumberFormat("en-IN", {
@@ -42,7 +41,6 @@ const TRUST_POINTS = [
   { icon: RotateCcw, text: "Easy replacement for damaged items" },
 ];
 
-/* ── derive spec rows from the product object ─────────────── */
 function buildSpecRows(product) {
   const rows = [];
   if (product.sizes?.length)
@@ -62,7 +60,6 @@ function buildSpecRows(product) {
   return rows;
 }
 
-/* ── social links ─────────────────────────────────────────── */
 const SOCIALS = [
   { href: "https://www.facebook.com/Dpacksolutions/", Icon: Facebook, label: "Facebook" },
   { href: "https://www.instagram.com/dpacksolutionsindia/", Icon: Instagram, label: "Instagram" },
@@ -70,7 +67,6 @@ const SOCIALS = [
   { href: "https://www.linkedin.com/company/dpacksolutions/", Icon: Linkedin, label: "LinkedIn" },
 ];
 
-/* ── image gallery ────────────────────────────────────────── */
 function Gallery({ product }) {
   const images = [product.image, ...(product.extraImages ?? [])].filter(Boolean);
   const [active, setActive] = useState(0);
@@ -80,7 +76,6 @@ function Gallery({ product }) {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Main image */}
       <div className="relative aspect-square overflow-hidden rounded-2xl border border-ink/8 bg-[#F5F3EF]">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,rgba(255,255,255,0.8)_0%,transparent_100%)] pointer-events-none z-10" />
 
@@ -97,13 +92,11 @@ function Gallery({ product }) {
           />
         </AnimatePresence>
 
-        {/* 360 badge */}
         <span className="absolute bottom-4 left-4 z-20 flex items-center gap-1.5 rounded-full border border-ink/10 bg-white/80 px-3 py-1 text-[11px] font-semibold text-ink/60 backdrop-blur-sm">
           <Maximize2 className="h-3 w-3" />
           360° View
         </span>
 
-        {/* arrows */}
         {images.length > 1 && (
           <>
             <button
@@ -124,7 +117,6 @@ function Gallery({ product }) {
         )}
       </div>
 
-      {/* Thumbnails */}
       <div className="flex gap-2.5 overflow-x-auto pb-0.5">
         {images.map((src, i) => (
           <button
@@ -149,7 +141,6 @@ function Gallery({ product }) {
   );
 }
 
-/* ── tabs ─────────────────────────────────────────────────── */
 const TABS = [
   { id: "description", label: "Description" },
   { id: "additional", label: "Additional Info" },
@@ -246,7 +237,6 @@ function ProductTabs({ product }) {
   );
 }
 
-/* ── main component ───────────────────────────────────────── */
 export default function ProductDetail({ product }) {
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
@@ -280,26 +270,20 @@ export default function ProductDetail({ product }) {
 
   return (
     <div>
-      {/* ── Two-column panel ───────────────────────────── */}
       <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
 
-        {/* Left — Gallery */}
         <Gallery product={product} />
 
-        {/* Right — Info */}
         <div className="flex flex-col">
 
-          {/* Category badge */}
           <span className="inline-flex w-fit items-center rounded-full border border-rust/25 bg-rust/8 px-3 py-1 text-[11.5px] font-bold uppercase tracking-widest text-rust">
             {product.category}
           </span>
 
-          {/* Name */}
           <h1 className="mt-3 font-display text-[26px] font-bold leading-tight tracking-tight text-ink sm:text-[30px]">
             {product.name}
           </h1>
 
-          {/* Stars + reviews */}
           <div className="mt-3 flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-1">
               {[1, 2, 3, 4, 5].map((s) => (
@@ -318,7 +302,6 @@ export default function ProductDetail({ product }) {
             </span>
           </div>
 
-          {/* Price */}
           {product.price != null && (
             <div className="mt-5 flex items-end gap-3">
               <span className="font-display text-3xl font-extrabold tabular-nums text-ink">
@@ -337,17 +320,13 @@ export default function ProductDetail({ product }) {
             </div>
           )}
 
-          {/* Short description */}
           <p className="mt-4 text-[14px] leading-relaxed text-ink/60">
             {product.description}
           </p>
 
-          {/* Divider */}
           <div className="mt-6 h-px bg-ink/8" />
 
-          {/* Qty + Add to cart + Wishlist */}
           <div className="mt-6 flex flex-wrap items-center gap-3">
-            {/* Qty stepper */}
             <div className="flex items-center rounded-full border border-ink/12">
               <button
                 type="button"
@@ -371,7 +350,6 @@ export default function ProductDetail({ product }) {
               </button>
             </div>
 
-            {/* Add to cart */}
             <button
               type="button"
               onClick={handleAddToCart}
@@ -410,7 +388,6 @@ export default function ProductDetail({ product }) {
               </AnimatePresence>
             </button>
 
-            {/* Wishlist */}
             <button
               type="button"
               onClick={handleWishlist}
@@ -441,7 +418,6 @@ export default function ProductDetail({ product }) {
             .
           </p>
 
-          {/* Spec table */}
           <div className="mt-7 overflow-hidden rounded-xl border border-ink/8">
             <table className="w-full text-[13.5px]">
               <tbody>
@@ -460,7 +436,6 @@ export default function ProductDetail({ product }) {
             </table>
           </div>
 
-          {/* Trust points */}
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
             {TRUST_POINTS.map(({ icon: Icon, text }) => (
               <div
@@ -473,10 +448,8 @@ export default function ProductDetail({ product }) {
             ))}
           </div>
 
-          {/* Divider */}
           <div className="mt-7 h-px bg-ink/8" />
 
-          {/* Social */}
           <div className="mt-5 flex flex-wrap items-center gap-3">
             <span className="text-[12.5px] font-semibold text-ink/40">Visit Us:</span>
             {SOCIALS.map(({ href, Icon, label }) => (
@@ -499,7 +472,6 @@ export default function ProductDetail({ product }) {
         </div>
       </div>
 
-      {/* ── Description / Additional Info tabs ─────────── */}
       <ProductTabs product={product} />
     </div>
   );

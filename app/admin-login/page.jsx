@@ -14,7 +14,6 @@ export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // If already logged in as admin, redirect
   useEffect(() => {
     const token = localStorage.getItem("dpack_token");
     if (token) {
@@ -50,7 +49,6 @@ export default function AdminLoginPage() {
         return;
       }
 
-      // Update AuthContext state with the new token, then redirect
       await loginWithToken(data.token);
       router.replace("/admin");
     } catch (e) {
@@ -64,7 +62,6 @@ export default function AdminLoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-[#F4F6FA] px-4">
       <div className="w-full max-w-md">
 
-        {/* Logo card */}
         <div className="mb-8 flex flex-col items-center gap-3 text-center">
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-ink shadow-lg">
             <BarChart3 className="h-7 w-7 text-white" />
@@ -75,11 +72,9 @@ export default function AdminLoginPage() {
           </div>
         </div>
 
-        {/* Login form */}
         <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
           <form onSubmit={handleSubmit} className="space-y-5">
 
-            {/* Username */}
             <div>
               <label htmlFor="username" className="mb-2 block text-sm font-medium text-gray-700">
                 Username
@@ -100,7 +95,6 @@ export default function AdminLoginPage() {
               </div>
             </div>
 
-            {/* Password */}
             <div>
               <label htmlFor="password" className="mb-2 block text-sm font-medium text-gray-700">
                 Password
@@ -128,7 +122,6 @@ export default function AdminLoginPage() {
               </div>
             </div>
 
-            {/* Error */}
             {error && (
               <div className="flex items-center gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 <AlertCircle className="h-4 w-4 shrink-0" />
@@ -136,7 +129,6 @@ export default function AdminLoginPage() {
               </div>
             )}
 
-            {/* Submit */}
             <button
               type="submit"
               disabled={loading}

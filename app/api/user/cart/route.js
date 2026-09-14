@@ -13,7 +13,6 @@ function serializeCart(user) {
     }));
 }
 
-// GET current user's cart, populated with live product details
 export async function GET(request) {
   const { user: authUser, error } = await requireAuth(request);
   if (error) return error;
@@ -23,7 +22,6 @@ export async function GET(request) {
   return ok({ cart: serializeCart(user) });
 }
 
-// POST add to cart (or increment qty if already present)
 export async function POST(request) {
   const { user: authUser, error } = await requireAuth(request);
   if (error) return error;
@@ -49,7 +47,6 @@ export async function POST(request) {
   return ok({ message: "Added to cart", cart: serializeCart(populated) });
 }
 
-// PATCH set an exact qty for a cart item (removes it if qty <= 0)
 export async function PATCH(request) {
   const { user: authUser, error } = await requireAuth(request);
   if (error) return error;
@@ -74,7 +71,6 @@ export async function PATCH(request) {
   return ok({ message: "Cart updated", cart: serializeCart(populated) });
 }
 
-// DELETE remove an item from cart entirely
 export async function DELETE(request) {
   const { user: authUser, error } = await requireAuth(request);
   if (error) return error;

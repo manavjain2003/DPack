@@ -76,7 +76,6 @@ export default function LoginSidebar() {
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             className="fixed inset-y-0 right-0 z-50 flex w-full max-w-sm flex-col bg-cream shadow-2xl"
           >
-            {/* Header */}
             <div className="flex items-center justify-between border-b border-ink/10 px-6 py-5">
               <div>
                 <h2 className="font-display text-lg font-bold text-ink">
@@ -91,7 +90,6 @@ export default function LoginSidebar() {
               </button>
             </div>
 
-            {/* Body */}
             <div className="flex-1 overflow-y-auto px-6 py-8">
               {step === "mobile" ? (
                 <form onSubmit={handleRequestOtp} className="space-y-5">

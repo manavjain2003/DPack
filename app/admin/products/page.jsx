@@ -61,7 +61,6 @@ export default function AdminProductsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Products</h1>
@@ -76,7 +75,6 @@ export default function AdminProductsPage() {
         </Link>
       </div>
 
-      {/* Search */}
       <div className="relative">
         <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
         <input
@@ -95,7 +93,6 @@ export default function AdminProductsPage() {
         </div>
       )}
 
-      {/* Table */}
       <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
         {loading ? (
           <div className="divide-y divide-gray-50">
@@ -197,7 +194,6 @@ export default function AdminProductsPage() {
         )}
       </div>
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-gray-500">

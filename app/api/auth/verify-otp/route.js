@@ -18,10 +18,8 @@ export async function POST(request) {
     if (!record) return err("OTP expired or not found. Request a new one.");
     if (record.otp !== String(otp).trim()) return err("Invalid OTP");
 
-    // OTP valid — delete it
     await Otp.deleteMany({ mobile: cleaned });
 
-    // Upsert user
     let user = await User.findOne({ mobile: cleaned });
     if (!user) {
       user = await User.create({

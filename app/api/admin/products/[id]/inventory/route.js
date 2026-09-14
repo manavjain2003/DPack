@@ -2,7 +2,6 @@ import { connectDB } from "@/lib/db/mongoose";
 import Product from "@/lib/models/Product";
 import { requireAdmin, ok, err } from "@/lib/apiHelpers";
 
-// GET inventory details
 export async function GET(request, { params }) {
   const { error } = await requireAdmin(request);
   if (error) return error;
@@ -15,7 +14,6 @@ export async function GET(request, { params }) {
   return ok({ inventory: product });
 }
 
-// PATCH update stock
 export async function PATCH(request, { params }) {
   const { error } = await requireAdmin(request);
   if (error) return error;

@@ -148,7 +148,6 @@ export default function InventoryPage() {
         </button>
       </div>
 
-      {/* Summary cards */}
       <div className="grid gap-4 sm:grid-cols-3">
         <button onClick={() => setFilter("all")} className={`rounded-2xl border p-5 text-left transition ${filter === "all" ? "border-rust/30 bg-rust/5" : "border-gray-100 bg-white hover:bg-gray-50"}`}>
           <div className="flex items-center gap-3">
@@ -173,7 +172,6 @@ export default function InventoryPage() {
         </button>
       </div>
 
-      {/* List */}
       <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
         {loading ? (
           <div className="space-y-0">

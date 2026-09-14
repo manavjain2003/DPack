@@ -3,7 +3,6 @@ import Product from "@/lib/models/Product";
 import { requireAdmin, ok, err, parseFormData } from "@/lib/apiHelpers";
 import { uploadToCloudinary } from "@/lib/cloudinary";
 
-// GET - list all products (admin, includes inactive)
 export async function GET(request) {
   const { error } = await requireAdmin(request);
   if (error) return error;
@@ -39,7 +38,6 @@ export async function GET(request) {
   }
 }
 
-// POST - create product (multipart/form-data with image)
 export async function POST(request) {
   const { error } = await requireAdmin(request);
   if (error) return error;
@@ -48,7 +46,6 @@ export async function POST(request) {
     await connectDB();
     const { fields, files } = await parseFormData(request);
 
-    // Upload primary image
     if (!files.image) return err("Product image is required");
 
     const { url, public_id } = await uploadToCloudinary(
@@ -56,7 +53,6 @@ export async function POST(request) {
       "dpack/products"
     );
 
-    // Upload extra images if provided
     const extraImages = [];
     const extraImagePublicIds = [];
     for (let i = 0; i < 10; i++) {
@@ -68,7 +64,6 @@ export async function POST(request) {
       }
     }
 
-    // Parse array fields
     const specs = [].concat(fields.specs || []).filter(Boolean);
     const sizes = [].concat(fields.sizes || []).filter(Boolean);
 

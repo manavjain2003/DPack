@@ -12,7 +12,6 @@ export async function GET(request, { params }) {
 
     if (!product) return err("Product not found", 404);
 
-    // Fetch related (same category, not same product)
     const related = await Product.find({
       category: product.category,
       _id: { $ne: product._id },

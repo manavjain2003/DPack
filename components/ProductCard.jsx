@@ -166,7 +166,6 @@ function ProductCard({ product, index = 0 }) {
           </span>
         )}
 
-        {/* Wishlist heart */}
         <button
           type="button"
           onClick={handleWishlist}

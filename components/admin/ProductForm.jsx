@@ -48,11 +48,10 @@ export default function ProductForm({ initial = {}, onSubmit, loading, submitLab
   useEffect(() => {
     categoriesAPI.list()
       .then((data) => {
-        // Strip "All" from the dropdown list
         const cats = (data.categories || []).filter((c) => c !== "All");
         if (cats.length > 0) setCategories(cats);
       })
-      .catch(() => {}); // fall back to static list on error
+      .catch(() => {}); 
   }, []);
 
   const [form, setForm] = useState({
@@ -104,7 +103,6 @@ export default function ProductForm({ initial = {}, onSubmit, loading, submitLab
     e.preventDefault();
     const fd = new FormData();
 
-    // Required image — either new file or signal "keep existing"
     if (mainImage) fd.append("image", mainImage);
     else if (mainPreview) fd.append("keepImage", "true");
 
@@ -123,7 +121,6 @@ export default function ProductForm({ initial = {}, onSubmit, loading, submitLab
       trackInventory: String(form.trackInventory),
     };
 
-    // Append array fields multiple times (multipart array convention)
     for (const [k, v] of Object.entries(fields)) {
       if (Array.isArray(v)) v.forEach((item) => fd.append(k, item));
       else fd.append(k, v);
@@ -134,7 +131,6 @@ export default function ProductForm({ initial = {}, onSubmit, loading, submitLab
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
-      {/* Basic info */}
       <section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
         <h3 className="mb-5 text-sm font-semibold uppercase tracking-wider text-gray-400">Basic Information</h3>
         <div className="grid gap-5 sm:grid-cols-2">
@@ -245,7 +241,6 @@ export default function ProductForm({ initial = {}, onSubmit, loading, submitLab
         </div>
       </section>
 
-      {/* Images */}
       <section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
         <h3 className="mb-5 text-sm font-semibold uppercase tracking-wider text-gray-400">Product Images</h3>
         <div className="flex flex-wrap gap-4">
@@ -280,7 +275,6 @@ export default function ProductForm({ initial = {}, onSubmit, loading, submitLab
         </div>
       </section>
 
-      {/* Pricing */}
       <section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
         <h3 className="mb-5 text-sm font-semibold uppercase tracking-wider text-gray-400">Pricing</h3>
         <div className="grid gap-5 sm:grid-cols-3">
@@ -306,7 +300,6 @@ export default function ProductForm({ initial = {}, onSubmit, loading, submitLab
         </div>
       </section>
 
-      {/* Inventory */}
       <section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
         <h3 className="mb-5 text-sm font-semibold uppercase tracking-wider text-gray-400">Inventory</h3>
         <div className="grid gap-5 sm:grid-cols-3">
@@ -337,7 +330,6 @@ export default function ProductForm({ initial = {}, onSubmit, loading, submitLab
         </div>
       </section>
 
-      {/* Specs & Sizes */}
       <section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
         <h3 className="mb-5 text-sm font-semibold uppercase tracking-wider text-gray-400">Specifications & Sizes</h3>
         <div className="grid gap-6 sm:grid-cols-2">
@@ -394,7 +386,6 @@ export default function ProductForm({ initial = {}, onSubmit, loading, submitLab
         </div>
       </section>
 
-      {/* Visibility */}
       <section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
         <h3 className="mb-5 text-sm font-semibold uppercase tracking-wider text-gray-400">Visibility & SEO</h3>
         <div className="grid gap-5 sm:grid-cols-2">

@@ -37,7 +37,6 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  // Hydrate from token on mount
   useEffect(() => {
     const init = async () => {
       const token = getToken();
@@ -45,14 +44,12 @@ export function AuthProvider({ children }) {
         try {
           const data = await authAPI.me();
           setUser(data.user);
-          // Load wishlist from server
           try {
             const wl = await userAPI.getWishlist();
             setWishlistState(wl.wishlist || []);
           } catch {
             setWishlistState([]);
           }
-          // Reconcile local (guest) cart with the server cart
           syncCartFromServer();
         } catch {
           clearToken();
@@ -95,7 +92,6 @@ export function AuthProvider({ children }) {
         setToken(res.token);
         setUser(res.user);
 
-        // Load wishlist after login
         try {
           const wl = await userAPI.getWishlist();
           setWishlistState(wl.wishlist || []);
@@ -103,7 +99,6 @@ export function AuthProvider({ children }) {
           setWishlistState([]);
         }
 
-        // Handle deferred wishlist intent
         if (loginIntent?.type === "wishlist" && loginIntent.productId) {
           try {
             await userAPI.addToWishlist(loginIntent.productId);
@@ -112,7 +107,6 @@ export function AuthProvider({ children }) {
           } catch {}
         }
 
-        // Reconcile local (guest) cart with the server cart
         syncCartFromServer();
 
         closeLogin();

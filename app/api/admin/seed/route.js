@@ -106,7 +106,6 @@ export async function POST(request) {
   try {
     await connectDB();
 
-    // Seed products
     let created = 0;
     for (const p of SEED_PRODUCTS) {
       await Product.findOneAndUpdate({ slug: p.slug }, p, {
@@ -116,7 +115,6 @@ export async function POST(request) {
       created++;
     }
 
-    // Create demo admin
     let admin = await User.findOne({ mobile: "9999999999" });
     if (!admin) {
       admin = await User.create({

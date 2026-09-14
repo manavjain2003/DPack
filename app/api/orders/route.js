@@ -15,14 +15,13 @@ function cleanAddress(addr = {}) {
   };
 }
 
-// POST create an order from the current cart
 export async function POST(request) {
   const { user: authUser, error } = await requireAuth(request);
   if (error) return error;
 
   const body = await request.json();
   const {
-    items, // [{ productId, qty }] - client tells us WHAT, server decides price
+    items, 
     customerName,
     customerEmail,
     customerMobile,
@@ -48,8 +47,7 @@ export async function POST(request) {
 
   await connectDB();
 
-  // Re-fetch every product from the DB so price/stock/availability can
-  // never be spoofed by the client.
+
   const orderItems = [];
   let subtotal = 0;
 
@@ -81,7 +79,7 @@ export async function POST(request) {
     userId: authUser._id,
     items: orderItems,
     subtotal,
-    total: subtotal, // shipping is free per current site copy; add taxes/fees here later
+    total: subtotal, 
     status: "pending",
     customerName: customerName.trim(),
     customerEmail: customerEmail?.trim() || "",
@@ -92,7 +90,6 @@ export async function POST(request) {
     notes: notes?.trim() || "",
   });
 
-  // Decrement stock for tracked products
   for (const item of orderItems) {
     await Product.findOneAndUpdate(
       { _id: item.productId, trackInventory: true },
@@ -100,13 +97,11 @@ export async function POST(request) {
     );
   }
 
-  // Clear the user's server-side cart now that it's been placed
   await User.findByIdAndUpdate(authUser._id, { $set: { cart: [] } });
 
   return ok({ message: "Order placed", order }, 201);
 }
 
-// GET the current user's order history, most recent first
 export async function GET(request) {
   const { user: authUser, error } = await requireAuth(request);
   if (error) return error;

@@ -3,7 +3,6 @@ import User from "@/lib/models/User";
 import Product from "@/lib/models/Product";
 import { requireAuth, ok, err } from "@/lib/apiHelpers";
 
-// GET wishlist
 export async function GET(request) {
   const { user: authUser, error } = await requireAuth(request);
   if (error) return error;
@@ -17,7 +16,6 @@ export async function GET(request) {
   return ok({ wishlist: items });
 }
 
-// POST add to wishlist
 export async function POST(request) {
   const { user: authUser, error } = await requireAuth(request);
   if (error) return error;
@@ -40,7 +38,6 @@ export async function POST(request) {
   return ok({ message: "Added to wishlist" });
 }
 
-// DELETE remove from wishlist
 export async function DELETE(request) {
   const { user: authUser, error } = await requireAuth(request);
   if (error) return error;

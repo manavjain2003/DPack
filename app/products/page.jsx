@@ -11,7 +11,7 @@ export const metadata = {
     "Air column bags, gap fillers, air bags, e-commerce pouches, ratchet belts, lashing systems, bubble wrap, straps and packaging tapes — all under one roof.",
 };
 
-export const dynamic = "force-dynamic"; // always fresh from DB
+export const dynamic = "force-dynamic"; 
 
 export default async function ProductsPage() {
   let products = [];

@@ -14,17 +14,14 @@ export async function POST(request) {
       username?.trim() !== validUsername ||
       password !== validPassword
     ) {
-      // Deliberate delay to slow brute-force attempts
       await new Promise((r) => setTimeout(r, 800));
       return err("Invalid username or password", 401);
     }
 
     await connectDB();
 
-    // Import here to avoid circular deps
     const User = (await import("@/lib/models/User")).default;
 
-    // Find or create the admin user in DB
     let admin = await User.findOne({ role: "admin" });
     if (!admin) {
       admin = await User.create({

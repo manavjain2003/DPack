@@ -43,7 +43,6 @@ const [searchQuery, setSearchQuery] = useState("");
     0
   );
 
-  // Auth
   const {
     user,
     isLoggedIn,
@@ -100,7 +99,6 @@ const searchResults = searchQuery.trim()
     setAccountOpen(false);
   }, [pathname]);
 
-  // Logout
   const handleLogout = () => {
     setAccountOpen(false);
     setOpen(false);
@@ -117,7 +115,6 @@ const searchResults = searchQuery.trim()
     >
       <nav className="mx-auto flex max-w-8xl items-center px-5 py-4 sm:px-8">
 
-        {/* Logo */}
         <div className="flex flex-1 items-center">
           <Link
             href="/"
@@ -229,7 +226,6 @@ const searchResults = searchQuery.trim()
           </button>
         </div>
 
-        {/* Search Results */}
         <AnimatePresence>
           {searchQuery.trim() && (
             <motion.div
@@ -359,7 +355,6 @@ const searchResults = searchQuery.trim()
                 />
               </motion.span>
 
-              {/* Cart Count */}
               <AnimatePresence>
                 {cartCount > 0 && (
                   <motion.span
@@ -502,7 +497,6 @@ const searchResults = searchQuery.trim()
             </div>
           </div>
 
-          {/* Mobile Menu Button */}
           <button
             onClick={() => setOpen((v) => !v)}
             className="grid h-10 w-10 place-items-center
@@ -519,7 +513,6 @@ const searchResults = searchQuery.trim()
         </div>
       </nav>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -543,7 +536,6 @@ const searchResults = searchQuery.trim()
           >
             <ul className="space-y-1 px-5 py-4">
 
-              {/* Navigation Links */}
               {links.map((link) => (
                 <li key={link.href}>
                   <Link
@@ -561,11 +553,9 @@ const searchResults = searchQuery.trim()
                 </li>
               ))}
 
-              {/* Mobile Icons */}
               <li className="mt-3 border-t border-ink/10 pt-3">
                 <div className="flex items-center gap-3 px-4">
 
-                  {/* Search */}
                   <Link
                     href="/search"
                     className="grid h-11 w-11 place-items-center
@@ -577,7 +567,6 @@ const searchResults = searchQuery.trim()
                     <Search className="h-5 w-5" />
                   </Link>
 
-                  {/* Mobile Account */}
                   <div className="relative">
 
                     {!isLoggedIn ? (
@@ -608,7 +597,6 @@ const searchResults = searchQuery.trim()
                           {userInitial}
                         </button>
 
-                        {/* Mobile Account Dropdown */}
                         <AnimatePresence>
                           {accountOpen && (
                             <motion.div
@@ -633,7 +621,6 @@ const searchResults = searchQuery.trim()
                                          border border-ink/10
                                          bg-cream shadow-xl"
                             >
-                              {/* User Info */}
                               <div className="border-b border-ink/10 px-4 py-3">
                                 <p className="truncate text-sm font-semibold text-ink">
                                   {user?.name || "User"}
@@ -646,7 +633,6 @@ const searchResults = searchQuery.trim()
                                 )}
                               </div>
 
-                              {/* Profile */}
                               <Link
                                 href="/account"
                                 onClick={() =>
@@ -661,7 +647,6 @@ const searchResults = searchQuery.trim()
                                 <span>Profile</span>
                               </Link>
 
-                              {/* Logout */}
                               <button
                                 type="button"
                                 onClick={handleLogout}
@@ -682,12 +667,10 @@ const searchResults = searchQuery.trim()
                     )}
                   </div>
 
-                  {/* Wishlist */}
                   <WishlistNavButton
                     className="h-11 w-11 rounded-xl border border-ink/10"
                   />
 
-                  {/* Cart */}
                   <Link
                     href="/cart"
                     className="relative grid h-11 w-11

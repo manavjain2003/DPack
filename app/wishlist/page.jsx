@@ -36,7 +36,6 @@ export default function WishlistPage() {
     openLogin,
   } = useAuth();
 
-  // Optional: scroll to top
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -87,7 +86,6 @@ export default function WishlistPage() {
     <Navbar/>
     <main className="min-h-screen bg-cream pt-24 pb-20 sm:pt-28">
       <div className="mx-auto max-w-8xl px-5 sm:px-8">
-      {/* Header */}
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
            <Link

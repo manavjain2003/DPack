@@ -73,7 +73,6 @@ export default function CheckoutPage() {
   const [error, setError] = useState("");
   const [placedOrder, setPlacedOrder] = useState(null);
 
-  // Pre-fill from the user's saved profile
   useEffect(() => {
     if (!user) return;
     setName(user.name || "");
@@ -152,7 +151,6 @@ export default function CheckoutPage() {
     );
   }
 
-  // ── Order placed ──────────────────────────────────────
   if (placedOrder) {
     return (
       <>
@@ -216,7 +214,6 @@ export default function CheckoutPage() {
     );
   }
 
-  // ── Not logged in ─────────────────────────────────────
   if (!isLoggedIn) {
     return (
       <>
@@ -251,7 +248,6 @@ export default function CheckoutPage() {
     );
   }
 
-  // ── Empty cart ────────────────────────────────────────
   if (items.length === 0) {
     return (
       <>
@@ -281,7 +277,6 @@ export default function CheckoutPage() {
     );
   }
 
-  // ── Checkout form ─────────────────────────────────────
   return (
     <>
       <Navbar />
@@ -428,7 +423,6 @@ export default function CheckoutPage() {
               </section>
             </div>
 
-            {/* Order summary */}
             <motion.aside
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

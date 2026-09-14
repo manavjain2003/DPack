@@ -12,18 +12,12 @@ export async function POST(request) {
 
     await connectDB();
 
-    // Generate 6-digit OTP
-    // In production, integrate Twilio / MSG91 / Fast2SMS here
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // Delete any existing OTP for this mobile
     await Otp.deleteMany({ mobile: cleaned });
 
-    // Save new OTP (TTL index will auto-expire in 5 min)
     await Otp.create({ mobile: cleaned, otp });
 
-    // TODO: Send SMS via your provider
-    // await sendSMS(cleaned, `Your DPack OTP is ${otp}. Valid for 5 minutes.`);
 
     console.log(`[DEV] OTP for ${cleaned}: ${otp}`); // Remove in production
 

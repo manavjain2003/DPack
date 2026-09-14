@@ -157,7 +157,6 @@ export default function AccountPage() {
           </div>
 
           <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-            {/* Personal Info */}
             <section className="p-6 sm:p-8">
               <div className="mb-6">
                 <h2 className="text-lg font-semibold text-gray-900">Personal Information</h2>
@@ -189,7 +188,6 @@ export default function AccountPage() {
 
             <div className="border-t border-gray-200" />
 
-            {/* Address */}
             <section className="p-6 sm:p-8">
               <div className="mb-6">
                 <h2 className="text-lg font-semibold text-gray-900">Address Information</h2>
@@ -203,7 +201,6 @@ export default function AccountPage() {
 
             <div className="border-t border-gray-200" />
 
-            {/* Billing */}
             <section className="p-6 sm:p-8">
               <div className="mb-6">
                 <h2 className="text-lg font-semibold text-gray-900">Billing Information</h2>

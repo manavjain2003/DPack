@@ -68,7 +68,6 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
@@ -101,7 +100,6 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* Stats grid */}
       {loading ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[...Array(6)].map((_, i) => (
@@ -119,7 +117,6 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* Categories */}
       {stats?.categories?.length > 0 && (
         <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
           <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-400">Product Categories</h2>
@@ -133,7 +130,6 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* Quick links */}
       <div className="grid gap-4 sm:grid-cols-3">
         {[
           { href: "/admin/products", label: "Manage Products", desc: "Add, edit or remove products", icon: Package, color: "rust" },

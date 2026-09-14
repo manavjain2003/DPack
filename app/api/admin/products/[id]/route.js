@@ -3,7 +3,6 @@ import Product from "@/lib/models/Product";
 import { requireAdmin, ok, err, parseFormData } from "@/lib/apiHelpers";
 import { uploadToCloudinary, deleteFromCloudinary } from "@/lib/cloudinary";
 
-// GET single product
 export async function GET(request, { params }) {
   const { error } = await requireAdmin(request);
   if (error) return error;
@@ -13,7 +12,6 @@ export async function GET(request, { params }) {
   return ok({ product });
 }
 
-// PUT update product
 export async function PUT(request, { params }) {
   const { error } = await requireAdmin(request);
   if (error) return error;
@@ -26,12 +24,9 @@ export async function PUT(request, { params }) {
     const contentType = request.headers.get("content-type") || "";
 
     if (contentType.includes("multipart/form-data")) {
-      // Full update with possible image replacement
       const { fields, files } = await parseFormData(request);
 
-      // Update image if new one provided
       if (files.image) {
-        // Delete old image from Cloudinary
         if (product.imagePublicId) {
           await deleteFromCloudinary(product.imagePublicId);
         }
@@ -43,7 +38,6 @@ export async function PUT(request, { params }) {
         product.imagePublicId = public_id;
       }
 
-      // Handle extra images
       for (let i = 0; i < 10; i++) {
         const key = `extraImage_${i}`;
         if (files[key]) {
@@ -83,7 +77,6 @@ export async function PUT(request, { params }) {
       if (fields.metaDescription !== undefined)
         product.metaDescription = fields.metaDescription;
     } else {
-      // JSON update (no image)
       const body = await request.json();
       Object.assign(product, body);
     }
@@ -96,7 +89,6 @@ export async function PUT(request, { params }) {
   }
 }
 
-// DELETE product
 export async function DELETE(request, { params }) {
   const { error } = await requireAdmin(request);
   if (error) return error;
@@ -106,7 +98,6 @@ export async function DELETE(request, { params }) {
     const product = await Product.findById(params.id);
     if (!product) return err("Product not found", 404);
 
-    // Delete images from Cloudinary
     if (product.imagePublicId) {
       await deleteFromCloudinary(product.imagePublicId);
     }
