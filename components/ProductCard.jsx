@@ -7,16 +7,8 @@ import { ShoppingCart, Check, Zap, Play, Heart } from "lucide-react";
 import { addToCart } from "@/lib/cartBus";
 import { useAuth } from "@/app/context/AuthContext";
 
-const PRODUCT_VIDEOS = [
-  "https://www.pexels.com/download/video/3927676/",
-  "https://www.pexels.com/download/video/3838401/",
-  "https://www.pexels.com/download/video/3838402/",
-  "https://www.pexels.com/download/video/4269132/",
-];
-
 function ProductCard({ product, index = 0 }) {
   const [hovered, setHovered] = useState(false);
-  const [videoLoaded, setVideoLoaded] = useState(false);
   const [added, setAdded] = useState(false);
   const [ripples, setRipples] = useState([]);
   const [wishAnim, setWishAnim] = useState(false);
@@ -30,23 +22,26 @@ function ProductCard({ product, index = 0 }) {
 
   const href = product.slug ? `/products/${product.slug}` : null;
 
-  const videoSrc =
-    product.videoSrc ?? PRODUCT_VIDEOS[index % PRODUCT_VIDEOS.length];
+  // Only use the video uploaded by the admin; no fallback to demo URLs
+  const videoSrc = product.video || null;
+  const hasVideo = Boolean(videoSrc);
 
   const handleMouseEnter = useCallback(() => {
     setHovered(true);
-    setTimeout(() => {
-      videoRef.current?.play().catch(() => {});
-    }, 50);
-  }, []);
+    if (hasVideo) {
+      setTimeout(() => {
+        videoRef.current?.play().catch(() => {});
+      }, 50);
+    }
+  }, [hasVideo]);
 
   const handleMouseLeave = useCallback(() => {
     setHovered(false);
-    if (videoRef.current) {
+    if (hasVideo && videoRef.current) {
       videoRef.current.pause();
       videoRef.current.currentTime = 0;
     }
-  }, []);
+  }, [hasVideo]);
 
   const formatPrice = (price) => {
     if (price == null) return null;
@@ -138,17 +133,19 @@ function ProductCard({ product, index = 0 }) {
           }`}
         />
 
-        <video
-          ref={videoRef}
-          src={videoSrc}
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-400 ${
-            hovered ? "opacity-100" : "opacity-0"
-          }`}
-        />
+        {hasVideo && (
+          <video
+            ref={videoRef}
+            src={videoSrc}
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-400 ${
+              hovered ? "opacity-100" : "opacity-0"
+            }`}
+          />
+        )}
 
         <div
           className={`absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent transition-opacity duration-300 ${
@@ -189,7 +186,7 @@ function ProductCard({ product, index = 0 }) {
         </button>
 
         <AnimatePresence>
-          {hovered && (
+          {hovered && hasVideo && (
             <motion.div
               key="play-hint"
               initial={{ opacity: 0, x: 8 }}

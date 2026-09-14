@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Upload, X, Plus, Trash2, Loader2 } from "lucide-react";
+import { Upload, X, Plus, Trash2, Loader2, Video } from "lucide-react";
 import { categoriesAPI } from "@/lib/apiClient";
 
 const FALLBACK_CATEGORIES = [
@@ -36,6 +36,52 @@ function ImageUploadZone({ label, preview, onFile, onClear }) {
         </button>
       )}
       <input ref={ref} type="file" accept="image/*" className="hidden" onChange={(e) => onFile(e.target.files[0])} />
+    </div>
+  );
+}
+
+function VideoUploadZone({ preview, onFile, onClear }) {
+  const ref = useRef();
+  return (
+    <div className="space-y-2">
+      <label className="block text-sm font-medium text-gray-700">
+        Product Video <span className="text-gray-400 font-normal">(optional — shown on card hover &amp; product page)</span>
+      </label>
+      {preview ? (
+        <div className="relative inline-block">
+          <video
+            src={preview}
+            className="h-32 w-48 rounded-xl border border-gray-200 object-cover bg-black"
+            muted
+            loop
+            playsInline
+            controls
+          />
+          <button
+            type="button"
+            onClick={onClear}
+            className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow"
+          >
+            <X className="h-3 w-3" />
+          </button>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => ref.current?.click()}
+          className="flex h-32 w-48 flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 text-gray-400 transition hover:border-rust/50 hover:bg-rust/5 hover:text-rust"
+        >
+          <Video className="h-5 w-5" />
+          <span className="text-xs text-center leading-tight">Upload video<br />(MP4, WebM, MOV)</span>
+        </button>
+      )}
+      <input
+        ref={ref}
+        type="file"
+        accept="video/mp4,video/webm,video/quicktime,video/*"
+        className="hidden"
+        onChange={(e) => onFile(e.target.files[0])}
+      />
     </div>
   );
 }
@@ -76,6 +122,9 @@ export default function ProductForm({ initial = {}, onSubmit, loading, submitLab
   const [mainPreview, setMainPreview] = useState(initial.image || "");
   const [extraImages, setExtraImages] = useState([]);
   const [extraPreviews, setExtraPreviews] = useState(initial.extraImages || []);
+  const [videoFile, setVideoFile] = useState(null);
+  const [videoPreview, setVideoPreview] = useState(initial.video || "");
+  const [removeVideo, setRemoveVideo] = useState(false);
 
   const set = (key, val) => setForm((p) => ({ ...p, [key]: val }));
 
@@ -107,6 +156,9 @@ export default function ProductForm({ initial = {}, onSubmit, loading, submitLab
     else if (mainPreview) fd.append("keepImage", "true");
 
     extraImages.forEach((f, i) => fd.append(`extraImage_${i}`, f));
+
+    if (videoFile) fd.append("video", videoFile);
+    if (removeVideo) fd.append("removeVideo", "true");
 
     const fields = {
       ...form,
@@ -273,6 +325,27 @@ export default function ProductForm({ initial = {}, onSubmit, loading, submitLab
             onClear={() => {}}
           />
         </div>
+      </section>
+
+      <section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+        <h3 className="mb-5 text-sm font-semibold uppercase tracking-wider text-gray-400">Product Video</h3>
+        <VideoUploadZone
+          preview={videoPreview}
+          onFile={(file) => {
+            if (!file) return;
+            setVideoFile(file);
+            setVideoPreview(URL.createObjectURL(file));
+            setRemoveVideo(false);
+          }}
+          onClear={() => {
+            setVideoFile(null);
+            setVideoPreview("");
+            if (initial.video) setRemoveVideo(true);
+          }}
+        />
+        <p className="mt-3 text-xs text-gray-400">
+          This video plays on product card hover and appears in the media gallery on the product detail page. Max recommended size: 50 MB.
+        </p>
       </section>
 
       <section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">

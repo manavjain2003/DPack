@@ -22,6 +22,7 @@ import {
   ShieldCheck,
   Truck,
   RotateCcw,
+  Play,
 } from "lucide-react";
 import { addToCart } from "@/lib/cartBus";
 import { useAuth } from "@/app/context/AuthContext";
@@ -67,37 +68,72 @@ const SOCIALS = [
   { href: "https://www.linkedin.com/company/dpacksolutions/", Icon: Linkedin, label: "LinkedIn" },
 ];
 
+// A media item is either an image or the product video.
+// type: "image" | "video"
 function Gallery({ product }) {
   const images = [product.image, ...(product.extraImages ?? [])].filter(Boolean);
-  const [active, setActive] = useState(0);
 
-  const prev = () => setActive((i) => (i - 1 + images.length) % images.length);
-  const next = () => setActive((i) => (i + 1) % images.length);
+  // Build unified media list: images first, then video (if present)
+  const media = [
+    ...images.map((src) => ({ type: "image", src })),
+    ...(product.video ? [{ type: "video", src: product.video }] : []),
+  ];
+
+  const [active, setActive] = useState(0);
+  const activeItem = media[active] ?? media[0];
+
+  const prev = () => setActive((i) => (i - 1 + media.length) % media.length);
+  const next = () => setActive((i) => (i + 1) % media.length);
 
   return (
     <div className="flex flex-col gap-4">
       <div className="relative aspect-square overflow-hidden rounded-2xl border border-ink/8 bg-[#F5F3EF]">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,rgba(255,255,255,0.8)_0%,transparent_100%)] pointer-events-none z-10" />
+        {/* Subtle radial gradient overlay for images only */}
+        {activeItem?.type === "image" && (
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,rgba(255,255,255,0.8)_0%,transparent_100%)] pointer-events-none z-10" />
+        )}
 
         <AnimatePresence mode="wait" initial={false}>
-          <motion.img
-            key={images[active]}
-            src={images[active]}
-            alt={product.name}
-            initial={{ opacity: 0, scale: 1.03 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.98 }}
-            transition={{ duration: 0.28 }}
-            className="absolute inset-0 h-full w-full object-fill"
-          />
+          {activeItem?.type === "image" ? (
+            <motion.img
+              key={activeItem.src}
+              src={activeItem.src}
+              alt={product.name}
+              initial={{ opacity: 0, scale: 1.03 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.28 }}
+              className="absolute inset-0 h-full w-full object-fill"
+            />
+          ) : (
+            <motion.div
+              key="product-video"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.28 }}
+              className="absolute inset-0 flex items-center justify-center bg-black"
+            >
+              <video
+                src={activeItem.src}
+                controls
+                autoPlay
+                loop
+                playsInline
+                className="h-full w-full object-contain"
+              />
+            </motion.div>
+          )}
         </AnimatePresence>
 
-        <span className="absolute bottom-4 left-4 z-20 flex items-center gap-1.5 rounded-full border border-ink/10 bg-white/80 px-3 py-1 text-[11px] font-semibold text-ink/60 backdrop-blur-sm">
-          <Maximize2 className="h-3 w-3" />
-          360° View
-        </span>
+        {activeItem?.type === "image" && (
+          <span className="absolute bottom-4 left-4 z-20 flex items-center gap-1.5 rounded-full border border-ink/10 bg-white/80 px-3 py-1 text-[11px] font-semibold text-ink/60 backdrop-blur-sm">
+            <Maximize2 className="h-3 w-3" />
+            360° View
+          </span>
+        )}
 
-        {images.length > 1 && (
+        {media.length > 1 && (
           <>
             <button
               type="button"
@@ -117,10 +153,11 @@ function Gallery({ product }) {
         )}
       </div>
 
+      {/* Thumbnail strip */}
       <div className="flex gap-2.5 overflow-x-auto pb-0.5">
-        {images.map((src, i) => (
+        {media.map((item, i) => (
           <button
-            key={src}
+            key={item.src}
             type="button"
             onClick={() => setActive(i)}
             className={`relative h-[72px] w-[72px] shrink-0 overflow-hidden rounded-xl border-2 transition-all bg-[#F5F3EF] ${
@@ -129,11 +166,30 @@ function Gallery({ product }) {
                 : "border-ink/10 hover:border-ink/25"
             }`}
           >
-            <img
-              src={src}
-              alt={`${product.name} ${i + 1}`}
-              className="h-full w-full object-contain p-2"
-            />
+            {item.type === "image" ? (
+              <img
+                src={item.src}
+                alt={`${product.name} ${i + 1}`}
+                className="h-full w-full object-contain p-2"
+              />
+            ) : (
+              /* Video thumbnail: show first frame via <video> poster trick */
+              <div className="relative h-full w-full">
+                <video
+                  src={item.src}
+                  muted
+                  playsInline
+                  preload="metadata"
+                  className="h-full w-full object-cover"
+                />
+                {/* Play badge overlay */}
+                <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/90 shadow">
+                    <Play className="h-3 w-3 fill-rust text-rust" />
+                  </div>
+                </div>
+              </div>
+            )}
           </button>
         ))}
       </div>
