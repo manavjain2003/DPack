@@ -13,7 +13,7 @@ module.exports = {
           soft: "#16324A",
         },
         cream: {
-          DEFAULT: "#FAF6EF",
+          DEFAULT: "#fff",
           dark: "#F0E8D8",
         },
         rust: {

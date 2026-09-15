@@ -92,7 +92,7 @@ export default async function ProductDetailPage({ params }) {
       {related.length > 0 && (
         <section className="pb-20 sm:pb-24">
           <div className="mx-auto max-w-8xl px-5 sm:px-8">
-            <h2 className="font-display text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+            <h2 className="font-display text-2xl font-bold tracking-tight text-ink sm:text-3xl mt-2.5">
               You might also like
             </h2>
             <p className="mt-1.5 text-[14px] text-ink/50">More from {product.category ?? "our catalogue"}</p>
