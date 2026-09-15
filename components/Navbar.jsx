@@ -26,6 +26,26 @@ const links = [
   { href: "/contact", label: "Contact" },
 ];
 
+
+let searchIndexCache = null;
+let searchIndexPromise = null;
+function getSearchIndex() {
+  if (searchIndexCache) return Promise.resolve(searchIndexCache);
+  if (!searchIndexPromise) {
+    searchIndexPromise = fetch("/api/products?limit=200")
+      .then((r) => r.json())
+      .then((data) => {
+        searchIndexCache = data.products || [];
+        return searchIndexCache;
+      })
+      .catch(() => {
+        searchIndexPromise = null; 
+        return [];
+      });
+  }
+  return searchIndexPromise;
+}
+
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -55,10 +75,13 @@ const pathname = usePathname();
     user?.name?.trim()?.charAt(0)?.toUpperCase() || "U";
 
     useEffect(() => {
-  fetch("/api/products?limit=200")
-    .then((r) => r.json())
-    .then((data) => setAllProducts(data.products || []))
-    .catch(() => {});
+  let cancelled = false;
+  getSearchIndex().then((products) => {
+    if (!cancelled) setAllProducts(products);
+  });
+  return () => {
+    cancelled = true;
+  };
 }, []);
 
   useEffect(() => {
@@ -75,7 +98,7 @@ const pathname = usePathname();
 const searchResults = searchQuery.trim()
   ? allProducts
       .filter((product) => {
-        if (!product) return false; // guard against undefined entries
+        if (!product) return false; 
         const query = searchQuery.toLowerCase();
         return (
         product.name?.toLowerCase()?.includes(query) ||

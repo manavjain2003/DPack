@@ -207,55 +207,41 @@ function TabDescription({ product }) {
     `High-quality ${product.name} designed to secure cargo and prevent movement during transportation, ensuring safe and damage-free delivery.`,
     "Provides excellent strength and cushioning performance ideal for filling voids between cargo.",
     "Suitable for use in containers, trucks, and rail wagons — covering a wide range of logistics and industrial applications.",
-    "A cost-effective packaging solution widely used across various industries.",
-  ];
-
-  const features = [
-    "Strong Construction: Made with durable materials that provide high strength and reliable load support during transit.",
-    "Effective Load Stabilization: Helps in securely filling gaps between cargo, preventing movement, shifting, and damage.",
-    "Easy to Use & Install: Simple placement process reduces manual effort and improves packaging efficiency.",
-    "Eco-Friendly Packaging Solution: Designed with sustainability in mind.",
-    ...(product.specs ?? []).map((s) => `${s}: built to specification.`),
+    "Manufactured under strict quality control to ensure consistent performance and durability.",
   ];
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h3 className="mb-4 text-[17px] font-bold text-ink">Product Overview</h3>
-        <ul className="space-y-2.5 list-none pl-0">
-          {overview.map((item) => (
-            <li key={item} className="flex items-start gap-3 text-[14px] text-ink/65 leading-relaxed">
-              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-rust" />
-              {item}
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div>
-        <h3 className="mb-4 text-[17px] font-bold text-ink">Key Features</h3>
-        <ul className="space-y-2.5 list-none pl-0">
-          {features.map((item) => (
-            <li key={item} className="flex items-start gap-3 text-[14px] text-ink/65 leading-relaxed">
-              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-rust" />
-              {item}
-            </li>
-          ))}
-        </ul>
-      </div>
+    <div className="space-y-4">
+      {overview.map((line, i) => (
+        <p key={i} className="flex items-start gap-2.5 text-[14px] leading-relaxed text-ink/65">
+          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-rust" />
+          {line}
+        </p>
+      ))}
     </div>
   );
 }
 
 function TabAdditional({ product }) {
-  const rows = buildSpecRows(product);
+  const rows = [
+    { label: "Category", value: product.category },
+    { label: "Sizes Available", value: product.sizes?.join(", ") || "Standard" },
+    { label: "Material", value: "Industrial grade packaging material" },
+    { label: "Shelf Life", value: "24 months from manufacture" },
+  ];
   return (
     <div className="overflow-hidden rounded-xl border border-ink/8">
-      <table className="w-full text-[14px]">
+      <table className="w-full text-[13.5px]">
         <tbody>
           {rows.map(({ label, value }, i) => (
-            <tr key={label} className={i % 2 === 0 ? "bg-[#F9F7F4]" : "bg-white"}>
-              <td className="w-44 px-5 py-3.5 font-semibold text-ink/55 sm:w-56">{label}</td>
-              <td className="px-5 py-3.5 text-ink/80">{value}</td>
+            <tr
+              key={label}
+              className={`border-b border-ink/6 last:border-0 ${
+                i % 2 === 0 ? "bg-[#FAFAF9]" : "bg-white"
+              }`}
+            >
+              <td className="w-40 px-4 py-3 font-semibold text-ink/50">{label}</td>
+              <td className="px-4 py-3 font-medium text-ink/80">{value}</td>
             </tr>
           ))}
         </tbody>
@@ -267,15 +253,15 @@ function TabAdditional({ product }) {
 function ProductTabs({ product }) {
   const [active, setActive] = useState("description");
   return (
-    <div className="mt-14 border-t border-ink/8 pt-10">
-      <div className="flex gap-1 border-b border-ink/10">
+    <div className="mt-12">
+      <div className="flex gap-8 border-b border-ink/10">
         {TABS.map((tab) => (
           <button
             key={tab.id}
             type="button"
             onClick={() => setActive(tab.id)}
-            className={`relative px-5 py-3 text-[13.5px] font-semibold tracking-wide transition-colors ${
-              active === tab.id ? "text-ink" : "text-ink/40 hover:text-ink/70"
+            className={`relative pb-3.5 text-[14px] font-bold transition-colors ${
+              active === tab.id ? "text-ink" : "text-ink/40 hover:text-ink/60"
             }`}
           >
             {tab.label}
@@ -301,6 +287,8 @@ export default function ProductDetail({ product }) {
   const { isWishlisted, toggleWishlist } = useAuth();
   const wishlisted = product?.id ? isWishlisted(product.id) : false;
 
+  const outOfStock = product.trackInventory !== false && (product.stock ?? 0) <= 0;
+
   const specRows = buildSpecRows(product);
 
   const discountPercent =
@@ -311,10 +299,11 @@ export default function ProductDetail({ product }) {
       : null;
 
   const handleAddToCart = useCallback(() => {
+    if (outOfStock) return;
     addToCart(product, qty);
     setAdded(true);
     setTimeout(() => setAdded(false), 2200);
-  }, [product, qty]);
+  }, [product, qty, outOfStock]);
 
   const handleWishlist = useCallback(() => {
     const result = toggleWishlist(product);
@@ -350,12 +339,19 @@ export default function ProductDetail({ product }) {
                   }`}
                 />
               ))}
-              <span className="ml-1 text-[12px] text-ink/45">(93 Reviews)</span>
+            <span className="ml-1 text-[12px] text-ink/45">(93 Reviews)</span>
             </div>
-            <span className="flex items-center gap-1.5 rounded-full bg-green-50 px-2.5 py-1 text-[12px] font-semibold text-green-700">
-              <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
-              In Stock
-            </span>
+            {outOfStock ? (
+              <span className="flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1 text-[12px] font-semibold text-red-700">
+                <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
+                Out of Stock
+              </span>
+            ) : (
+              <span className="flex items-center gap-1.5 rounded-full bg-green-50 px-2.5 py-1 text-[12px] font-semibold text-green-700">
+                <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                In Stock
+              </span>
+            )}
           </div>
 
           {product.price != null && (
@@ -380,6 +376,12 @@ export default function ProductDetail({ product }) {
             {product.description}
           </p>
 
+          {outOfStock && (
+            <p className="mt-3 flex items-center gap-1.5 text-[13px] font-semibold text-red-600">
+              This product is currently out of stock.
+            </p>
+          )}
+
           <div className="mt-6 h-px bg-ink/8" />
 
           <div className="mt-6 flex flex-wrap items-center gap-3">
@@ -388,7 +390,7 @@ export default function ProductDetail({ product }) {
                 type="button"
                 onClick={() => setQty((q) => Math.max(1, q - 1))}
                 aria-label="Decrease quantity"
-                disabled={qty <= 1}
+                disabled={qty <= 1 || outOfStock}
                 className="flex h-11 w-11 items-center justify-center text-ink/60 transition hover:text-ink disabled:opacity-30"
               >
                 <Minus className="h-4 w-4" />
@@ -400,7 +402,8 @@ export default function ProductDetail({ product }) {
                 type="button"
                 onClick={() => setQty((q) => q + 1)}
                 aria-label="Increase quantity"
-                className="flex h-11 w-11 items-center justify-center text-ink/60 transition hover:text-ink"
+                disabled={outOfStock}
+                className="flex h-11 w-11 items-center justify-center text-ink/60 transition hover:text-ink disabled:opacity-30"
               >
                 <Plus className="h-4 w-4" />
               </button>
@@ -409,14 +412,29 @@ export default function ProductDetail({ product }) {
             <button
               type="button"
               onClick={handleAddToCart}
+              disabled={outOfStock}
+              aria-disabled={outOfStock}
               className={`relative inline-flex flex-1 min-w-[160px] items-center justify-center gap-2 rounded-full px-6 py-3.5 text-[14px] font-bold text-white transition-colors duration-300 active:scale-[0.98] ${
-                added
+                outOfStock
+                  ? "cursor-not-allowed bg-ink/25 hover:bg-ink/25 active:scale-100"
+                  : added
                   ? "bg-green-600 hover:bg-green-700"
                   : "bg-rust hover:bg-rust/90 hover:shadow-[0_4px_18px_-2px_rgba(224,92,42,0.45)]"
               }`}
             >
               <AnimatePresence mode="wait" initial={false}>
-                {added ? (
+                {outOfStock ? (
+                  <motion.span
+                    key="out-of-stock"
+                    initial={{ scale: 0.7, opacity: 0, y: 4 }}
+                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                    exit={{ scale: 0.7, opacity: 0, y: -4 }}
+                    transition={{ duration: 0.18 }}
+                    className="flex items-center gap-2"
+                  >
+                    Out of stock
+                  </motion.span>
+                ) : added ? (
                   <motion.span
                     key="added"
                     initial={{ scale: 0.7, opacity: 0, y: 4 }}

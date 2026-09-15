@@ -9,7 +9,8 @@ import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
 import { getProductBySlug, getRelatedProducts, getAllSlugs } from "@/lib/products";
 
-export const dynamic = "force-dynamic";
+
+export const revalidate = 60;
 
 export async function generateStaticParams() {
   try {

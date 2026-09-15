@@ -15,6 +15,8 @@ import Product360 from "@/components/Product360";
 import ProductsClient from "@/components/ProductsClient";
 import { getProducts, getFeaturedProducts } from "@/lib/products";
 
+export const revalidate = 60;
+
 export default async function Home() {
   let featured = [];
   let allProducts = [];
@@ -25,7 +27,6 @@ export default async function Home() {
       getProducts(),
     ]);
   } catch (e) {
-    // DB not connected yet — graceful degradation
     console.warn("Could not fetch products from DB:", e.message);
   }
 

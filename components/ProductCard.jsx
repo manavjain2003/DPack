@@ -23,6 +23,7 @@ function ProductCard({ product, index = 0 }) {
   if (!product) return null;
 
   const href = product.slug ? `/products/${product.slug}` : null;
+  const outOfStock = product.trackInventory !== false && (product.stock ?? 0) <= 0;
 
   // Only use the video uploaded by the admin; no fallback to demo URLs
   const videoSrc = product.video || null;
@@ -64,7 +65,7 @@ function ProductCard({ product, index = 0 }) {
 
   const handleAddToCart = useCallback(
     (e) => {
-      if (added) return;
+      if (added || outOfStock) return;
 
       const rect = btnRef.current?.getBoundingClientRect();
       if (rect) {
@@ -81,7 +82,7 @@ function ProductCard({ product, index = 0 }) {
       setTimeout(() => setAdded(false), 2200);
       addToCart(product);
     },
-    [added, product]
+    [added, outOfStock, product]
   );
 
   const handleWishlist = useCallback(
@@ -129,8 +130,12 @@ function ProductCard({ product, index = 0 }) {
           loading={index < 3 ? "eager" : "lazy"}
           decoding="async"
           className={`absolute inset-0 m-auto h-full w-full transition-all duration-500 ${
+            outOfStock ? "opacity-60 grayscale-[35%]" : ""
+          } ${
             hovered && hasVideo
               ? "opacity-0 scale-105"
+              : outOfStock
+              ? ""
               : "opacity-100 scale-100 group-hover:scale-[1.06]"
           }`}
         />
@@ -159,11 +164,17 @@ function ProductCard({ product, index = 0 }) {
           {product?.category}
         </span>
 
-        {discountPercent && (
-          <span className="absolute right-3 top-3 z-10 flex items-center gap-1 rounded-full bg-rust px-2.5 py-1 text-[9px] font-bold text-white">
-            <Zap className="h-2.5 w-2.5" />
-            {discountPercent}% off
+        {outOfStock ? (
+          <span className="absolute right-3 top-3 z-10 rounded-full bg-ink/80 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-white">
+            Out of stock
           </span>
+        ) : (
+          discountPercent && (
+            <span className="absolute right-3 top-3 z-10 flex items-center gap-1 rounded-full bg-rust px-2.5 py-1 text-[9px] font-bold text-white">
+              <Zap className="h-2.5 w-2.5" />
+              {discountPercent}% off
+            </span>
+          )
         )}
 
         <button
@@ -270,35 +281,51 @@ function ProductCard({ product, index = 0 }) {
               ref={btnRef}
               type="button"
               onClick={handleAddToCart}
+              disabled={outOfStock}
+              aria-disabled={outOfStock}
               className={`group/btn relative inline-flex shrink-0 items-center gap-2 overflow-hidden rounded-full px-4 py-2.5 text-[12px] font-bold text-white transition-colors duration-300 active:scale-[0.96] ${
-                added
+                outOfStock
+                  ? "cursor-not-allowed bg-ink/25 hover:bg-ink/25 active:scale-100"
+                  : added
                   ? "bg-green-600 hover:bg-green-700"
                   : "bg-rust hover:bg-rust/90 hover:shadow-[0_4px_18px_-2px_rgba(224,92,42,0.45)]"
               }`}
             >
               <AnimatePresence>
-                {ripples.map((r) => (
-                  <motion.span
-                    key={r.id}
-                    initial={{ scale: 0, opacity: 0.6 }}
-                    animate={{ scale: 3.2, opacity: 0 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.55, ease: "easeOut" }}
-                    className="pointer-events-none absolute rounded-full bg-white/35"
-                    style={{
-                      left: r.x,
-                      top: r.y,
-                      width: 100,
-                      height: 100,
-                      marginLeft: -50,
-                      marginTop: -50,
-                    }}
-                  />
-                ))}
+                {!outOfStock &&
+                  ripples.map((r) => (
+                    <motion.span
+                      key={r.id}
+                      initial={{ scale: 0, opacity: 0.6 }}
+                      animate={{ scale: 3.2, opacity: 0 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.55, ease: "easeOut" }}
+                      className="pointer-events-none absolute rounded-full bg-white/35"
+                      style={{
+                        left: r.x,
+                        top: r.y,
+                        width: 100,
+                        height: 100,
+                        marginLeft: -50,
+                        marginTop: -50,
+                      }}
+                    />
+                  ))}
               </AnimatePresence>
 
               <AnimatePresence mode="wait" initial={false}>
-                {added ? (
+                {outOfStock ? (
+                  <motion.span
+                    key="out-of-stock"
+                    initial={{ scale: 0.7, opacity: 0, y: 4 }}
+                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                    exit={{ scale: 0.7, opacity: 0, y: -4 }}
+                    transition={{ duration: 0.18 }}
+                    className="flex items-center gap-1.5"
+                  >
+                    Out of stock
+                  </motion.span>
+                ) : added ? (
                   <motion.span
                     key="added"
                     initial={{ scale: 0.7, opacity: 0, y: 4 }}

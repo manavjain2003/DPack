@@ -13,22 +13,22 @@ import { useEffect, useRef, useState } from "react";
 
 const SLIDES = [
   {
-    src: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
-    alt: "Dpack air cushion machine producing inflatable cushions",
-    title: "Air Cushion Machine",
-    subtitle: "The smart replacement for bubble wrap rolls",
+    src: "https://pub-6773b48348124a078cb55322f384ad44.r2.dev/dpack/categories/23f7d221-5342-425a-9a87-494f785201fd",
+    alt: "Dunnage Bags",
+    title: "Dunnage Bags",
+    subtitle: "Versatile inflatable air bags suitable for securing and protecting various types of cargo.",
   },
   {
-    src: "https://images.unsplash.com/photo-1609709295948-17d77cb2a69b?w=800&q=80",
-    alt: "Dpack column air bags protecting fragile products",
+    src: "https://www.dpackshop.com/cdn/shop/files/Cambelt_25mm_5Mtr_5.png?v=1742965832&width=990",
+    alt: "Column Air Bags",
     title: "Column Air Bags",
     subtitle: "Inflatable columns that cradle every corner",
   },
   {
-    src: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=80",
-    alt: "Dpack paper void-fill system",
-    title: "Paper Void Fill",
-    subtitle: "Sustainable fill for retail & e-commerce",
+    src: "https://pub-6773b48348124a078cb55322f384ad44.r2.dev/dpack/categories/1d9a1ea2-907b-44b1-aed9-853006a04587",
+    alt: "Packaging Air Bags",
+    title: "Packaging Air Bags",
+    subtitle: "Protective air bags designed to safeguard trolley bags etc. from scratches and impact.",
   },
 ];
 

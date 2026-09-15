@@ -8,10 +8,10 @@ import { getProducts } from "@/lib/products";
 export const metadata = {
   title: "Products — Dpack | Protective Packaging & Cargo Securing",
   description:
-    "Air column bags, gap fillers, air bags, e-commerce pouches, ratchet belts, lashing systems, bubble wrap, straps and packaging tapes — all under one roof.",
+    "Air column bags, gap fillers, air bags, e-commerce pouches, ratchet belts, lashing systems, bubble wrap and packaging tapes — all under one roof.",
 };
 
-export const dynamic = "force-dynamic"; 
+export const revalidate = 60;
 
 export default async function ProductsPage() {
   let products = [];
