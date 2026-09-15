@@ -67,6 +67,9 @@ export async function PUT(request, { params }) {
 
       const specs = [].concat(fields.specs || []).filter(Boolean);
       const sizes = [].concat(fields.sizes || []).filter(Boolean);
+      const overview = [].concat(fields.overview || []).filter(Boolean);
+      const keyFeatures = [].concat(fields.keyFeatures || []).filter(Boolean);
+      const applications = [].concat(fields.applications || []).filter(Boolean);
 
       if (fields.name) product.name = fields.name;
       if (fields.slug) product.slug = fields.slug;
@@ -74,6 +77,9 @@ export async function PUT(request, { params }) {
       if (fields.description) product.description = fields.description;
       if (specs.length) product.specs = specs;
       if (sizes.length) product.sizes = sizes;
+      if (overview.length) product.overview = overview;
+      if (keyFeatures.length) product.keyFeatures = keyFeatures;
+      if (applications.length) product.applications = applications;
       if (fields.price) product.price = parseFloat(fields.price);
       if (fields.compareAtPrice !== undefined)
         product.compareAtPrice = fields.compareAtPrice
