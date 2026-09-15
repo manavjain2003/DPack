@@ -14,6 +14,7 @@ import SmoothScroll from "@/components/SmoothScroll";
 import Product360 from "@/components/Product360";
 import ProductsClient from "@/components/ProductsClient";
 import { getProducts, getFeaturedProducts } from "@/lib/products";
+import OverviewProducts from "@/components/OverviewProducts";
 
 export const revalidate = 60;
 
@@ -39,7 +40,7 @@ export default async function Home() {
         <Categories />
         <FeaturedProducts products={featured} />
         <Product360 />
-        <ProductsClient products={allProducts} />
+        <OverviewProducts products={allProducts} />
         <WhyUs />
         <Reviews />
         <Stats />

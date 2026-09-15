@@ -359,9 +359,7 @@ function TabDescription({ product }) {
   const bullets = product.descriptionBullets ?? [];
   return (
     <div className="space-y-6">
-      {product.description && (
-        <p className="text-[15px] leading-relaxed text-ink/65">{product.description}</p>
-      )}
+    
       {bullets.length > 0 && (
         <div className="space-y-3">
           {bullets.map((line, i) => (

@@ -8,6 +8,7 @@ import ProductCard from "@/components/ProductCard";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
 import { getProductBySlug, getRelatedProducts, getAllSlugs } from "@/lib/products";
+import ProductCTA from "@/components/ProductDetailCTA";
 
 
 export const revalidate = 60;
@@ -105,7 +106,7 @@ export default async function ProductDetailPage({ params }) {
         </section>
       )}
 
-      <CTA />
+      <ProductCTA />
       <Footer />
     </main>
   );
