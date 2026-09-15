@@ -303,11 +303,11 @@ function Gallery({ product }) {
 }
 
 const HARDCODED_FEATURES = [
-  { icon: "Package", title: "Hassle-Free Support", subtitle: "Get assistance for product selection, setup, and queries." },
-  { icon: "Leaf",     title: "Expert Guidance",      subtitle: "Our team provides complete technical consultation." },
-  { icon: "Layers",   title: "Reliable Solutions",      subtitle: "High-quality machines designed for long-term performance." },
-  { icon: "Zap",      title: "High Strength",     subtitle: "Durable & reliable" },
-  { icon: "Building2",title: "Multi-Industry Use",subtitle: "E-commerce, industrial & more" },
+  { icon: "Package",   title: "Hassle-Free Support",  subtitle: "Get assistance for product selection, setup, and queries." },
+  { icon: "Leaf",      title: "Expert Guidance",       subtitle: "Our team provides complete technical consultation." },
+  { icon: "Layers",    title: "Reliable Solutions",    subtitle: "High-quality machines designed for long-term performance." },
+  { icon: "Zap",       title: "High Strength",         subtitle: "Durable & reliable for heavy-duty use." },
+  { icon: "Building2", title: "Multi-Industry Use",    subtitle: "E-commerce, industrial and more." },
 ];
 
 function FeatureStrip({ features }) {
@@ -315,20 +315,23 @@ function FeatureStrip({ features }) {
 
   return (
     <div className="mt-10 overflow-hidden rounded-2xl border border-ink/8 bg-[#F9F8F6]">
-      <div className="grid grid-cols-2 divide-x divide-y divide-ink/8 sm:grid-cols-3 sm:divide-y-0 lg:grid-cols-5">
-        {items.map(({ icon, title, subtitle }) => {
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 divide-x divide-ink/8">
+        {items.map(({ icon, title, subtitle }, idx) => {
           const Icon = FEATURE_ICON_MAP[icon] ?? Package;
           return (
             <div
               key={title}
-              className="flex flex-row items-start gap-2 px-5 py-4"
+              className={`flex flex-col items-center justify-start gap-3 px-6 py-7 text-center
+                ${idx >= 2 ? "sm:border-t-0" : ""}
+                ${idx >= 3 ? "border-t border-ink/8 sm:border-t lg:border-t-0" : ""}
+              `}
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-ink/10 bg-white shadow-sm">
-                <Icon className="h-5 w-5 text-ink/70" strokeWidth={1.5} />
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-ink/10 bg-white shadow-sm">
+                <Icon className="h-5 w-5 text-ink/50" strokeWidth={1.5} />
               </div>
               <div>
-                <p className="text-[13px] font-bold text-ink">{title}</p>
-                <p className="text-[12px] text-ink/45 leading-snug">{subtitle}</p>
+                <p className="text-[13.5px] font-bold text-ink">{title}</p>
+                <p className="mt-1 text-[12.5px] leading-snug text-ink/45">{subtitle}</p>
               </div>
             </div>
           );
