@@ -15,6 +15,7 @@ import Product360 from "@/components/Product360";
 import ProductsClient from "@/components/ProductsClient";
 import { getProducts, getFeaturedProducts } from "@/lib/products";
 import OverviewProducts from "@/components/OverviewProducts";
+import DualBanner from "@/components/BannerPanel";
 
 export const revalidate = 60;
 
@@ -41,6 +42,7 @@ export default async function Home() {
         <FeaturedProducts products={featured} />
         <Product360 />
         <OverviewProducts products={allProducts} />
+        <DualBanner/>
         <WhyUs />
         <Reviews />
         <Stats />

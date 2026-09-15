@@ -83,7 +83,6 @@ export default function Footer() {
 
         <div className="mt-14 flex flex-wrap items-center justify-between gap-4 border-t border-cream/10 pt-6 text-xs text-cream/40">
           <p>© {new Date().getFullYear()} Dpackshop. All rights reserved.</p>
-          <p>{fullRange.length}+ categories · Machines · Wraps · Void fill · Securing</p>
         </div>
       </div>
     </footer>
