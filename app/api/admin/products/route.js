@@ -75,12 +75,18 @@ export async function POST(request) {
 
     const specs = [].concat(fields.specs || []).filter(Boolean);
     const sizes = [].concat(fields.sizes || []).filter(Boolean);
+    const overview = [].concat(fields.overview || []).filter(Boolean);
+    const keyFeatures = [].concat(fields.keyFeatures || []).filter(Boolean);
+    const applications = [].concat(fields.applications || []).filter(Boolean);
 
     const product = await Product.create({
       name: fields.name,
       slug: fields.slug,
       category: fields.category,
       description: fields.description,
+      overview,
+      keyFeatures,
+      applications,
       specs,
       sizes,
       image: url,

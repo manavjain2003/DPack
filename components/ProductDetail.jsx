@@ -338,10 +338,27 @@ function FeatureStrip({ features }) {
   );
 }
 
+function BulletSection({ title, items }) {
+  if (!items?.length) return null;
+  return (
+    <div>
+      <h4 className="mb-2.5 text-[15px] font-bold text-ink">{title}</h4>
+      <ul className="space-y-2">
+        {items.map((line, i) => (
+          <li key={i} className="flex items-start gap-2.5 text-[14px] leading-relaxed text-ink/65">
+            <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-ink/40" />
+            {line}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 function TabDescription({ product }) {
   const bullets = product.descriptionBullets ?? [];
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {product.description && (
         <p className="text-[15px] leading-relaxed text-ink/65">{product.description}</p>
       )}
@@ -355,6 +372,10 @@ function TabDescription({ product }) {
           ))}
         </div>
       )}
+
+      <BulletSection title="Product Overview" items={product.overview} />
+      <BulletSection title="Key Features" items={product.keyFeatures} />
+      <BulletSection title="Applications" items={product.applications} />
     </div>
   );
 }

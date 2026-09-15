@@ -8,7 +8,35 @@ const FALLBACK_CATEGORIES = [
   "Machines", "Films & Rolls", "Void Fill", "Wrap",
   "Securing", "Boxes", "Tapes", "Pouches", "Bags", "Strapping",
 ];
-
+function BulletListEditor({ label, items, onChange, placeholder }) {
+  return (
+    <div>
+      <label className="mb-2 block text-sm font-medium text-gray-700">{label}</label>
+      <div className="space-y-2">
+        {items.map((val, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <input
+              value={val}
+              onChange={(e) => {
+                const next = [...items];
+                next[i] = e.target.value;
+                onChange(next);
+              }}
+              className="flex-1 rounded-xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-rust focus:ring-2 focus:ring-rust/20"
+              placeholder={placeholder || `${label} ${i + 1}`}
+            />
+            <button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="text-red-400 hover:text-red-600">
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+        ))}
+        <button type="button" onClick={() => onChange([...items, ""])} className="flex items-center gap-1.5 text-sm text-rust hover:underline">
+          <Plus className="h-3.5 w-3.5" /> Add {label.toLowerCase()}
+        </button>
+      </div>
+    </div>
+  );
+}
 function ImageUploadZone({ label, preview, onFile, onClear }) {
   const ref = useRef();
   return (
@@ -113,6 +141,9 @@ export default function ProductForm({ initial = {}, onSubmit, loading, submitLab
     featured: initial.featured || false,
     isActive: initial.isActive !== false,
     metaTitle: initial.metaTitle || "",
+    overview: initial.overview?.length ? initial.overview : [""],
+keyFeatures: initial.keyFeatures?.length ? initial.keyFeatures : [""],
+applications: initial.applications?.length ? initial.applications : [""],
     metaDescription: initial.metaDescription || "",
     specs: initial.specs?.length ? initial.specs : [""],
     sizes: initial.sizes?.length ? initial.sizes : [],
@@ -160,11 +191,14 @@ export default function ProductForm({ initial = {}, onSubmit, loading, submitLab
     if (videoFile) fd.append("video", videoFile);
     if (removeVideo) fd.append("removeVideo", "true");
 
-    const fields = {
-      ...form,
-      specs: form.specs.filter(Boolean),
-      sizes: form.sizes.filter(Boolean),
-      price: String(form.price),
+const fields = {
+  ...form,
+  specs: form.specs.filter(Boolean),
+  sizes: form.sizes.filter(Boolean),
+  overview: form.overview.filter(Boolean),
+  keyFeatures: form.keyFeatures.filter(Boolean),
+  applications: form.applications.filter(Boolean),
+  price: String(form.price),
       compareAtPrice: form.compareAtPrice ? String(form.compareAtPrice) : "",
       stock: String(form.stock),
       lowStockThreshold: String(form.lowStockThreshold),
@@ -292,7 +326,28 @@ export default function ProductForm({ initial = {}, onSubmit, loading, submitLab
           </div>
         </div>
       </section>
-
+<section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+  <h3 className="mb-5 text-sm font-semibold uppercase tracking-wider text-gray-400">
+    Product Details Tab Content
+  </h3>
+  <div className="grid gap-6 sm:grid-cols-3">
+    <BulletListEditor
+      label="Product Overview"
+      items={form.overview}
+      onChange={(v) => set("overview", v)}
+    />
+    <BulletListEditor
+      label="Key Features"
+      items={form.keyFeatures}
+      onChange={(v) => set("keyFeatures", v)}
+    />
+    <BulletListEditor
+      label="Applications"
+      items={form.applications}
+      onChange={(v) => set("applications", v)}
+    />
+  </div>
+</section>
       <section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
         <h3 className="mb-5 text-sm font-semibold uppercase tracking-wider text-gray-400">Product Images</h3>
         <div className="flex flex-wrap gap-4">
