@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -23,9 +23,19 @@ import {
   Truck,
   RotateCcw,
   Play,
+  CreditCard,
+  RefreshCw,
+  MapPin,
+  Package,
+  Leaf,
+  Layers,
+  Zap,
+  Building2,
 } from "lucide-react";
 import { addToCart } from "@/lib/cartBus";
 import { useAuth } from "@/app/context/AuthContext";
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function formatPrice(price) {
   if (price == null) return null;
@@ -36,44 +46,132 @@ function formatPrice(price) {
   }).format(price);
 }
 
-const TRUST_POINTS = [
-  { icon: ShieldCheck, text: "Quality checked before dispatch" },
-  { icon: Truck, text: "Same-day dispatch on bulk orders" },
-  { icon: RotateCcw, text: "Easy replacement for damaged items" },
-];
+/**
+ * Parse a spec string like "Material: Paper" → { label: "Material", value: "Paper" }
+ * Falls back to the full string as the value if no colon is found.
+ */
+function parseSpec(specString) {
+  const colonIdx = specString.indexOf(":");
+  if (colonIdx !== -1) {
+    return {
+      label: specString.slice(0, colonIdx).trim(),
+      value: specString.slice(colonIdx + 1).trim(),
+    };
+  }
+  return { label: "Detail", value: specString };
+}
 
+/**
+ * Build the full spec table rows from product data.
+ * Specs come from product.specs[] — each entry is parsed to extract
+ * a real label (e.g. "Material", "Size/Dimension") rather than "Specification N".
+ */
 function buildSpecRows(product) {
   const rows = [];
-  if (product.sizes?.length)
+
+  if (product.sizes?.length) {
     rows.push({ label: "Available Sizes", value: product.sizes.join(", ") });
-  if (product.specs?.length)
-    rows.push(
-      ...product.specs.map((s, i) => ({
-        label: `Specification ${i + 1}`,
-        value: s,
-      }))
-    );
+  }
+
+  if (product.specs?.length) {
+    product.specs.forEach((s) => {
+      rows.push(parseSpec(s));
+    });
+  }
+
   rows.push(
-    { label: "Country of Origin", value: "Made in India" },
-    { label: "Usage / Application", value: product.category },
-    { label: "Waterproof", value: "Yes" }
+    { label: "Country of Origin", value: product.countryOfOrigin ?? "Made in India" },
+    { label: "Usage / Application", value: product.category ?? "—" },
+    { label: "Waterproof", value: product.waterproof ?? "Yes" }
   );
+
   return rows;
 }
 
-const SOCIALS = [
-  { href: "https://www.facebook.com/Dpacksolutions/", Icon: Facebook, label: "Facebook" },
-  { href: "https://www.instagram.com/dpacksolutionsindia/", Icon: Instagram, label: "Instagram" },
-  { href: "https://www.youtube.com/@Dpacksolutions", Icon: Youtube, label: "YouTube" },
-  { href: "https://www.linkedin.com/company/dpacksolutions/", Icon: Linkedin, label: "LinkedIn" },
+// ─── Static badge data (layout only — no copy hardcoded into business logic) ──
+const TRUST_BADGES = [
+  { Icon: CreditCard, text: "Secure Payments" },
+  { Icon: RefreshCw,  text: "Easy Returns"    },
+  { Icon: MapPin,     text: "Pan India Delivery" },
 ];
 
-// A media item is either an image or the product video.
-// type: "image" | "video"
+const TRUST_POINTS = [
+  { Icon: ShieldCheck, text: "Quality checked before dispatch"    },
+  { Icon: Truck,       text: "Same-day dispatch on bulk orders"   },
+  { Icon: RotateCcw,   text: "Easy replacement for damaged items" },
+];
+
+const SOCIALS = [
+  { href: "https://www.facebook.com/Dpacksolutions/",          Icon: Facebook,  label: "Facebook"  },
+  { href: "https://www.instagram.com/dpacksolutionsindia/",    Icon: Instagram, label: "Instagram" },
+  { href: "https://www.youtube.com/@Dpacksolutions",           Icon: Youtube,   label: "YouTube"   },
+  { href: "https://www.linkedin.com/company/dpacksolutions/",  Icon: Linkedin,  label: "LinkedIn"  },
+];
+
+
+const FEATURE_ICON_MAP = {
+  Package,
+  Leaf,
+  Layers,
+  Zap,
+  Building2,
+  ShieldCheck,
+  Truck,
+};
+
+
+const PROMO_STATS = [
+  { value: "10K+",      label: "Businesses Trust Us" },
+  { value: "99%",       label: "Damage Reduction"    },
+  { value: "Pan India", label: "Delivery"            },
+];
+
+function PromoPanel() {
+  return (
+    <div className="relative flex h-full min-h-[360px] flex-col justify-between overflow-hidden rounded-2xl border border-ink/8 bg-[#F3EEE8] p-7">
+      {/* Full container background image */}
+      <img
+        src="/promo.jpg"
+        alt="Safely packaged products"
+        className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
+      />
+
+      {/* Optional overlay for better text readability */}
+      <div className="pointer-events-none absolute inset-0 z-[1] bg-white/20" />
+
+      <div className="relative z-10 max-w-[220px]">
+        <h3 className="font-display text-[22px] font-bold leading-tight text-ink">
+          Safe Products.
+          <br />
+          Happy Customers.
+        </h3>
+
+        <p className="mt-2 text-[13px] leading-snug text-ink/55">
+          Because every product deserves to reach safely.
+        </p>
+      </div>
+
+      <div className="relative z-10 mt-8 grid grid-cols-3 gap-3 border-t border-ink/10 pt-4">
+        {PROMO_STATS.map(({ value, label }) => (
+          <div key={label}>
+            <p className="font-display text-base font-extrabold leading-none text-ink sm:text-lg">
+              {value}
+            </p>
+
+            <p className="mt-1 text-[10.5px] leading-snug text-ink/45">
+              {label}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+
+
 function Gallery({ product }) {
   const images = [product.image, ...(product.extraImages ?? [])].filter(Boolean);
-
-  // Build unified media list: images first, then video (if present)
   const media = [
     ...images.map((src) => ({ type: "image", src })),
     ...(product.video ? [{ type: "video", src: product.video }] : []),
@@ -86,11 +184,65 @@ function Gallery({ product }) {
   const next = () => setActive((i) => (i + 1) % media.length);
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="relative aspect-square overflow-hidden rounded-2xl border border-ink/8 bg-[#F5F3EF]">
-        {/* Subtle radial gradient overlay for images only */}
+    <div className="flex gap-3">
+      <div className="flex flex-col gap-2 overflow-y-auto" style={{ maxHeight: 520 }}>
+        {media.map((item, i) => (
+          <button
+            key={item.src}
+            type="button"
+            onClick={() => setActive(i)}
+            className={`relative h-[72px] w-[72px] shrink-0 overflow-hidden rounded-xl border-2 transition-all bg-[#F5F3EF] ${
+              i === active
+                ? "border-rust shadow-[0_0_0_2px_rgba(224,92,42,0.20)]"
+                : "border-ink/10 hover:border-ink/25"
+            }`}
+          >
+            {item.type === "image" ? (
+              <img
+                src={item.src}
+                alt={`${product.name} ${i + 1}`}
+                className="h-full w-full object-contain p-1.5"
+              />
+            ) : (
+              <div className="relative h-full w-full">
+                <video
+                  src={item.src}
+                  muted
+                  playsInline
+                  preload="metadata"
+                  className="h-full w-full object-cover"
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/90 shadow">
+                    <Play className="h-3 w-3 fill-rust text-rust" />
+                  </div>
+                </div>
+              </div>
+            )}
+          </button>
+        ))}
+      </div>
+
+      <div className="relative flex-1 overflow-hidden rounded-2xl border border-ink/8 bg-[#F5F3EF]" style={{ aspectRatio: "1/1" }}>
+        {product.badges?.length > 0 && (
+          <div className="absolute top-4 left-4 z-20 flex flex-wrap gap-2">
+            {product.badges.map((badge, i) => (
+              <span
+                key={i}
+                className={`rounded-full px-3 py-1 text-[11.5px] font-bold ${
+                  i === 0
+                    ? "bg-ink text-white"
+                    : "border border-ink/15 bg-white/90 text-ink/70 backdrop-blur-sm"
+                }`}
+              >
+                {badge}
+              </span>
+            ))}
+          </div>
+        )}
+
         {activeItem?.type === "image" && (
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,rgba(255,255,255,0.8)_0%,transparent_100%)] pointer-events-none z-10" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,rgba(255,255,255,0.75)_0%,transparent_100%)] pointer-events-none z-10" />
         )}
 
         <AnimatePresence mode="wait" initial={false}>
@@ -126,12 +278,6 @@ function Gallery({ product }) {
           )}
         </AnimatePresence>
 
-        {activeItem?.type === "image" && (
-          <span className="absolute bottom-4 left-4 z-20 flex items-center gap-1.5 rounded-full border border-ink/10 bg-white/80 px-3 py-1 text-[11px] font-semibold text-ink/60 backdrop-blur-sm">
-            <Maximize2 className="h-3 w-3" />
-            360° View
-          </span>
-        )}
 
         {media.length > 1 && (
           <>
@@ -152,96 +298,82 @@ function Gallery({ product }) {
           </>
         )}
       </div>
+    </div>
+  );
+}
 
-      {/* Thumbnail strip */}
-      <div className="flex gap-2.5 overflow-x-auto pb-0.5">
-        {media.map((item, i) => (
-          <button
-            key={item.src}
-            type="button"
-            onClick={() => setActive(i)}
-            className={`relative h-[72px] w-[72px] shrink-0 overflow-hidden rounded-xl border-2 transition-all bg-[#F5F3EF] ${
-              i === active
-                ? "border-rust shadow-[0_0_0_2px_rgba(224,92,42,0.20)]"
-                : "border-ink/10 hover:border-ink/25"
-            }`}
-          >
-            {item.type === "image" ? (
-              <img
-                src={item.src}
-                alt={`${product.name} ${i + 1}`}
-                className="h-full w-full object-contain p-2"
-              />
-            ) : (
-              /* Video thumbnail: show first frame via <video> poster trick */
-              <div className="relative h-full w-full">
-                <video
-                  src={item.src}
-                  muted
-                  playsInline
-                  preload="metadata"
-                  className="h-full w-full object-cover"
-                />
-                {/* Play badge overlay */}
-                <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/90 shadow">
-                    <Play className="h-3 w-3 fill-rust text-rust" />
-                  </div>
-                </div>
+const HARDCODED_FEATURES = [
+  { icon: "Package", title: "Hassle-Free Support", subtitle: "Get assistance for product selection, setup, and queries." },
+  { icon: "Leaf",     title: "Expert Guidance",      subtitle: "Our team provides complete technical consultation." },
+  { icon: "Layers",   title: "Reliable Solutions",      subtitle: "High-quality machines designed for long-term performance." },
+  { icon: "Zap",      title: "High Strength",     subtitle: "Durable & reliable" },
+  { icon: "Building2",title: "Multi-Industry Use",subtitle: "E-commerce, industrial & more" },
+];
+
+function FeatureStrip({ features }) {
+  const items = features?.length ? features : HARDCODED_FEATURES;
+
+  return (
+    <div className="mt-10 overflow-hidden rounded-2xl border border-ink/8 bg-[#F9F8F6]">
+      <div className="grid grid-cols-2 divide-x divide-y divide-ink/8 sm:grid-cols-3 sm:divide-y-0 lg:grid-cols-5">
+        {items.map(({ icon, title, subtitle }) => {
+          const Icon = FEATURE_ICON_MAP[icon] ?? Package;
+          return (
+            <div
+              key={title}
+              className="flex flex-row items-start gap-2 px-5 py-4"
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-ink/10 bg-white shadow-sm">
+                <Icon className="h-5 w-5 text-ink/70" strokeWidth={1.5} />
               </div>
-            )}
-          </button>
-        ))}
+              <div>
+                <p className="text-[13px] font-bold text-ink">{title}</p>
+                <p className="text-[12px] text-ink/45 leading-snug">{subtitle}</p>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 }
 
-const TABS = [
-  { id: "description", label: "Description" },
-  { id: "additional", label: "Additional Info" },
-];
-
 function TabDescription({ product }) {
-  const overview = [
-    `High-quality ${product.name} designed to secure cargo and prevent movement during transportation, ensuring safe and damage-free delivery.`,
-    "Provides excellent strength and cushioning performance ideal for filling voids between cargo.",
-    "Suitable for use in containers, trucks, and rail wagons — covering a wide range of logistics and industrial applications.",
-    "Manufactured under strict quality control to ensure consistent performance and durability.",
-  ];
-
+  const bullets = product.descriptionBullets ?? [];
   return (
-    <div className="space-y-4">
-      {overview.map((line, i) => (
-        <p key={i} className="flex items-start gap-2.5 text-[14px] leading-relaxed text-ink/65">
-          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-rust" />
-          {line}
-        </p>
-      ))}
+    <div className="space-y-5">
+      {product.description && (
+        <p className="text-[15px] leading-relaxed text-ink/65">{product.description}</p>
+      )}
+      {bullets.length > 0 && (
+        <div className="space-y-3">
+          {bullets.map((line, i) => (
+            <p key={i} className="flex items-start gap-3 text-[15px] leading-relaxed text-ink/65">
+              <CheckCircle2 className="mt-0.5 h-4.5 w-4.5 shrink-0 text-rust" style={{ width: 18, height: 18 }} />
+              {line}
+            </p>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
-function TabAdditional({ product }) {
-  const rows = [
-    { label: "Category", value: product.category },
-    { label: "Sizes Available", value: product.sizes?.join(", ") || "Standard" },
-    { label: "Material", value: "Industrial grade packaging material" },
-    { label: "Shelf Life", value: "24 months from manufacture" },
-  ];
+function TabSpecifications({ product }) {
+  const specRows = buildSpecRows(product);
   return (
-    <div className="overflow-hidden rounded-xl border border-ink/8">
-      <table className="w-full text-[13.5px]">
+    <div className="overflow-hidden rounded-2xl border border-ink/8">
+      <table className="w-full text-[15px]">
         <tbody>
-          {rows.map(({ label, value }, i) => (
+          {specRows.map(({ label, value }, i) => (
             <tr
-              key={label}
+              key={`${label}-${i}`}
               className={`border-b border-ink/6 last:border-0 ${
                 i % 2 === 0 ? "bg-[#FAFAF9]" : "bg-white"
               }`}
             >
-              <td className="w-40 px-4 py-3 font-semibold text-ink/50">{label}</td>
-              <td className="px-4 py-3 font-medium text-ink/80">{value}</td>
+              <td className="w-48 px-5 py-3.5 font-semibold text-ink/50">{label}</td>
+              <td className="px-5 py-3.5 font-medium text-ink/80">{value}</td>
             </tr>
           ))}
         </tbody>
@@ -250,52 +382,101 @@ function TabAdditional({ product }) {
   );
 }
 
+function TabShipping({ product }) {
+  const rows = product.shippingInfo ?? [
+    { label: "Dispatch Time",    value: "1–2 business days" },
+    { label: "Shipping Partner", value: "Pan India — all major couriers" },
+    { label: "Bulk Orders",      value: "Same-day dispatch available" },
+    { label: "Returns",          value: "Easy replacement for damaged items within 7 days" },
+    { label: "Payment",          value: "Secure checkout — UPI, cards, net banking" },
+  ];
+  return (
+    <div className="overflow-hidden rounded-2xl border border-ink/8">
+      <table className="w-full text-[15px]">
+        <tbody>
+          {rows.map(({ label, value }, i) => (
+            <tr
+              key={label}
+              className={`border-b border-ink/6 last:border-0 ${
+                i % 2 === 0 ? "bg-[#FAFAF9]" : "bg-white"
+              }`}
+            >
+              <td className="w-48 px-5 py-3.5 font-semibold text-ink/50">{label}</td>
+              <td className="px-5 py-3.5 font-medium text-ink/80">{value}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+const TABS = [
+  { id: "description",    label: "Product Details"    },
+  { id: "specifications", label: "Specifications"     },
+  { id: "shipping",       label: "Shipping & Returns" },
+];
+
 function ProductTabs({ product }) {
   const [active, setActive] = useState("description");
+
+  const reviewCount = product.reviewCount ?? 0;
+  const tabs = TABS.map((t) =>
+    t.id === "reviews" && reviewCount > 0
+      ? { ...t, label: `Reviews (${reviewCount})` }
+      : t
+  );
+
   return (
-    <div className="mt-12">
-      <div className="flex gap-8 border-b border-ink/10">
-        {TABS.map((tab) => (
+    <div className="mt-14">
+      <div className="flex gap-8 border-b border-ink/10 overflow-x-auto">
+        {tabs.map((tab) => (
           <button
             key={tab.id}
             type="button"
             onClick={() => setActive(tab.id)}
-            className={`relative pb-3.5 text-[14px] font-bold transition-colors ${
-              active === tab.id ? "text-ink" : "text-ink/40 hover:text-ink/60"
+            className={`relative pb-4 text-[16px] font-bold transition-colors whitespace-nowrap ${
+              active === tab.id ? "text-ink" : "text-ink/35 hover:text-ink/55"
             }`}
           >
             {tab.label}
             {active === tab.id && (
-              <span className="absolute inset-x-0 bottom-0 h-[2.5px] rounded-t-full bg-rust" />
+              <span className="absolute inset-x-0 bottom-0 h-[3px] rounded-t-full bg-rust" />
             )}
           </button>
         ))}
       </div>
-      <div className="py-8">
-        {active === "description" && <TabDescription product={product} />}
-        {active === "additional" && <TabAdditional product={product} />}
+
+      <div className="grid gap-8 py-9 lg:grid-cols-[1.5fr_1fr]">
+        <div>
+          {active === "description"    && <TabDescription    product={product} />}
+          {active === "specifications" && <TabSpecifications product={product} />}
+          {active === "shipping"       && <TabShipping       product={product} />}
+          {active === "reviews"        && (
+            <p className="text-[15px] text-ink/45">Reviews section coming soon.</p>
+          )}
+        </div>
+
+        <PromoPanel />
       </div>
     </div>
   );
 }
 
 export default function ProductDetail({ product }) {
-  const [qty, setQty] = useState(1);
-  const [added, setAdded] = useState(false);
+  const [qty, setQty]           = useState(1);
+  const [added, setAdded]       = useState(false);
   const [wishAnim, setWishAnim] = useState(false);
+  const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] ?? null);
 
   const { isWishlisted, toggleWishlist } = useAuth();
   const wishlisted = product?.id ? isWishlisted(product.id) : false;
 
   const outOfStock = product.trackInventory !== false && (product.stock ?? 0) <= 0;
 
-  const specRows = buildSpecRows(product);
-
   const discountPercent =
     product.compareAtPrice && product.compareAtPrice > product.price
-      ? Math.round(
-          ((product.compareAtPrice - product.price) / product.compareAtPrice) * 100
-        )
+      ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
       : null;
 
   const handleAddToCart = useCallback(() => {
@@ -314,7 +495,8 @@ export default function ProductDetail({ product }) {
   }, [product, toggleWishlist]);
 
   return (
-    <div>
+    <div className="w-full" style={{ padding: "0 clamp(24px, 5vw, 96px)" }}>
+
       <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
 
         <Gallery product={product} />
@@ -322,35 +504,37 @@ export default function ProductDetail({ product }) {
         <div className="flex flex-col">
 
           <span className="inline-flex w-fit items-center rounded-full border border-rust/25 bg-rust/8 px-3 py-1 text-[11.5px] font-bold uppercase tracking-widest text-rust">
-            {product?.category}
+            {product.category}
           </span>
 
           <h1 className="mt-3 font-display text-[26px] font-bold leading-tight tracking-tight text-ink sm:text-[30px]">
             {product.name}
           </h1>
 
-          <div className="mt-3 flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-1">
+          {product.tagline && (
+            <p className="mt-1 text-[13.5px] text-ink/45">{product.tagline}</p>
+          )}
+
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-0.5">
               {[1, 2, 3, 4, 5].map((s) => (
                 <Star
                   key={s}
                   className={`h-3.5 w-3.5 ${
-                    s <= 4 ? "fill-amber-400 text-amber-400" : "fill-ink/10 text-ink/10"
+                    s <= Math.round(product.rating ?? 4)
+                      ? "fill-amber-400 text-amber-400"
+                      : "fill-ink/10 text-ink/10"
                   }`}
                 />
               ))}
-            <span className="ml-1 text-[12px] text-ink/45">(93 Reviews)</span>
             </div>
-            {outOfStock ? (
-              <span className="flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1 text-[12px] font-semibold text-red-700">
-                <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
-                Out of Stock
+            {product.rating != null && (
+              <span className="text-[12px] font-semibold text-ink/65">
+                {product.rating} ({product.reviewCount ?? 0} reviews)
               </span>
-            ) : (
-              <span className="flex items-center gap-1.5 rounded-full bg-green-50 px-2.5 py-1 text-[12px] font-semibold text-green-700">
-                <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
-                In Stock
-              </span>
+            )}
+            {product.soldCount && (
+              <span className="text-[12px] text-ink/35">| {product.soldCount} sold</span>
             )}
           </div>
 
@@ -365,8 +549,8 @@ export default function ProductDetail({ product }) {
                 </span>
               )}
               {discountPercent && (
-                <span className="mb-0.5 rounded-full bg-green-100 px-2.5 py-0.5 text-[12px] font-bold text-green-700">
-                  {discountPercent}% off
+                <span className="mb-0.5 rounded-full bg-orange-100 px-2.5 py-0.5 text-[12px] font-bold text-orange-600">
+                  {discountPercent}% OFF
                 </span>
               )}
             </div>
@@ -376,39 +560,77 @@ export default function ProductDetail({ product }) {
             {product.description}
           </p>
 
-          {outOfStock && (
-            <p className="mt-3 flex items-center gap-1.5 text-[13px] font-semibold text-red-600">
-              This product is currently out of stock.
-            </p>
+          <div className="mt-5 h-px bg-ink/8" />
+
+          {product.sizes?.length > 0 && (
+            <div className="mt-5">
+              <p className="mb-2.5 text-[13px] font-semibold text-ink/70">Size</p>
+              <div className="flex flex-wrap gap-2">
+                {product.sizes.map((size) => (
+                  <button
+                    key={size}
+                    type="button"
+                    onClick={() => setSelectedSize(size)}
+                    className={`rounded-lg border px-3.5 py-2 text-[13px] font-semibold transition-all ${
+                      selectedSize === size
+                        ? "border-ink bg-ink text-white"
+                        : "border-ink/15 bg-white text-ink/65 hover:border-ink/35"
+                    }`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
           )}
 
-          <div className="mt-6 h-px bg-ink/8" />
-
-          <div className="mt-6 flex flex-wrap items-center gap-3">
-            <div className="flex items-center rounded-full border border-ink/12">
-              <button
-                type="button"
-                onClick={() => setQty((q) => Math.max(1, q - 1))}
-                aria-label="Decrease quantity"
-                disabled={qty <= 1 || outOfStock}
-                className="flex h-11 w-11 items-center justify-center text-ink/60 transition hover:text-ink disabled:opacity-30"
-              >
-                <Minus className="h-4 w-4" />
-              </button>
-              <span className="w-8 text-center text-[15px] font-bold tabular-nums text-ink">
-                {qty}
-              </span>
-              <button
-                type="button"
-                onClick={() => setQty((q) => q + 1)}
-                aria-label="Increase quantity"
-                disabled={outOfStock}
-                className="flex h-11 w-11 items-center justify-center text-ink/60 transition hover:text-ink disabled:opacity-30"
-              >
-                <Plus className="h-4 w-4" />
-              </button>
+          <div className="mt-5 flex flex-wrap items-center gap-5">
+            <div>
+              <p className="mb-2.5 text-[13px] font-semibold text-ink/70">Quantity</p>
+              <div className="flex items-center rounded-lg border border-ink/12">
+                <button
+                  type="button"
+                  onClick={() => setQty((q) => Math.max(1, q - 1))}
+                  aria-label="Decrease quantity"
+                  disabled={qty <= 1 || outOfStock}
+                  className="flex h-10 w-10 items-center justify-center text-ink/60 transition hover:text-ink disabled:opacity-30"
+                >
+                  <Minus className="h-3.5 w-3.5" />
+                </button>
+                <span className="w-8 text-center text-[15px] font-bold tabular-nums text-ink">
+                  {qty}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setQty((q) => q + 1)}
+                  aria-label="Increase quantity"
+                  disabled={outOfStock}
+                  className="flex h-10 w-10 items-center justify-center text-ink/60 transition hover:text-ink disabled:opacity-30"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                </button>
+              </div>
             </div>
 
+            <div className="mt-auto pb-0.5">
+              {outOfStock ? (
+                <span className="flex items-center gap-1.5 text-[13px] font-semibold text-red-600">
+                  <span className="h-2 w-2 rounded-full bg-red-500" />
+                  Out of Stock
+                </span>
+              ) : (
+                <div className="space-y-0.5">
+                  <span className="flex items-center gap-1.5 text-[13px] font-semibold text-green-700">
+                    <span className="h-2 w-2 rounded-full bg-green-500" />
+                    In Stock
+                  </span>
+                  <p className="text-[12px] text-ink/40">Ready to ship</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="mt-5 flex flex-wrap gap-3">
             <button
               type="button"
               onClick={handleAddToCart}
@@ -416,47 +638,26 @@ export default function ProductDetail({ product }) {
               aria-disabled={outOfStock}
               className={`relative inline-flex flex-1 min-w-[160px] items-center justify-center gap-2 rounded-full px-6 py-3.5 text-[14px] font-bold text-white transition-colors duration-300 active:scale-[0.98] ${
                 outOfStock
-                  ? "cursor-not-allowed bg-ink/25 hover:bg-ink/25 active:scale-100"
+                  ? "cursor-not-allowed bg-ink/25 active:scale-100"
                   : added
                   ? "bg-green-600 hover:bg-green-700"
-                  : "bg-rust hover:bg-rust/90 hover:shadow-[0_4px_18px_-2px_rgba(224,92,42,0.45)]"
+                  : "bg-ink hover:bg-ink/85"
               }`}
             >
               <AnimatePresence mode="wait" initial={false}>
                 {outOfStock ? (
-                  <motion.span
-                    key="out-of-stock"
-                    initial={{ scale: 0.7, opacity: 0, y: 4 }}
-                    animate={{ scale: 1, opacity: 1, y: 0 }}
-                    exit={{ scale: 0.7, opacity: 0, y: -4 }}
-                    transition={{ duration: 0.18 }}
-                    className="flex items-center gap-2"
-                  >
+                  <motion.span key="oos" initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.18 }} className="flex items-center gap-2">
                     Out of stock
                   </motion.span>
                 ) : added ? (
-                  <motion.span
-                    key="added"
-                    initial={{ scale: 0.7, opacity: 0, y: 4 }}
-                    animate={{ scale: 1, opacity: 1, y: 0 }}
-                    exit={{ scale: 0.7, opacity: 0, y: -4 }}
-                    transition={{ duration: 0.18 }}
-                    className="flex items-center gap-2"
-                  >
+                  <motion.span key="added" initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.18 }} className="flex items-center gap-2">
                     <Check className="h-4 w-4" strokeWidth={2.5} />
                     Added to cart
                   </motion.span>
                 ) : (
-                  <motion.span
-                    key="cart"
-                    initial={{ scale: 0.7, opacity: 0, y: 4 }}
-                    animate={{ scale: 1, opacity: 1, y: 0 }}
-                    exit={{ scale: 0.7, opacity: 0, y: -4 }}
-                    transition={{ duration: 0.18 }}
-                    className="flex items-center gap-2"
-                  >
+                  <motion.span key="cart" initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.18 }} className="flex items-center gap-2">
                     <ShoppingCart className="h-4 w-4" />
-                    Add to cart
+                    Add to Cart
                   </motion.span>
                 )}
               </AnimatePresence>
@@ -466,22 +667,25 @@ export default function ProductDetail({ product }) {
               type="button"
               onClick={handleWishlist}
               aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
-              className={`flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-full border-2 transition-all duration-200 ${
+              className={`flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-full border-2 transition-all duration-200 ${
                 wishlisted
                   ? "border-rust bg-rust text-white shadow-[0_4px_14px_-2px_rgba(224,92,42,0.45)]"
-                  : "border-ink/12 bg-transparent text-ink/50 hover:border-rust/40 hover:text-rust"
+                  : "border-ink/12 text-ink/50 hover:border-rust/40 hover:text-rust"
               }`}
             >
-              <motion.span
-                animate={wishAnim ? { scale: [1, 1.35, 1] } : { scale: 1 }}
-                transition={{ duration: 0.35 }}
-              >
-                <Heart
-                  className={`h-5 w-5 ${wishlisted ? "fill-current" : ""}`}
-                  strokeWidth={wishlisted ? 0 : 2}
-                />
+              <motion.span animate={wishAnim ? { scale: [1, 1.35, 1] } : { scale: 1 }} transition={{ duration: 0.35 }}>
+                <Heart className={`h-5 w-5 ${wishlisted ? "fill-current" : ""}`} strokeWidth={wishlisted ? 0 : 2} />
               </motion.span>
             </button>
+          </div>
+
+          <div className="mt-5 flex flex-wrap items-center gap-5 border-t border-ink/8 pt-4">
+            {TRUST_BADGES.map(({ Icon, text }) => (
+              <div key={text} className="flex items-center gap-2 text-ink/50">
+                <Icon className="h-4 w-4 shrink-0" strokeWidth={1.5} />
+                <span className="text-[12.5px] font-medium">{text}</span>
+              </div>
+            ))}
           </div>
 
           <p className="mt-4 text-[13px] text-ink/45">
@@ -492,30 +696,9 @@ export default function ProductDetail({ product }) {
             .
           </p>
 
-          <div className="mt-7 overflow-hidden rounded-xl border border-ink/8">
-            <table className="w-full text-[13.5px]">
-              <tbody>
-                {specRows.map(({ label, value }, i) => (
-                  <tr
-                    key={label}
-                    className={`border-b border-ink/6 last:border-0 ${
-                      i % 2 === 0 ? "bg-[#FAFAF9]" : "bg-white"
-                    }`}
-                  >
-                    <td className="w-36 px-4 py-3 font-semibold text-ink/50 sm:w-44">{label}</td>
-                    <td className="px-4 py-3 font-medium text-ink/80">{value}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
-            {TRUST_POINTS.map(({ icon: Icon, text }) => (
-              <div
-                key={text}
-                className="flex items-start gap-2.5 rounded-xl border border-ink/8 bg-[#F9F7F4] px-3.5 py-3"
-              >
+            {TRUST_POINTS.map(({ Icon, text }) => (
+              <div key={text} className="flex items-start gap-2.5 rounded-xl border border-ink/8 bg-[#F9F7F4] px-3.5 py-3">
                 <Icon className="mt-0.5 h-4 w-4 shrink-0 text-rust" />
                 <span className="text-[12.5px] leading-snug text-ink/65">{text}</span>
               </div>
@@ -523,28 +706,23 @@ export default function ProductDetail({ product }) {
           </div>
 
           <div className="mt-7 h-px bg-ink/8" />
-
           <div className="mt-5 flex flex-wrap items-center gap-3">
             <span className="text-[12.5px] font-semibold text-ink/40">Visit Us:</span>
             {SOCIALS.map(({ href, Icon, label }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={label}
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-ink/10 bg-ink/3 text-ink/50 transition hover:border-rust/30 hover:bg-rust/8 hover:text-rust"
-              >
+              <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-ink/10 bg-ink/3 text-ink/50 transition hover:border-rust/30 hover:bg-rust/8 hover:text-rust">
                 <Icon className="h-3.5 w-3.5" />
               </a>
             ))}
-            <span className="ml-auto flex items-center gap-1.5 text-[12px] text-ink/35">
+            <button type="button" className="ml-auto flex items-center gap-1.5 text-[12px] text-ink/35 hover:text-ink/55 transition">
               <Share2 className="h-3 w-3" />
               Share
-            </span>
+            </button>
           </div>
         </div>
       </div>
+
+      <FeatureStrip features={product.features} />
 
       <ProductTabs product={product} />
     </div>

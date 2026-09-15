@@ -138,7 +138,7 @@ product.description?.toLowerCase()?.includes(query)
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+      className={`fixed inset-x-0 top-0 z-50 border-b border-ink/10 bg-white shadow-sm ${
         scrolled || open
           ? "border-b border-ink/10 bg-cream/85 shadow-sm backdrop-blur-xl"
           : "bg-transparent"
@@ -202,9 +202,10 @@ product.description?.toLowerCase()?.includes(query)
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
         className="group grid h-10 w-10 place-items-center
-                   rounded-full text-ink/70
-                   transition-all duration-300
-                   hover:bg-ink hover:text-cream"
+           rounded-full border border-ink/15
+           bg-white text-ink/70
+           transition-all duration-300
+           hover:border-ink hover:bg-ink hover:text-white"
       >
         <Search
           className="h-5 w-5 transition-transform duration-300
@@ -358,10 +359,12 @@ product.description?.toLowerCase()?.includes(query)
             <Link
               href="/cart"
               aria-label={`Shopping Cart, ${cartCount} items`}
-              className="group relative grid h-10 w-10
-                         place-items-center rounded-full
-                         text-ink/70 transition-all duration-300
-                         hover:bg-rust hover:text-cream"
+             className="group relative grid h-10 w-10
+           place-items-center rounded-full
+           border border-ink/15
+           bg-white text-ink/70
+           transition-all duration-300
+           hover:border-rust hover:bg-rust hover:text-white"
             >
               <motion.span
                 key={cartPulse}
@@ -425,10 +428,11 @@ product.description?.toLowerCase()?.includes(query)
                   type="button"
                   onClick={() => openLogin()}
                   aria-label="Login"
-                  className="group grid h-10 w-10 place-items-center
-                             rounded-full text-ink/70
-                             transition-all duration-300
-                             hover:bg-ink hover:text-cream"
+                 className="group grid h-10 w-10 place-items-center
+           rounded-full border border-ink/15
+           bg-white text-ink/70
+           transition-all duration-300
+           hover:border-ink hover:bg-ink hover:text-white"
                 >
                   <User
                     className="h-5 w-5 transition-transform duration-300

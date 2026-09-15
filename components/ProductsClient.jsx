@@ -7,7 +7,7 @@ import ProductCard from "@/components/ProductCard";
 function ProductSkeleton() {
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden rounded-2xl border border-ink/8 bg-white">
-      <div className="h-48 shrink-0 bg-ink/[0.06] animate-pulse" />
+      <div className="h-64 shrink-0 bg-ink/[0.06] animate-pulse" />
 
       <div className="flex flex-1 flex-col px-5 py-4 gap-3">
         <div className="h-3 w-16 rounded-full bg-ink/[0.07] animate-pulse" />
@@ -88,14 +88,14 @@ export default function ProductsClient({ products }) {
               key={c}
               onClick={() => handleCategoryChange(c)}
               className={`relative rounded-full px-5 py-2.5 text-sm font-semibold transition-colors duration-300 ${
-                isActive ? "text-cream" : "text-ink/60 hover:text-ink"
+                isActive ? "text-white" : "text-ink/60 hover:text-ink"
               }`}
             >
               {isActive && (
                 <motion.span
                   layoutId="cat-pill"
                   transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                  className="absolute inset-0 rounded-full bg-ink"
+                  className="absolute inset-0 rounded-full bg-rust"
                 />
               )}
               <span className="relative">{c}</span>

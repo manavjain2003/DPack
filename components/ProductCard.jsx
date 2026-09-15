@@ -114,7 +114,7 @@ function ProductCard({ product, index = 0 }) {
         onClick={(e) => {
           if (!href) e.preventDefault();
         }}
-        className="relative block h-48 shrink-0 overflow-hidden bg-[#F5F3EF]"
+        className="relative block h-64 shrink-0 overflow-hidden bg-[#F5F3EF]"
       >
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,rgba(255,255,255,0.85)_0%,rgba(245,243,239,0)_100%)]" />
 

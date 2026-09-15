@@ -94,40 +94,44 @@ export default function WhyUs() {
   return (
     <section
       ref={sectionRef}
-      className="bg-cream-dark/60 py-24 sm:py-32"
+      className="bg-[#e8f0fe] py-24 sm:py-32"
     >
       <div className="mx-auto grid max-w-8xl gap-14 px-5 sm:px-8 lg:grid-cols-[0.9fr_1.1fr]">
+        {/* Left sticky column */}
         <div ref={stickyRef} className="lg:sticky lg:top-32 lg:self-start">
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.5 }}
-            className="mb-3 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.28em] text-rust"
+            className="mb-3 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.28em] text-[#3d63dd]"
           >
-            <span className="h-px w-8 bg-rust" />
+            <span className="h-px w-8 bg-[#3d63dd]" />
             Why Dpack
           </motion.p>
+
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.6, delay: 0.08 }}
-            className="font-display text-4xl font-bold tracking-tight sm:text-5xl"
+            className="font-display text-4xl font-bold tracking-tight text-[#0f1f5c] sm:text-5xl"
           >
             One roof. Every packaging problem solved.
           </motion.h2>
+
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.6, delay: 0.16 }}
-            className="mt-6 max-w-md leading-relaxed text-ink/60"
+            className="mt-6 max-w-md leading-relaxed text-[#4a5a8a]"
           >
             From air column bags and gap fillers to ratchet belts, composite
             straps and packaging tapes — Dpackshop carries the full cargo
             securing range, so you never juggle multiple vendors.
           </motion.p>
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -137,7 +141,7 @@ export default function WhyUs() {
           >
             <Link
               href="/about"
-              className="group inline-flex items-center gap-2 rounded-full bg-rust px-7 py-3.5 font-semibold text-cream shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:bg-rust-dark"
+              className="group inline-flex items-center gap-2 rounded-full bg-[#3d63dd] px-7 py-3.5 font-semibold text-[#eef2ff] shadow-[0_4px_16px_rgba(61,99,221,0.3)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#2d50c4]"
             >
               More about us
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
@@ -145,6 +149,7 @@ export default function WhyUs() {
           </motion.div>
         </div>
 
+        {/* Right cards grid */}
         <div className="grid gap-5 sm:grid-cols-2">
           {features.map((f, i) => (
             <motion.div
@@ -154,15 +159,17 @@ export default function WhyUs() {
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.55, delay: i * 0.08 }}
               whileHover={{ y: -6 }}
-              className={`rounded-3xl border border-ink/10 bg-cream p-7 shadow-sm transition-shadow duration-300 hover:shadow-card ${
+              className={`rounded-3xl border border-[#c5d4f8] bg-[#f5f8ff] p-7 shadow-sm transition-shadow duration-300 hover:shadow-[0_8px_24px_rgba(61,99,221,0.12)] ${
                 i % 2 === 1 ? "sm:translate-y-8" : ""
               }`}
             >
-              <span className="whyus-icon mb-5 grid h-12 w-12 place-items-center rounded-2xl bg-ink text-cream">
+              <span className="whyus-icon mb-5 grid h-12 w-12 place-items-center rounded-2xl bg-[#dce8ff] text-[#3d63dd]">
                 <f.icon className="h-6 w-6" strokeWidth={1.8} />
               </span>
-              <h3 className="font-display text-lg font-bold">{f.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-ink/55">
+              <h3 className="font-display text-lg font-bold text-[#0f1f5c]">
+                {f.title}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-[#5a6fa8]">
                 {f.text}
               </p>
             </motion.div>

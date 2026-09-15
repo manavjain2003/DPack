@@ -83,8 +83,8 @@ export default async function ProductDetailPage({ params }) {
         </div>
       </div>
 
-      <section className="pb-16 pt-12 sm:pb-20 sm:pt-16">
-        <div className="mx-auto max-w-8xl px-5 sm:px-8">
+      <section className="pb-16 pt-12 sm:pb-20 sm:pt-16 bg-[#fff]">
+        <div className="mx-auto max-w-8xl">
           <ProductDetail product={product} />
         </div>
       </section>
