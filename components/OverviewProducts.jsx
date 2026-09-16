@@ -88,7 +88,7 @@ export default function OverviewProducts({ products }) {
     active === "All" ? "/products" : `/products?category=${encodeURIComponent(active)}`;
 
   return (
-    <div className="m-8">
+    <div className="px-8 py-4 bg-slate-50">
       <div className="mb-12 flex flex-wrap gap-2.5">
         {categories.map((c) => {
           const isActive = active === c;

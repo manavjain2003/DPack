@@ -94,7 +94,7 @@ export default function WhyUs() {
   return (
     <section
       ref={sectionRef}
-      className="bg-[#e8f0fe] py-24 sm:py-32"
+      className="bg-gray-50 py-24 sm:py-32"
     >
       <div className="mx-auto grid max-w-8xl gap-14 px-5 sm:px-8 lg:grid-cols-[0.9fr_1.1fr]">
         {/* Left sticky column */}
@@ -104,9 +104,9 @@ export default function WhyUs() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.5 }}
-            className="mb-3 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.28em] text-[#3d63dd]"
+            className="mb-3 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.28em] text-rust"
           >
-            <span className="h-px w-8 bg-[#3d63dd]" />
+            <span className="h-px w-8 bg-rust" />
             Why Dpack
           </motion.p>
 
@@ -115,7 +115,7 @@ export default function WhyUs() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.6, delay: 0.08 }}
-            className="font-display text-4xl font-bold tracking-tight text-[#0f1f5c] sm:text-5xl"
+            className="font-display text-4xl font-bold tracking-tight text-ink sm:text-5xl"
           >
             One roof. Every packaging problem solved.
           </motion.h2>
@@ -125,7 +125,7 @@ export default function WhyUs() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.6, delay: 0.16 }}
-            className="mt-6 max-w-md leading-relaxed text-[#4a5a8a]"
+            className="mt-6 max-w-md leading-relaxed text-ink/60"
           >
             From air column bags and gap fillers to ratchet belts, composite
             straps and packaging tapes — Dpackshop carries the full cargo
@@ -141,7 +141,7 @@ export default function WhyUs() {
           >
             <Link
               href="/about"
-              className="group inline-flex items-center gap-2 rounded-full bg-[#3d63dd] px-7 py-3.5 font-semibold text-[#eef2ff] shadow-[0_4px_16px_rgba(61,99,221,0.3)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#2d50c4]"
+              className="group inline-flex items-center gap-2 rounded-full bg-ink px-7 py-3.5 font-semibold text-cream shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:bg-rust hover:shadow-lift"
             >
               More about us
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
@@ -159,17 +159,17 @@ export default function WhyUs() {
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.55, delay: i * 0.08 }}
               whileHover={{ y: -6 }}
-              className={`rounded-3xl border border-[#c5d4f8] bg-[#f5f8ff] p-7 shadow-sm transition-shadow duration-300 hover:shadow-[0_8px_24px_rgba(61,99,221,0.12)] ${
+              className={`rounded-3xl border border-ink/10 bg-white p-7 shadow-sm transition-shadow duration-300 hover:shadow-card ${
                 i % 2 === 1 ? "sm:translate-y-8" : ""
               }`}
             >
-              <span className="whyus-icon mb-5 grid h-12 w-12 place-items-center rounded-2xl bg-[#dce8ff] text-[#3d63dd]">
+              <span className="whyus-icon mb-5 grid h-12 w-12 place-items-center rounded-2xl bg-rust/10 text-rust">
                 <f.icon className="h-6 w-6" strokeWidth={1.8} />
               </span>
-              <h3 className="font-display text-lg font-bold text-[#0f1f5c]">
+              <h3 className="font-display text-lg font-bold text-ink">
                 {f.title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-[#5a6fa8]">
+              <p className="mt-2 text-sm leading-relaxed text-ink/60">
                 {f.text}
               </p>
             </motion.div>

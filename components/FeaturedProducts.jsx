@@ -156,7 +156,7 @@ export default function FeaturedProducts({ products = [] }) {
   }, []);
 
   return (
-    <section className="relative py-16 sm:py-20 lg:py-24">
+    <section className="relative py-16 sm:py-20 lg:py-24 bg-slate-50">
       <div className="mx-auto max-w-8xl px-5 sm:px-8">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-6 sm:mb-10">
           <div className="max-w-xl">
@@ -165,7 +165,7 @@ export default function FeaturedProducts({ products = [] }) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.5 }}
-              className="mb-3 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.28em] text-rust"
+              className="mb-3 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.28em] text-ink"
             >
               <span className="h-px w-8 bg-rust" />
               Best sellers
@@ -211,7 +211,7 @@ export default function FeaturedProducts({ products = [] }) {
 
             <Link
               href="/products"
-              className="group inline-flex items-center gap-2 rounded-full border-2 border-ink/15 px-6 py-3 font-semibold text-ink transition-all duration-300 hover:border-ink hover:bg-ink hover:text-cream"
+              className="group inline-flex items-center gap-2 rounded-full border-2 border-ink/15 px-6 py-3 font-semibold text-ink transition-all duration-300 hover:border-rust-dark hover:bg-rust-dark hover:text-white"
             >
               View all products
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />

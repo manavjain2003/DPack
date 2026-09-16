@@ -23,7 +23,7 @@ const PALETTE = [
 ];
 
 const DEFAULT_CATEGORY_IMAGE =
-  "https://images.unsplash.com/photo-1607166452427-7e4477079cb9?auto=format&fit=crop&w=400&q=80";
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWmwkYA1Cd0QDokZkak3zDojn7oEPccY0aV89bk8fWvA&s=10";
 
 const FALLBACK_CATEGORIES = [
   { slug: "machines", label: "Machines" },
@@ -141,6 +141,57 @@ function CategoryCircle({ cat }) {
     >
       <Link href={`/categories/${cat.slug}`} className="flex flex-col items-center gap-4">
         <div className="relative">
+          {/* ── Outer thick orange rotating border ── */}
+          <div className="absolute -inset-2.5 rounded-full pointer-events-none">
+            <div
+              className="absolute inset-0 rounded-full animate-[spin_8s_linear_infinite]"
+              style={{
+                background: `conic-gradient(
+                  from 0deg,
+                  transparent 0%,
+                  transparent 65%,
+                  #E2591B 80%,
+                  #E2591B 100%
+                )`,
+                mask: "radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 4px))",
+                WebkitMask:
+                  "radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 4px))",
+              }}
+            />
+          </div>
+
+          {/* ── Second thicker orange ring (opposite direction) ── */}
+          <div className="absolute -inset-4 rounded-full pointer-events-none">
+            <div
+              className="absolute inset-0 rounded-full animate-[spin_12s_linear_infinite_reverse]"
+              style={{
+                background: `conic-gradient(
+                  from 180deg,
+                  transparent 0%,
+                  transparent 70%,
+                  rgba(226, 89, 27, 0.7) 88%,
+                  #E2591B 100%
+                )`,
+                mask: "radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px))",
+                WebkitMask:
+                  "radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px))",
+              }}
+            />
+          </div>
+
+          {/* ── Soft orange glow / shadow ring ── */}
+          <div
+            className="absolute -inset-1.5 rounded-full pointer-events-none animate-[spin_10s_linear_infinite]"
+            style={{
+              boxShadow: `
+                0 0 0 1.5px rgba(226, 89, 27, 0.25),
+                0 4px 22px rgba(226, 89, 27, 0.22),
+                0 0 35px rgba(226, 89, 27, 0.12)
+              `,
+            }}
+          />
+
+          {/* Main circle */}
           <div
             className="cat-circle-inner relative flex h-44 w-44 items-center justify-center overflow-hidden rounded-full sm:h-48 sm:w-48"
             style={{
@@ -193,7 +244,7 @@ function ArrowBtn({ dir, onClick, disabled }) {
       disabled={disabled}
       whileHover={disabled ? {} : { scale: 1.08 }}
       whileTap={disabled ? {} : { scale: 0.94 }}
-      className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-ink/15 bg-white shadow-sm transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-30 hover:border-rust hover:text-rust"
+      className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-ink/15 bg-white shadow-sm transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-30 hover:border-rust-dark hover:text-rust-dark"
       aria-label={dir === "left" ? "Previous categories" : "Next categories"}
     >
       {dir === "left" ? (
@@ -302,7 +353,7 @@ export default function CategorySection() {
   }, [page]);
 
   return (
-    <section ref={sectionRef} className="overflow-hidden pt-24 sm:pt-32">
+    <section ref={sectionRef} className="overflow-hidden pt-24 sm:pt-32 bg-slate-50">
       <div className="mx-auto max-w-8xl">
         {/* Header row */}
         <div className="mb-14 flex flex-wrap items-end justify-between gap-6 px-6">
@@ -310,7 +361,7 @@ export default function CategorySection() {
             <div className="mb-4 flex items-center gap-3">
               <div ref={lineRef} className="h-px w-10 bg-rust" />
               <span
-                className="text-xs font-bold text-rust"
+                className="text-xs font-bold text-ink"
                 style={{ textTransform: "uppercase", letterSpacing: "0.24em" }}
               >
                 Browse by category

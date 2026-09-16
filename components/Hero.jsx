@@ -156,7 +156,7 @@ export default function Hero() {
           <motion.div variants={item} className="mt-10 flex flex-wrap gap-4">
             <Link
               href="/products"
-              className="group inline-flex items-center gap-2 rounded-full bg-rust px-7 py-3.5 font-semibold text-cream shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:bg-rust-dark hover:shadow-lift"
+              className="group inline-flex items-center gap-2 rounded-full bg-ink px-7 py-3.5 font-semibold text-cream shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:bg-rust hover:shadow-lift"
             >
               Browse products
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />

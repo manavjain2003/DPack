@@ -39,7 +39,7 @@ function getSearchIndex() {
         return searchIndexCache;
       })
       .catch(() => {
-        searchIndexPromise = null; 
+        searchIndexPromise = null;
         return [];
       });
   }
@@ -51,10 +51,10 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [cartPulse, setCartPulse] = useState(0);
   const [accountOpen, setAccountOpen] = useState(false);
-const [searchOpen, setSearchOpen] = useState(false);
-const [searchQuery, setSearchQuery] = useState("");
-const [allProducts, setAllProducts] = useState([]); 
-const pathname = usePathname();
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [allProducts, setAllProducts] = useState([]);
+  const pathname = usePathname();
 
   const cartItems = useCart();
 
@@ -63,66 +63,44 @@ const pathname = usePathname();
     0
   );
 
-  const {
-    user,
-    isLoggedIn,
-    openLogin,
-    logout,
-  } = useAuth();
-
+  const { user, isLoggedIn, openLogin, logout } = useAuth();
 
   const userInitial =
     user?.name?.trim()?.charAt(0)?.toUpperCase() || "U";
 
-    useEffect(() => {
-  let cancelled = false;
-  getSearchIndex().then((products) => {
-    if (!cancelled) setAllProducts(products);
-  });
-  return () => {
-    cancelled = true;
-  };
-}, []);
-
   useEffect(() => {
-    const onAdded = () => {
-      setCartPulse((p) => p + 1);
-    };
-
-    window.addEventListener("cart:added", onAdded);
-
-    return () => {
-      window.removeEventListener("cart:added", onAdded);
-    };
-  }, []);
-const searchResults = searchQuery.trim()
-  ? allProducts
-      .filter((product) => {
-        if (!product) return false; 
-        const query = searchQuery.toLowerCase();
-        return (
-        product.name?.toLowerCase()?.includes(query) ||
-product.category?.toLowerCase()?.includes(query) ||
-product.description?.toLowerCase()?.includes(query)
-        );
-      })
-      .slice(0, 6)
-  : [];
-
-  useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 24);
-    };
-
-    onScroll();
-
-    window.addEventListener("scroll", onScroll, {
-      passive: true,
+    let cancelled = false;
+    getSearchIndex().then((products) => {
+      if (!cancelled) setAllProducts(products);
     });
+    return () => { cancelled = true; };
+  }, []);
 
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-    };
+  useEffect(() => {
+    const onAdded = () => { setCartPulse((p) => p + 1); };
+    window.addEventListener("cart:added", onAdded);
+    return () => { window.removeEventListener("cart:added", onAdded); };
+  }, []);
+
+  const searchResults = searchQuery.trim()
+    ? allProducts
+        .filter((product) => {
+          if (!product) return false;
+          const query = searchQuery.toLowerCase();
+          return (
+            product.name?.toLowerCase()?.includes(query) ||
+            product.category?.toLowerCase()?.includes(query) ||
+            product.description?.toLowerCase()?.includes(query)
+          );
+        })
+        .slice(0, 6)
+    : [];
+
+  useEffect(() => {
+    const onScroll = () => { setScrolled(window.scrollY > 24); };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => { window.removeEventListener("scroll", onScroll); };
   }, []);
 
   useEffect(() => {
@@ -138,19 +116,16 @@ product.description?.toLowerCase()?.includes(query)
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 border-b border-ink/10 bg-white shadow-sm ${
+      className={`fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#0a1628] shadow-sm ${
         scrolled || open
-          ? "border-b border-ink/10 bg-cream/85 shadow-sm backdrop-blur-xl"
-          : "bg-transparent"
+          ? "border-b border-white/10 bg-[#0a1628]/90 shadow-sm backdrop-blur-xl"
+          : "bg-[#0a1628]"
       }`}
     >
       <nav className="mx-auto flex max-w-8xl items-center px-5 py-4 sm:px-8">
 
         <div className="flex flex-1 items-center">
-          <Link
-            href="/"
-            className="group flex items-center gap-3"
-          >
+          <Link href="/" className="group flex items-center gap-3">
             <img
               src="https://packingairbag.com/_next/image?url=%2Flogo.png&w=256&q=75"
               width={120}
@@ -159,25 +134,25 @@ product.description?.toLowerCase()?.includes(query)
           </Link>
         </div>
 
+        {/* Desktop Nav Links */}
         <ul className="hidden items-center gap-8 md:flex">
           {links.map((link) => {
             const active = pathname === link.href;
-
             return (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className={`relative text-sm font-medium transition-colors
-                    after:absolute after:-bottom-1
-                    after:left-0 after:h-[2px]
-                    after:bg-rust
-                    after:transition-all after:duration-300
-                    ${
-                      active
-                        ? "text-ink after:w-full"
-                        : "text-ink/70 hover:text-ink after:w-0 hover:after:w-full"
-                    }
-                  `}
+                 className={`relative text-sm font-semibold transition-colors
+  after:absolute after:-bottom-1
+  after:left-0 after:h-[2px]
+  after:bg-orange-500
+  after:transition-all after:duration-300
+  ${
+    active
+      ? "text-orange-400 after:w-full"
+      : "text-orange-300/80 hover:text-white after:w-0 hover:after:w-full"
+  }
+`}
                 >
                   {link.label}
                 </Link>
@@ -190,230 +165,172 @@ product.description?.toLowerCase()?.includes(query)
 
           <div className="hidden items-center gap-1 sm:gap-2 md:flex">
 
-           <div className="relative">
-  <AnimatePresence mode="wait">
-    {!searchOpen ? (
-      <motion.button
-        key="search-button"
-        type="button"
-        onClick={() => setSearchOpen(true)}
-        aria-label="Open search"
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.9 }}
-        className="group grid h-10 w-10 place-items-center
-           rounded-full border border-ink/15
-           bg-white text-ink/70
-           transition-all duration-300
-           hover:border-ink hover:bg-ink hover:text-white"
-      >
-        <Search
-          className="h-5 w-5 transition-transform duration-300
-                     group-hover:scale-110"
-        />
-      </motion.button>
-    ) : (
-      <motion.div
-        key="search-input"
-        initial={{ width: 40, opacity: 0 }}
-        animate={{ width: 300, opacity: 1 }}
-        exit={{ width: 40, opacity: 0 }}
-        transition={{
-          duration: 0.25,
-          ease: "easeOut",
-        }}
-        className="relative"
-      >
-        <div
-          className="flex h-10 items-center gap-2
-                     rounded-full border border-ink/10
-                     bg-cream px-3 shadow-sm"
-        >
-          <Search className="h-4 w-4 shrink-0 text-ink/50" />
-
-          <input
-            autoFocus
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search products..."
-            className="min-w-0 flex-1 bg-transparent
-                       text-sm text-ink outline-none
-                       placeholder:text-ink/40"
-          />
-
-          <button
-            type="button"
-            onClick={() => {
-              setSearchOpen(false);
-              setSearchQuery("");
-            }}
-            aria-label="Close search"
-            className="grid h-7 w-7 shrink-0 place-items-center
-                       rounded-full text-ink/50
-                       transition-colors
-                       hover:bg-ink/10 hover:text-ink"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-
-        <AnimatePresence>
-          {searchQuery.trim() && (
-            <motion.div
-              initial={{
-                opacity: 0,
-                y: -8,
-                scale: 0.98,
-              }}
-              animate={{
-                opacity: 1,
-                y: 0,
-                scale: 1,
-              }}
-              exit={{
-                opacity: 0,
-                y: -8,
-                scale: 0.98,
-              }}
-              transition={{ duration: 0.18 }}
-              className="absolute right-0 top-12 z-[60]
-                         w-[360px] overflow-hidden
-                         rounded-2xl border border-ink/10
-                         bg-cream shadow-2xl"
-            >
-              {searchResults.length > 0 ? (
-                <div className="max-h-[420px] overflow-y-auto p-2">
-                  {searchResults.map((product) => (
-                    <Link
-                      key={product.id}
-                      href={`/products/${product.slug}`}
-                      onClick={() => {
-                        setSearchOpen(false);
-                        setSearchQuery("");
-                      }}
-                      className="flex items-center gap-3
-                                 rounded-xl p-3
-                                 transition-colors
-                                 hover:bg-ink/5"
+            {/* Search */}
+            <div className="relative">
+              <AnimatePresence mode="wait">
+                {!searchOpen ? (
+                  <motion.button
+                    key="search-button"
+                    type="button"
+                    onClick={() => setSearchOpen(true)}
+                    aria-label="Open search"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    className="group grid h-10 w-10 place-items-center
+                       rounded-full border border-orange-500
+                       bg-orange-500 text-white
+                       transition-all duration-300
+                       hover:border-black hover:bg-black hover:text-white"
+                  >
+                    <Search className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
+                  </motion.button>
+                ) : (
+                  <motion.div
+                    key="search-input"
+                    initial={{ width: 40, opacity: 0 }}
+                    animate={{ width: 300, opacity: 1 }}
+                    exit={{ width: 40, opacity: 0 }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
+                    className="relative"
+                  >
+                    <div
+                      className="flex h-10 items-center gap-2
+                                 rounded-full border border-white/20
+                                 bg-[#0d1f3c] px-3 shadow-sm"
                     >
-                      <div
-                        className="h-14 w-14 shrink-0
-                                   overflow-hidden rounded-lg
-                                   bg-white"
+                      <Search className="h-4 w-4 shrink-0 text-orange-400" />
+                      <input
+                        autoFocus
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search products..."
+                        className="min-w-0 flex-1 bg-transparent
+                                   text-sm text-white outline-none
+                                   placeholder:text-white/40"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSearchOpen(false);
+                          setSearchQuery("");
+                        }}
+                        aria-label="Close search"
+                        className="grid h-7 w-7 shrink-0 place-items-center
+                                   rounded-full text-orange-400
+                                   transition-colors
+                                   hover:bg-black hover:text-white"
                       >
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="h-full w-full object-contain"
-                        />
-                      </div>
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
 
-                      <div className="min-w-0 flex-1">
-                        <p
-                          className="truncate text-sm
-                                     font-semibold text-ink"
+                    <AnimatePresence>
+                      {searchQuery.trim() && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -8, scale: 0.98 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                          transition={{ duration: 0.18 }}
+                          className="absolute right-0 top-12 z-[60]
+                                     w-[360px] overflow-hidden
+                                     rounded-2xl border border-white/10
+                                     bg-[#0d1f3c] shadow-2xl"
                         >
-                          {product.name}
-                        </p>
-
-                        <p className="mt-0.5 text-xs text-ink/50">
-                         {product?.category}
-                        </p>
-
-                        <p className="mt-1 text-sm font-medium text-rust">
-                          ₹{product.price.toLocaleString("en-IN")}
-                        </p>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              ) : (
-                <div className="px-5 py-8 text-center">
-                  <Search
-                    className="mx-auto h-8 w-8
-                               text-ink/20"
-                  />
-
-                  <p className="mt-3 text-sm font-semibold text-ink">
-                    No products found
-                  </p>
-
-                  <p className="mt-1 text-xs text-ink/50">
-                    Try searching for another product.
-                  </p>
-                </div>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
-    )}
-  </AnimatePresence>
-</div>
-
-  
+                          {searchResults.length > 0 ? (
+                            <div className="max-h-[420px] overflow-y-auto p-2">
+                              {searchResults.map((product) => (
+                                <Link
+                                  key={product.id}
+                                  href={`/products/${product.slug}`}
+                                  onClick={() => {
+                                    setSearchOpen(false);
+                                    setSearchQuery("");
+                                  }}
+                                  className="flex items-center gap-3
+                                             rounded-xl p-3
+                                             transition-colors
+                                             hover:bg-black/30"
+                                >
+                                  <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-white/10">
+                                    <img
+                                      src={product.image}
+                                      alt={product.name}
+                                      className="h-full w-full object-contain"
+                                    />
+                                  </div>
+                                  <div className="min-w-0 flex-1">
+                                    <p className="truncate text-sm font-semibold text-white">
+                                      {product.name}
+                                    </p>
+                                    <p className="mt-0.5 text-xs text-white/50">
+                                      {product?.category}
+                                    </p>
+                                    <p className="mt-1 text-sm font-medium text-orange-400">
+                                      ₹{product.price.toLocaleString("en-IN")}
+                                    </p>
+                                  </div>
+                                </Link>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="px-5 py-8 text-center">
+                              <Search className="mx-auto h-8 w-8 text-white/20" />
+                              <p className="mt-3 text-sm font-semibold text-white">
+                                No products found
+                              </p>
+                              <p className="mt-1 text-xs text-white/50">
+                                Try searching for another product.
+                              </p>
+                            </div>
+                          )}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
             <WishlistNavButton />
 
+            {/* Cart */}
             <Link
               href="/cart"
               aria-label={`Shopping Cart, ${cartCount} items`}
-             className="group relative grid h-10 w-10
-           place-items-center rounded-full
-           border border-ink/15
-           bg-white text-ink/70
-           transition-all duration-300
-           hover:border-rust hover:bg-rust hover:text-white"
+              className="group relative grid h-10 w-10
+                 place-items-center rounded-full
+                 border border-orange-500
+                 bg-orange-500 text-white
+                 transition-all duration-300
+                 hover:border-black hover:bg-black hover:text-white"
             >
               <motion.span
                 key={cartPulse}
                 animate={
                   cartPulse > 0
-                    ? {
-                        scale: [1, 1.45, 0.85, 1.12, 1],
-                        rotate: [0, -14, 10, 0],
-                        y: [0, -5, 0],
-                      }
+                    ? { scale: [1, 1.45, 0.85, 1.12, 1], rotate: [0, -14, 10, 0], y: [0, -5, 0] }
                     : {}
                 }
-                transition={{
-                  duration: 0.6,
-                  ease: "easeOut",
-                }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
                 className="grid place-items-center"
               >
-                <ShoppingCart
-                  className="h-5 w-5 transition-transform
-                             duration-300 group-hover:scale-110"
-                />
+                <ShoppingCart className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
               </motion.span>
 
               <AnimatePresence>
                 {cartCount > 0 && (
                   <motion.span
                     key={cartCount}
-                    initial={{
-                      scale: 0.3,
-                      opacity: 0,
-                    }}
-                    animate={{
-                      scale: 1,
-                      opacity: 1,
-                    }}
-                    exit={{
-                      scale: 0.3,
-                      opacity: 0,
-                    }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 500,
-                      damping: 22,
-                    }}
+                    initial={{ scale: 0.3, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.3, opacity: 0 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 22 }}
                     className="absolute -right-1 -top-1
                                grid h-4 min-w-4 place-items-center
-                               rounded-full bg-rust px-1
-                               text-[10px] font-bold text-white"
+                               rounded-full bg-white px-1
+                               text-[10px] font-bold text-orange-600"
                   >
                     {cartCount}
                   </motion.span>
@@ -421,39 +338,33 @@ product.description?.toLowerCase()?.includes(query)
               </AnimatePresence>
             </Link>
 
-                      <div className="relative">
-
+            {/* Account */}
+            <div className="relative">
               {!isLoggedIn ? (
                 <button
                   type="button"
                   onClick={() => openLogin()}
                   aria-label="Login"
-                 className="group grid h-10 w-10 place-items-center
-           rounded-full border border-ink/15
-           bg-white text-ink/70
-           transition-all duration-300
-           hover:border-ink hover:bg-ink hover:text-white"
+                  className="group grid h-10 w-10 place-items-center
+                     rounded-full border border-orange-500
+                     bg-orange-500 text-white
+                     transition-all duration-300
+                     hover:border-black hover:bg-black hover:text-white"
                 >
-                  <User
-                    className="h-5 w-5 transition-transform duration-300
-                               group-hover:scale-110"
-                  />
+                  <User className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
                 </button>
               ) : (
-               
                 <>
                   <button
                     type="button"
-                    onClick={() =>
-                      setAccountOpen((value) => !value)
-                    }
+                    onClick={() => setAccountOpen((value) => !value)}
                     aria-label="Account menu"
                     aria-expanded={accountOpen}
                     className="grid h-10 w-10 place-items-center
-                               rounded-full bg-rust
+                               rounded-full bg-orange-500
                                text-sm font-bold text-white
                                transition-all duration-300
-                               hover:scale-105 hover:shadow-md"
+                               hover:bg-black hover:scale-105 hover:shadow-md"
                   >
                     {userInitial}
                   </button>
@@ -461,36 +372,21 @@ product.description?.toLowerCase()?.includes(query)
                   <AnimatePresence>
                     {accountOpen && (
                       <motion.div
-                        initial={{
-                          opacity: 0,
-                          y: -8,
-                          scale: 0.96,
-                        }}
-                        animate={{
-                          opacity: 1,
-                          y: 0,
-                          scale: 1,
-                        }}
-                        exit={{
-                          opacity: 0,
-                          y: -8,
-                          scale: 0.96,
-                        }}
-                        transition={{
-                          duration: 0.18,
-                        }}
+                        initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                        transition={{ duration: 0.18 }}
                         className="absolute right-0 top-12 w-52
                                    overflow-hidden rounded-2xl
-                                   border border-ink/10
-                                   bg-cream shadow-xl"
+                                   border border-white/10
+                                   bg-[#0d1f3c] shadow-xl"
                       >
-                        <div className="border-b border-ink/10 px-4 py-3">
-                          <p className="truncate text-sm font-semibold text-ink">
+                        <div className="border-b border-white/10 px-4 py-3">
+                          <p className="truncate text-sm font-semibold text-white">
                             {user?.name || "User"}
                           </p>
-
                           {user?.email && (
-                            <p className="mt-0.5 truncate text-xs text-ink/50">
+                            <p className="mt-0.5 truncate text-xs text-white/50">
                               {user.email}
                             </p>
                           )}
@@ -498,16 +394,13 @@ product.description?.toLowerCase()?.includes(query)
 
                         <Link
                           href="/account"
-                          onClick={() =>
-                            setAccountOpen(false)
-                          }
+                          onClick={() => setAccountOpen(false)}
                           className="flex items-center gap-3 px-4 py-3
-                                     text-sm font-medium text-ink/80
+                                     text-sm font-medium text-orange-400
                                      transition-colors
-                                     hover:bg-ink/5 hover:text-ink"
+                                     hover:bg-black hover:text-white"
                         >
                           <UserCircle className="h-5 w-5" />
-
                           <span>Profile</span>
                         </Link>
 
@@ -516,12 +409,11 @@ product.description?.toLowerCase()?.includes(query)
                           onClick={handleLogout}
                           className="flex w-full items-center gap-3
                                      px-4 py-3 text-left
-                                     text-sm font-medium text-red-600
+                                     text-sm font-medium text-red-400
                                      transition-colors
-                                     hover:bg-red-50"
+                                     hover:bg-black hover:text-red-300"
                         >
                           <LogOut className="h-5 w-5" />
-
                           <span>Logout</span>
                         </button>
                       </motion.div>
@@ -532,42 +424,31 @@ product.description?.toLowerCase()?.includes(query)
             </div>
           </div>
 
+          {/* Mobile hamburger */}
           <button
             onClick={() => setOpen((v) => !v)}
             className="grid h-10 w-10 place-items-center
-                       rounded-xl border border-ink/10 md:hidden"
+                       rounded-xl border border-orange-500
+                       bg-orange-500 text-white
+                       transition-colors hover:border-black hover:bg-black
+                       md:hidden"
             aria-label="Toggle menu"
             aria-expanded={open}
           >
-            {open ? (
-              <X className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
       </nav>
 
+      {/* Mobile Menu */}
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{
-              height: 0,
-              opacity: 0,
-            }}
-            animate={{
-              height: "auto",
-              opacity: 1,
-            }}
-            exit={{
-              height: 0,
-              opacity: 0,
-            }}
-            transition={{
-              duration: 0.35,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-            className="overflow-hidden md:hidden"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden bg-[#0a1628] md:hidden"
           >
             <ul className="space-y-1 px-5 py-4">
 
@@ -575,43 +456,42 @@ product.description?.toLowerCase()?.includes(query)
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className={`block rounded-xl px-4 py-3
-                                font-display text-lg font-semibold
-                                transition-colors ${
-                                  pathname === link.href
-                                    ? "bg-rust/10 text-ink"
-                                    : "text-ink/80 hover:bg-rust/10 hover:text-ink"
-                                }`}
+                   className={`block rounded-xl px-4 py-3
+            font-display text-lg font-semibold
+            transition-colors ${
+              pathname === link.href
+                ? "bg-orange-500/20 text-orange-400"
+                : "text-orange-300/80 hover:bg-black hover:text-white"
+            }`}
                   >
                     {link.label}
                   </Link>
                 </li>
               ))}
 
-              <li className="mt-3 border-t border-ink/10 pt-3">
+              <li className="mt-3 border-t border-white/10 pt-3">
                 <div className="flex items-center gap-3 px-4">
 
                   <Link
                     href="/search"
                     className="grid h-11 w-11 place-items-center
-                               rounded-xl border border-ink/10
-                               text-ink/70
-                               hover:bg-ink hover:text-cream"
+                               rounded-xl border border-orange-500
+                               bg-orange-500 text-white
+                               transition-colors hover:border-black hover:bg-black"
                     aria-label="Search"
                   >
                     <Search className="h-5 w-5" />
                   </Link>
 
                   <div className="relative">
-
                     {!isLoggedIn ? (
                       <button
                         type="button"
                         onClick={() => openLogin()}
                         className="grid h-11 w-11 place-items-center
-                                   rounded-xl border border-ink/10
-                                   text-ink/70
-                                   hover:bg-ink hover:text-cream"
+                                   rounded-xl border border-orange-500
+                                   bg-orange-500 text-white
+                                   transition-colors hover:border-black hover:bg-black"
                         aria-label="Login"
                       >
                         <User className="h-5 w-5" />
@@ -620,12 +500,11 @@ product.description?.toLowerCase()?.includes(query)
                       <>
                         <button
                           type="button"
-                          onClick={() =>
-                            setAccountOpen((value) => !value)
-                          }
+                          onClick={() => setAccountOpen((value) => !value)}
                           className="grid h-11 w-11 place-items-center
-                                     rounded-xl bg-rust
-                                     text-sm font-bold text-white"
+                                     rounded-xl bg-orange-500
+                                     text-sm font-bold text-white
+                                     transition-colors hover:bg-black"
                           aria-label="Account menu"
                           aria-expanded={accountOpen}
                         >
@@ -635,34 +514,21 @@ product.description?.toLowerCase()?.includes(query)
                         <AnimatePresence>
                           {accountOpen && (
                             <motion.div
-                              initial={{
-                                opacity: 0,
-                                y: -8,
-                                scale: 0.96,
-                              }}
-                              animate={{
-                                opacity: 1,
-                                y: 0,
-                                scale: 1,
-                              }}
-                              exit={{
-                                opacity: 0,
-                                y: -8,
-                                scale: 0.96,
-                              }}
+                              initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                              animate={{ opacity: 1, y: 0, scale: 1 }}
+                              exit={{ opacity: 0, y: -8, scale: 0.96 }}
                               className="absolute left-0 top-14 z-50
                                          w-52 overflow-hidden
                                          rounded-2xl
-                                         border border-ink/10
-                                         bg-cream shadow-xl"
+                                         border border-white/10
+                                         bg-[#0d1f3c] shadow-xl"
                             >
-                              <div className="border-b border-ink/10 px-4 py-3">
-                                <p className="truncate text-sm font-semibold text-ink">
+                              <div className="border-b border-white/10 px-4 py-3">
+                                <p className="truncate text-sm font-semibold text-white">
                                   {user?.name || "User"}
                                 </p>
-
                                 {user?.email && (
-                                  <p className="mt-0.5 truncate text-xs text-ink/50">
+                                  <p className="mt-0.5 truncate text-xs text-white/50">
                                     {user.email}
                                   </p>
                                 )}
@@ -670,15 +536,12 @@ product.description?.toLowerCase()?.includes(query)
 
                               <Link
                                 href="/account"
-                                onClick={() =>
-                                  setAccountOpen(false)
-                                }
+                                onClick={() => setAccountOpen(false)}
                                 className="flex items-center gap-3 px-4 py-3
-                                           text-sm font-medium text-ink/80
-                                           hover:bg-ink/5"
+                                           text-sm font-medium text-orange-400
+                                           transition-colors hover:bg-black hover:text-white"
                               >
                                 <UserCircle className="h-5 w-5" />
-
                                 <span>Profile</span>
                               </Link>
 
@@ -687,12 +550,10 @@ product.description?.toLowerCase()?.includes(query)
                                 onClick={handleLogout}
                                 className="flex w-full items-center gap-3
                                            px-4 py-3 text-left
-                                           text-sm font-medium
-                                           text-red-600
-                                           hover:bg-red-50"
+                                           text-sm font-medium text-red-400
+                                           transition-colors hover:bg-black hover:text-red-300"
                               >
                                 <LogOut className="h-5 w-5" />
-
                                 <span>Logout</span>
                               </button>
                             </motion.div>
@@ -703,27 +564,26 @@ product.description?.toLowerCase()?.includes(query)
                   </div>
 
                   <WishlistNavButton
-                    className="h-11 w-11 rounded-xl border border-ink/10"
+                    className="h-11 w-11 rounded-xl border border-orange-500 bg-orange-500 text-white hover:border-black hover:bg-black"
                   />
 
                   <Link
                     href="/cart"
                     className="relative grid h-11 w-11
                                place-items-center rounded-xl
-                               border border-ink/10
-                               text-ink/70
-                               hover:bg-rust hover:text-cream"
+                               border border-orange-500
+                               bg-orange-500 text-white
+                               transition-colors hover:border-black hover:bg-black"
                     aria-label={`Shopping Cart, ${cartCount} items`}
                   >
                     <ShoppingCart className="h-5 w-5" />
-
                     {cartCount > 0 && (
                       <span
                         className="absolute -right-1 -top-1
                                    flex h-4 min-w-4 items-center
                                    justify-center rounded-full
-                                   bg-rust px-1 text-[10px]
-                                   font-bold text-white"
+                                   bg-white px-1 text-[10px]
+                                   font-bold text-orange-600"
                       >
                         {cartCount}
                       </span>

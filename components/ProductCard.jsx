@@ -219,7 +219,7 @@ function ProductCard({ product, index = 0 }) {
 
       <div className="flex flex-1 flex-col px-5 py-4">
         <Link href={href ?? "#"} onClick={(e) => { if (!href) e.preventDefault(); }}>
-          <h3 className="font-display text-[15px] font-bold leading-tight text-ink transition-colors hover:text-rust">
+          <h3 className="font-display text-[20px] font-bold leading-tight text-ink transition-colors hover:text-rust">
             {product.name}
           </h3>
 
@@ -246,18 +246,7 @@ function ProductCard({ product, index = 0 }) {
           </div>
         )}
 
-        {product.specs?.length > 0 && (
-          <div className="mt-2.5 flex flex-wrap gap-1.5">
-            {product.specs.map((s) => (
-              <span
-                key={s}
-                className="rounded-full border border-ink/10 px-2.5 py-0.5 text-[10px] font-medium text-ink/55"
-              >
-                {s}
-              </span>
-            ))}
-          </div>
-        )}
+
 
         <div className="mt-auto">
           <div className="mt-4 h-px w-full bg-ink/6" />
