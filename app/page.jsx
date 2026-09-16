@@ -9,7 +9,6 @@ import Footer from "@/components/Footer";
 import Categories from "@/components/Categories";
 import Reviews from "@/components/Reviews";
 import FAQSection from "@/components/FAQSection";
-import QueryForm from "@/components/QueryForm";
 import SmoothScroll from "@/components/SmoothScroll";
 import Product360 from "@/components/Product360";
 import ProductsClient from "@/components/ProductsClient";
@@ -48,7 +47,6 @@ export default async function Home() {
         <Stats />
         <CTA />
         <FAQSection />
-        <QueryForm />
         <Footer />
       </main>
     </SmoothScroll>
