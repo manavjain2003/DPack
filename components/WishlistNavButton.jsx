@@ -12,9 +12,9 @@ export default function WishlistNavButton({ className = "" }) {
     relative inline-flex items-center justify-center
     h-10 w-10 rounded-full
     border border-ink/15
-    bg-white text-ink/70
+    bg-[#f97316] text-white
     transition-all duration-300
-    hover:border-rust hover:bg-rust hover:text-white
+    hover:bg-black hover:text-white
     ${className}
   `;
 

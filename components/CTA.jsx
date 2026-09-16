@@ -5,17 +5,33 @@ import { motion } from "framer-motion";
 import { ArrowRight, Mail } from "lucide-react";
 import { EMAIL } from "@/lib/products";
 
-export default function CTA() {
+const BG_IMAGE =
+  "https://www.instantcustomboxes.com/wp-content/uploads/2023/02/ICB-BANNER-8-Feb-1-scaled.webp?lm=6AA1BDF0";
+
+export default function ProductCTA() {
   return (
-    <section className="pb-24 sm:pb-32">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8">
+    <section >
+      <div className="mx-auto max-w-8xl">
         <motion.div
           initial={{ opacity: 0, y: 40, scale: 0.98 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="relative overflow-hidden rounded-[2.5rem] bg-[#1b3a5c] px-8 py-16 text-center shadow-[0_20px_50px_rgba(27,58,92,0.3)] sm:px-14 sm:py-20"
+          className="relative overflow-hidden px-8 py-16 text-center shadow-[0_20px_50px_rgba(27,58,92,0.3)] sm:px-14 sm:py-20"
         >
+          {/* Background image */}
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              backgroundImage: `url(${BG_IMAGE})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          />
+
+          {/* Dark overlay to maintain text contrast */}
+          <div className="pointer-events-none absolute inset-0 bg-[#1b3a5c]/75" />
+
           {/* Dot grid overlay */}
           <div
             className="pointer-events-none absolute inset-0 opacity-100"

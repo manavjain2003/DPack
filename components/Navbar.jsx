@@ -142,7 +142,7 @@ export default function Navbar() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                 className={`relative text-sm font-semibold transition-colors
+               className={`relative text-sm font-bold transition-colors
   after:absolute after:-bottom-1
   after:left-0 after:h-[2px]
   after:bg-orange-500
@@ -539,7 +539,7 @@ export default function Navbar() {
                                 onClick={() => setAccountOpen(false)}
                                 className="flex items-center gap-3 px-4 py-3
                                            text-sm font-medium text-orange-400
-                                           transition-colors hover:bg-black hover:text-white"
+                                           transition-colors hover:bg-white hover:text-black"
                               >
                                 <UserCircle className="h-5 w-5" />
                                 <span>Profile</span>

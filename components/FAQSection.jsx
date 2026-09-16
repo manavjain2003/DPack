@@ -36,39 +36,70 @@ const FAQS = [
 
 function PlusMinusIcon({ open }) {
   return (
-    <svg
-      viewBox="0 0 20 20"
-      className={`h-4 w-4 shrink-0 fill-amber-500 transition-transform duration-200 ${
-        open ? "rotate-180" : ""
-      }`}
+    <span
+      className="relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-all duration-300"
+      style={{
+        backgroundColor: open ? "#D4891A" : "#EDE9E2",
+        transform: open ? "rotate(45deg)" : "rotate(0deg)",
+      }}
     >
-      <rect x="8.5" y="2" width="3" height="16" className={open ? "opacity-0" : "opacity-100"} />
-      <rect x="2" y="8.5" width="16" height="3" />
-    </svg>
+      {/* Horizontal bar */}
+      <span
+        className="absolute h-0.5 w-2.5 rounded-sm transition-colors duration-300"
+        style={{ backgroundColor: open ? "#ffffff" : "#1B2A4A" }}
+      />
+      {/* Vertical bar */}
+      <span
+        className="absolute h-2.5 w-0.5 rounded-sm transition-colors duration-300"
+        style={{ backgroundColor: open ? "#ffffff" : "#1B2A4A" }}
+      />
+    </span>
   );
 }
 
 function FaqItem({ item, open, onToggle }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-slate-50">
+    <div
+      className="overflow-hidden rounded-2xl border bg-white transition-all duration-300"
+      style={{
+        borderColor: open ? "#D4891A" : "#E8E2D9",
+        borderWidth: "1.5px",
+        boxShadow: open ? "0 0 0 3px rgba(212,137,26,0.10)" : "none",
+      }}
+    >
       <button
         type="button"
         onClick={onToggle}
         aria-expanded={open}
-        className="flex w-full items-center justify-between gap-6 px-7 py-6 text-left"
+        className="flex w-full items-center justify-between gap-4 border-l-4 px-5 py-[18px] text-left transition-all duration-300 sm:px-6"
+        style={{
+          borderLeftColor: open ? "#D4891A" : "transparent",
+          backgroundColor: open ? "#FDF3E3" : "transparent",
+        }}
       >
-        <span className="text-base font-semibold text-slate-900">
+        <span
+          className="text-[15px] font-semibold leading-snug"
+          style={{ color: "#1B2A4A" }}
+        >
           {item.question}
         </span>
         <PlusMinusIcon open={open} />
       </button>
+
       <div
         className={`grid overflow-hidden transition-all duration-300 ease-in-out ${
           open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
         }`}
       >
         <div className="overflow-hidden">
-          <p className="px-7 pb-6 text-[15px] leading-relaxed text-slate-500">
+          <p
+            className="border-l-4 pb-5 pl-5 pr-6 pt-4 text-sm leading-relaxed sm:pl-6"
+            style={{
+              color: "#6B7A99",
+              borderLeftColor: "#D4891A",
+              marginLeft: "0",
+            }}
+          >
             {item.answer}
           </p>
         </div>
@@ -83,18 +114,37 @@ export default function FAQSection() {
   const toggle = (i) => setOpenIndex((current) => (current === i ? -1 : i));
 
   return (
-    <section className="bg-white py-20">
+    <section className="py-20" style={{ backgroundColor: "#FAF7F2" }}>
       <div className="mx-auto max-w-6xl px-6">
+        {/* Header */}
         <div className="text-center">
-          <h2 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
+          <p
+            className="mb-3 flex items-center justify-center gap-3 text-[11px] font-bold uppercase tracking-[0.22em]"
+            style={{ color: "#D4891A" }}
+          >
+            <span
+              className="h-px w-7"
+              style={{ backgroundColor: "#D4891A" }}
+            />
+            Got questions
+            <span
+              className="h-px w-7"
+              style={{ backgroundColor: "#D4891A" }}
+            />
+          </p>
+          <h2
+            className="font-display text-4xl font-bold tracking-tight sm:text-5xl"
+            style={{ color: "#1B2A4A" }}
+          >
             Frequently Asked Questions
           </h2>
-          <p className="mt-4 text-base text-slate-500">
+          <p className="mt-4 text-base" style={{ color: "#6B7A99" }}>
             Everything you need to know about our packaging solutions.
           </p>
         </div>
 
-        <div className="mt-12 flex flex-col gap-4">
+        {/* FAQ List */}
+        <div className="mt-12 flex flex-col gap-3">
           {FAQS.map((item, i) => (
             <FaqItem
               key={i}
