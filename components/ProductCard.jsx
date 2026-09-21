@@ -129,7 +129,7 @@ function ProductCard({ product, index = 0 }) {
           alt={product.name}
           loading={index < 3 ? "eager" : "lazy"}
           decoding="async"
-          className={`absolute inset-0 m-auto h-full w-full transition-all duration-500 ${
+          className={`absolute inset-0 m-auto h-full w-full transition-all object-fit duration-500 ${
             outOfStock ? "opacity-60 grayscale-[35%]" : ""
           } ${
             hovered && hasVideo

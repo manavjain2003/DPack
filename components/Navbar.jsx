@@ -116,10 +116,10 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#0a1628] shadow-sm ${
+      className={`fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#ededf1] shadow-sm ${
         scrolled || open
-          ? "border-b border-white/10 bg-[#0a1628]/90 shadow-sm backdrop-blur-xl"
-          : "bg-[#0a1628]"
+          ? "border-b border-white/10 bg-[#ededf1]/90 shadow-sm backdrop-blur-xl"
+          : "bg-[#ededf1]"
       }`}
     >
       <nav className="mx-auto flex max-w-8xl items-center px-5 py-4 sm:px-8">
@@ -148,8 +148,8 @@ export default function Navbar() {
   after:transition-all after:duration-300
   ${
     active
-      ? "text-orange-400 after:w-full"
-      : "text-orange-300/80 hover:text-white after:w-0 hover:after:w-full"
+      ? "text-orange-800 after:w-full"
+      : "text-[#f97316] hover:text-ink after:w-0 hover:after:w-full"
   }
 `}
                 >

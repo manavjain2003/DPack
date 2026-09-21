@@ -35,6 +35,27 @@ import {
 import { addToCart } from "@/lib/cartBus";
 import { useAuth } from "@/app/context/AuthContext";
 
+// ─── Animation variants ───────────────────────────────────────────────────────
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { opacity: 1, y: 0 },
+};
+
+const fadeIn = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+};
+
+const staggerContainer = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function formatPrice(price) {
@@ -46,10 +67,6 @@ function formatPrice(price) {
   }).format(price);
 }
 
-/**
- * Parse a spec string like "Material: Paper" → { label: "Material", value: "Paper" }
- * Falls back to the full string as the value if no colon is found.
- */
 function parseSpec(specString) {
   const colonIdx = specString.indexOf(":");
   if (colonIdx !== -1) {
@@ -61,11 +78,6 @@ function parseSpec(specString) {
   return { label: "Detail", value: specString };
 }
 
-/**
- * Build the full spec table rows from product data.
- * Specs come from product.specs[] — each entry is parsed to extract
- * a real label (e.g. "Material", "Size/Dimension") rather than "Specification N".
- */
 function buildSpecRows(product) {
   const rows = [];
 
@@ -88,7 +100,8 @@ function buildSpecRows(product) {
   return rows;
 }
 
-// ─── Static badge data (layout only — no copy hardcoded into business logic) ──
+// ─── Static data ─────────────────────────────────────────────────────────────
+
 const TRUST_BADGES = [
   { Icon: CreditCard, text: "Secure Payments" },
   { Icon: RefreshCw,  text: "Easy Returns"    },
@@ -108,7 +121,6 @@ const SOCIALS = [
   { href: "https://www.linkedin.com/company/dpacksolutions/",  Icon: Linkedin,  label: "LinkedIn"  },
 ];
 
-
 const FEATURE_ICON_MAP = {
   Package,
   Leaf,
@@ -119,22 +131,28 @@ const FEATURE_ICON_MAP = {
   Truck,
 };
 
-
 const PROMO_STATS = [
   { value: "10K+",      label: "Businesses Trust Us" },
   { value: "99%",       label: "Damage Reduction"    },
   { value: "Pan India", label: "Delivery"            },
 ];
 
+// ─── Components ──────────────────────────────────────────────────────────────
+
 function PromoPanel() {
   return (
-    <div className="relative flex h-full min-h-[360px] flex-col justify-between overflow-hidden rounded-2xl border border-ink/8 bg-[#F3EEE8] p-7">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: false, margin: "-60px" }}
+      transition={{ duration: 0.6 }}
+      className="relative flex h-full min-h-[360px] flex-col justify-between overflow-hidden rounded-2xl border border-ink/8 bg-[#F3EEE8] p-7"
+    >
       <img
         src="/promo.jpg"
         alt="Safely packaged products"
         className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
       />
-
       <div className="pointer-events-none absolute inset-0 z-[1] bg-white/20" />
 
       <div className="relative z-10 max-w-[220px]">
@@ -143,7 +161,6 @@ function PromoPanel() {
           <br />
           Happy Customers.
         </h3>
-
         <p className="mt-2 text-[13px] leading-snug text-ink/55">
           Because every product deserves to reach safely.
         </p>
@@ -155,18 +172,15 @@ function PromoPanel() {
             <p className="font-display text-base font-extrabold leading-none text-ink sm:text-lg">
               {value}
             </p>
-
             <p className="mt-1 text-[10.5px] leading-snug text-ink/45">
               {label}
             </p>
           </div>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 }
-
-
 
 function Gallery({ product }) {
   const images = [product.image, ...(product.extraImages ?? [])].filter(Boolean);
@@ -182,46 +196,17 @@ function Gallery({ product }) {
   const next = () => setActive((i) => (i + 1) % media.length);
 
   return (
-    <div className="flex gap-3">
-      <div className="flex flex-col gap-2 overflow-y-auto" style={{ maxHeight: 520 }}>
-        {media.map((item, i) => (
-          <button
-            key={item.src}
-            type="button"
-            onClick={() => setActive(i)}
-            className={`relative h-[72px] w-[72px] shrink-0 overflow-hidden rounded-xl border-2 transition-all bg-[#F5F3EF] ${
-              i === active
-                ? "border-rust shadow-[0_0_0_2px_rgba(224,92,42,0.20)]"
-                : "border-ink/10 hover:border-ink/25"
-            }`}
-          >
-            {item.type === "image" ? (
-              <img
-                src={item.src}
-                alt={`${product.name} ${i + 1}`}
-                className="h-full w-full object-contain p-1.5"
-              />
-            ) : (
-              <div className="relative h-full w-full">
-                <video
-                  src={item.src}
-                  muted
-                  playsInline
-                  preload="metadata"
-                  className="h-full w-full object-cover"
-                />
-                <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/90 shadow">
-                    <Play className="h-3 w-3 fill-rust text-rust" />
-                  </div>
-                </div>
-              </div>
-            )}
-          </button>
-        ))}
-      </div>
-
-      <div className="relative flex-1 overflow-hidden rounded-2xl border border-ink/8 bg-[#F5F3EF]" style={{ aspectRatio: "1/1" }}>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.97, y: 20 }}
+      whileInView={{ opacity: 1, scale: 1, y: 0 }}
+      viewport={{ once: false, margin: "-80px" }}
+      transition={{ duration: 0.65, ease: "easeOut" }}
+      className="flex flex-col gap-3"
+    >
+      <div
+        className="relative w-full overflow-hidden rounded-2xl border border-ink/8 bg-[#F5F3EF]"
+        style={{ aspectRatio: "4/3" }}
+      >
         {product.badges?.length > 0 && (
           <div className="absolute top-4 left-4 z-20 flex flex-wrap gap-2">
             {product.badges.map((badge, i) => (
@@ -237,10 +222,6 @@ function Gallery({ product }) {
               </span>
             ))}
           </div>
-        )}
-
-        {activeItem?.type === "image" && (
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,rgba(255,255,255,0.75)_0%,transparent_100%)] pointer-events-none z-10" />
         )}
 
         <AnimatePresence mode="wait" initial={false}>
@@ -276,7 +257,6 @@ function Gallery({ product }) {
           )}
         </AnimatePresence>
 
-
         {media.length > 1 && (
           <>
             <button
@@ -296,7 +276,45 @@ function Gallery({ product }) {
           </>
         )}
       </div>
-    </div>
+
+      <div className="flex gap-2 overflow-x-auto pb-1">
+        {media.map((item, i) => (
+          <button
+            key={item.src}
+            type="button"
+            onClick={() => setActive(i)}
+            className={`relative h-[80px] w-[80px] shrink-0 overflow-hidden rounded-xl border-2 transition-all bg-[#F5F3EF] ${
+              i === active
+                ? "border-rust shadow-[0_0_0_2px_rgba(224,92,42,0.20)]"
+                : "border-ink/10 hover:border-ink/25"
+            }`}
+          >
+            {item.type === "image" ? (
+              <img
+                src={item.src}
+                alt={`${product.name} ${i + 1}`}
+                className="h-full w-full object-contain p-1.5"
+              />
+            ) : (
+              <div className="relative h-full w-full">
+                <video
+                  src={item.src}
+                  muted
+                  playsInline
+                  preload="metadata"
+                  className="h-full w-full object-cover"
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/90 shadow">
+                    <Play className="h-3 w-3 fill-rust text-rust" />
+                  </div>
+                </div>
+              </div>
+            )}
+          </button>
+        ))}
+      </div>
+    </motion.div>
   );
 }
 
@@ -312,13 +330,21 @@ function FeatureStrip({ features }) {
   const items = features?.length ? features : HARDCODED_FEATURES;
 
   return (
-    <div className="mt-10 overflow-hidden rounded-2xl border border-ink/8 bg-[#F9F8F6]">
+    <motion.div
+      variants={staggerContainer}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: false, margin: "-60px" }}
+      className="mt-10 overflow-hidden rounded-2xl border border-ink/8 bg-[#F9F8F6]"
+    >
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 divide-x divide-ink/8">
         {items.map(({ icon, title, subtitle }, idx) => {
           const Icon = FEATURE_ICON_MAP[icon] ?? Package;
           return (
-            <div
+            <motion.div
               key={title}
+              variants={fadeUp}
+              transition={{ duration: 0.5 }}
               className={`flex flex-col items-center justify-start gap-3 px-6 py-7 text-center
                 ${idx >= 2 ? "sm:border-t-0" : ""}
                 ${idx >= 3 ? "border-t border-ink/8 sm:border-t lg:border-t-0" : ""}
@@ -331,18 +357,23 @@ function FeatureStrip({ features }) {
                 <p className="text-[13.5px] font-bold text-ink">{title}</p>
                 <p className="mt-1 text-[12.5px] leading-snug text-ink/45">{subtitle}</p>
               </div>
-            </div>
+            </motion.div>
           );
         })}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 function BulletSection({ title, items }) {
   if (!items?.length) return null;
   return (
-    <div>
+    <motion.div
+      initial={{ opacity: 0, y: 25 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: false, margin: "-40px" }}
+      transition={{ duration: 0.5 }}
+    >
       <h4 className="mb-2.5 text-[15px] font-bold text-ink">{title}</h4>
       <ul className="space-y-2">
         {items.map((line, i) => (
@@ -352,7 +383,7 @@ function BulletSection({ title, items }) {
           </li>
         ))}
       </ul>
-    </div>
+    </motion.div>
   );
 }
 
@@ -360,16 +391,26 @@ function TabDescription({ product }) {
   const bullets = product.descriptionBullets ?? [];
   return (
     <div className="space-y-6">
-    
       {bullets.length > 0 && (
-        <div className="space-y-3">
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, margin: "-40px" }}
+          className="space-y-3"
+        >
           {bullets.map((line, i) => (
-            <p key={i} className="flex items-start gap-3 text-[15px] leading-relaxed text-ink/65">
+            <motion.p
+              key={i}
+              variants={fadeUp}
+              transition={{ duration: 0.45 }}
+              className="flex items-start gap-3 text-[15px] leading-relaxed text-ink/65"
+            >
               <CheckCircle2 className="mt-0.5 h-4.5 w-4.5 shrink-0 text-rust" style={{ width: 18, height: 18 }} />
               {line}
-            </p>
+            </motion.p>
           ))}
-        </div>
+        </motion.div>
       )}
 
       <BulletSection title="Product Overview" items={product.overview} />
@@ -382,7 +423,13 @@ function TabDescription({ product }) {
 function TabSpecifications({ product }) {
   const specRows = buildSpecRows(product);
   return (
-    <div className="overflow-hidden rounded-2xl border border-ink/8">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: false, margin: "-40px" }}
+      transition={{ duration: 0.55 }}
+      className="overflow-hidden rounded-2xl border border-ink/8"
+    >
       <table className="w-full text-[15px]">
         <tbody>
           {specRows.map(({ label, value }, i) => (
@@ -398,7 +445,7 @@ function TabSpecifications({ product }) {
           ))}
         </tbody>
       </table>
-    </div>
+    </motion.div>
   );
 }
 
@@ -411,7 +458,13 @@ function TabShipping({ product }) {
     { label: "Payment",          value: "Secure checkout — UPI, cards, net banking" },
   ];
   return (
-    <div className="overflow-hidden rounded-2xl border border-ink/8">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: false, margin: "-40px" }}
+      transition={{ duration: 0.55 }}
+      className="overflow-hidden rounded-2xl border border-ink/8"
+    >
       <table className="w-full text-[15px]">
         <tbody>
           {rows.map(({ label, value }, i) => (
@@ -427,7 +480,7 @@ function TabShipping({ product }) {
           ))}
         </tbody>
       </table>
-    </div>
+    </motion.div>
   );
 }
 
@@ -448,7 +501,13 @@ function ProductTabs({ product }) {
   );
 
   return (
-    <div className="mt-14">
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: false, margin: "-80px" }}
+      transition={{ duration: 0.6 }}
+      className="mt-14"
+    >
       <div className="flex gap-8 border-b border-ink/10 overflow-x-auto">
         {tabs.map((tab) => (
           <button
@@ -479,7 +538,7 @@ function ProductTabs({ product }) {
 
         <PromoPanel />
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -519,23 +578,48 @@ export default function ProductDetail({ product }) {
 
       <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
 
-        <Gallery product={product} />
+<div className="lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <Gallery product={product} />
+        </div>
 
-        <div className="flex flex-col">
-
-          <span className="inline-flex w-fit items-center rounded-full border border-rust/25 bg-rust/8 px-3 py-1 text-[11.5px] font-bold uppercase tracking-widest text-rust">
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, margin: "-80px" }}
+          className="flex flex-col"
+        >
+          <motion.span
+            variants={fadeUp}
+            transition={{ duration: 0.45 }}
+            className="inline-flex w-fit items-center rounded-full border border-rust/25 bg-rust/8 px-3 py-1 text-[11.5px] font-bold uppercase tracking-widest text-rust"
+          >
             {product.category}
-          </span>
+          </motion.span>
 
-          <h1 className="mt-3 font-display text-[26px] font-bold leading-tight tracking-tight text-ink sm:text-[30px]">
+          <motion.h1
+            variants={fadeUp}
+            transition={{ duration: 0.5 }}
+            className="mt-3 font-display text-[26px] font-bold leading-tight tracking-tight text-ink sm:text-[30px]"
+          >
             {product.name}
-          </h1>
+          </motion.h1>
 
           {product.tagline && (
-            <p className="mt-1 text-[13.5px] text-ink/45">{product.tagline}</p>
+            <motion.p
+              variants={fadeUp}
+              transition={{ duration: 0.5 }}
+              className="mt-1 text-[13.5px] text-ink/45"
+            >
+              {product.tagline}
+            </motion.p>
           )}
 
-          <div className="mt-3 flex flex-wrap items-center gap-2">
+          <motion.div
+            variants={fadeUp}
+            transition={{ duration: 0.5 }}
+            className="mt-3 flex flex-wrap items-center gap-2"
+          >
             <div className="flex items-center gap-0.5">
               {[1, 2, 3, 4, 5].map((s) => (
                 <Star
@@ -556,10 +640,14 @@ export default function ProductDetail({ product }) {
             {product.soldCount && (
               <span className="text-[12px] text-ink/35">| {product.soldCount} sold</span>
             )}
-          </div>
+          </motion.div>
 
           {product.price != null && (
-            <div className="mt-5 flex items-end gap-3">
+            <motion.div
+              variants={fadeUp}
+              transition={{ duration: 0.5 }}
+              className="mt-5 flex items-end gap-3"
+            >
               <span className="font-display text-3xl font-extrabold tabular-nums text-ink">
                 {formatPrice(product.price)}
               </span>
@@ -573,17 +661,21 @@ export default function ProductDetail({ product }) {
                   {discountPercent}% OFF
                 </span>
               )}
-            </div>
+            </motion.div>
           )}
 
-          <p className="mt-4 text-[14px] leading-relaxed text-ink/60">
+          <motion.p
+            variants={fadeUp}
+            transition={{ duration: 0.5 }}
+            className="mt-4 text-[14px] leading-relaxed text-ink/60"
+          >
             {product.description}
-          </p>
+          </motion.p>
 
-          <div className="mt-5 h-px bg-ink/8" />
+          <motion.div variants={fadeUp} transition={{ duration: 0.45 }} className="mt-5 h-px bg-ink/8" />
 
           {product.sizes?.length > 0 && (
-            <div className="mt-5">
+            <motion.div variants={fadeUp} transition={{ duration: 0.5 }} className="mt-5">
               <p className="mb-2.5 text-[13px] font-semibold text-ink/70">Size</p>
               <div className="flex flex-wrap gap-2">
                 {product.sizes.map((size) => (
@@ -601,10 +693,14 @@ export default function ProductDetail({ product }) {
                   </button>
                 ))}
               </div>
-            </div>
+            </motion.div>
           )}
 
-          <div className="mt-5 flex flex-wrap items-center gap-5">
+          <motion.div
+            variants={fadeUp}
+            transition={{ duration: 0.5 }}
+            className="mt-5 flex flex-wrap items-center gap-5"
+          >
             <div>
               <p className="mb-2.5 text-[13px] font-semibold text-ink/70">Quantity</p>
               <div className="flex items-center rounded-lg border border-ink/12">
@@ -648,9 +744,13 @@ export default function ProductDetail({ product }) {
                 </div>
               )}
             </div>
-          </div>
+          </motion.div>
 
-          <div className="mt-5 flex flex-wrap gap-3">
+          <motion.div
+            variants={fadeUp}
+            transition={{ duration: 0.5 }}
+            className="mt-5 flex flex-wrap gap-3"
+          >
             <button
               type="button"
               onClick={handleAddToCart}
@@ -697,53 +797,85 @@ export default function ProductDetail({ product }) {
                 <Heart className={`h-5 w-5 ${wishlisted ? "fill-current" : ""}`} strokeWidth={wishlisted ? 0 : 2} />
               </motion.span>
             </button>
-          </div>
+          </motion.div>
 
-          <div className="mt-5 flex flex-wrap items-center gap-5 border-t border-ink/8 pt-4">
+          <motion.div
+            variants={fadeUp}
+            transition={{ duration: 0.5 }}
+            className="mt-5 flex flex-wrap items-center gap-5 border-t border-ink/8 pt-4"
+          >
             {TRUST_BADGES.map(({ Icon, text }) => (
               <div key={text} className="flex items-center gap-2 text-ink/50">
                 <Icon className="h-4 w-4 shrink-0" strokeWidth={1.5} />
                 <span className="text-[12.5px] font-medium">{text}</span>
               </div>
             ))}
-          </div>
+          </motion.div>
 
-          <p className="mt-4 text-[13px] text-ink/45">
+          <motion.p
+            variants={fadeUp}
+            transition={{ duration: 0.5 }}
+            className="mt-4 text-[13px] text-ink/45"
+          >
             Need a custom quantity or specification?{" "}
             <Link href="/contact" className="font-semibold text-rust underline-offset-4 hover:underline">
               Talk to our team
             </Link>
             .
-          </p>
+          </motion.p>
 
-          <div className="mt-6 grid gap-3 sm:grid-cols-3">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, margin: "-40px" }}
+            className="mt-6 grid gap-3 sm:grid-cols-3"
+          >
             {TRUST_POINTS.map(({ Icon, text }) => (
-              <div key={text} className="flex items-start gap-2.5 rounded-xl border border-ink/8 bg-[#F9F7F4] px-3.5 py-3">
+              <motion.div
+                key={text}
+                variants={fadeUp}
+                transition={{ duration: 0.45 }}
+                className="flex items-start gap-2.5 rounded-xl border border-ink/8 bg-[#F9F7F4] px-3.5 py-3"
+              >
                 <Icon className="mt-0.5 h-4 w-4 shrink-0 text-rust" />
                 <span className="text-[12.5px] leading-snug text-ink/65">{text}</span>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
-          <div className="mt-7 h-px bg-ink/8" />
-          <div className="mt-5 flex flex-wrap items-center gap-3">
+          <motion.div variants={fadeUp} transition={{ duration: 0.45 }} className="mt-7 h-px bg-ink/8" />
+
+          <motion.div
+            variants={fadeUp}
+            transition={{ duration: 0.5 }}
+            className="mt-5 flex flex-wrap items-center gap-3"
+          >
             <span className="text-[12.5px] font-semibold text-ink/40">Visit Us:</span>
             {SOCIALS.map(({ href, Icon, label }) => (
-              <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-ink/10 bg-ink/3 text-ink/50 transition hover:border-rust/30 hover:bg-rust/8 hover:text-rust">
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-ink/10 bg-ink/3 text-ink/50 transition hover:border-rust/30 hover:bg-rust/8 hover:text-rust"
+              >
                 <Icon className="h-3.5 w-3.5" />
               </a>
             ))}
-            <button type="button" className="ml-auto flex items-center gap-1.5 text-[12px] text-ink/35 hover:text-ink/55 transition">
+            <button
+              type="button"
+              className="ml-auto flex items-center gap-1.5 text-[12px] text-ink/35 hover:text-ink/55 transition"
+            >
               <Share2 className="h-3 w-3" />
               Share
             </button>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
 
       <FeatureStrip features={product.features} />
-
       <ProductTabs product={product} />
     </div>
   );

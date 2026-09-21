@@ -15,7 +15,7 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 const SLIDES = [
   
   {
-    src: "https://pub-6773b48348124a078cb55322f384ad44.r2.dev/dpack/categories/1d9a1ea2-907b-44b1-aed9-853006a04587",
+    src: "https://pub-6773b48348124a078cb55322f384ad44.r2.dev/dpack/categories/2cced03d-febd-42bf-a9e7-7b1c31ae9ee6",
     alt: "Packaging Air Bags",
     title: "Packaging Air Bags",
     subtitle:
@@ -286,7 +286,7 @@ export default function Hero() {
                   x: "-50%",
                   transformOrigin: "50% 100%", // anchors the pop to the bottom, i.e. the box mouth
                 }}
-                className="z-10 w-[55%] max-w-[300px] rounded-2xl border border-ink/10 bg-white/95 p-4 shadow-lift backdrop-blur"
+                className="z-10 w-[55%] max-w-[200px] rounded-2xl border border-ink/10 bg-white/95 p-4 shadow-lift backdrop-blur"
               >
                 <div className="relative mx-auto h-28 w-full overflow-hidden rounded-lg bg-cream/70 sm:h-32">
                   <AnimatePresence mode="sync">
