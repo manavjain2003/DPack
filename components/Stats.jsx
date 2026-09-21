@@ -45,7 +45,7 @@ export default function Stats() {
             relative
             overflow-hidden
             rounded-[2.5rem]
-            bg-[#1a1410]
+            bg-[#0d2461]
             px-8
             py-16
             shadow-[0_20px_60px_rgba(160,80,0,0.22)]

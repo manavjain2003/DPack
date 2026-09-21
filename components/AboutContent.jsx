@@ -114,9 +114,9 @@ export default function AboutContent() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 30 }}
             whileInView={{ opacity: 1, scale: 1, y: 0 }}
-            viewport={{ once: false, margin: "-80px" }}   // ← changed
+            viewport={{ once: false, margin: "-80px" }} 
             transition={{ duration: 0.7, ease: "easeOut" }}
-            className="overflow-hidden rounded-3xl border border-ink/10 bg-white p-5 shadow-sm"
+            className="overflow-hidden rounded-3xl border border-ink/10 bg-white p-5 shadow-sm lg:h-[460px]"
           >
             <img
               src="https://packingairbag.com/check/bg1.webp"
