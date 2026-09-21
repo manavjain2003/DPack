@@ -255,8 +255,7 @@ export default function Hero() {
             <div className="relative mx-auto" style={{ width: 660, height: 420, marginTop: 180 }}>
               <div className="drop-shadow-[0_20px_36px_rgba(120,75,30,0.28)]">
                 <DotLottieReact
-                  src="/opening_cardboard_box.json"
-                  loop
+                  src="/opening_cardboard_box.json"     
                   autoplay
                 />
               </div>
