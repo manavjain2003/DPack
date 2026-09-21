@@ -118,9 +118,11 @@ export default function ProductsClient({ products }) {
                   <ProductSkeleton />
                 </motion.div>
               ))
-            : displayed.filter(Boolean).map((p, i) => (
-                <ProductCard key={p.slug} product={p} index={i} />
-              ))}
+           : displayed.filter(Boolean).map((p, i) => (
+    <motion.div key={p.slug} layout>  
+      <ProductCard product={p} index={i} />
+    </motion.div>
+  ))}
         </AnimatePresence>
       </div>
 
