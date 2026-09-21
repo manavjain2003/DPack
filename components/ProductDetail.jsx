@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 import { addToCart } from "@/lib/cartBus";
 import { useAuth } from "@/app/context/AuthContext";
+import { getPrimaryVideo, getYouTubeEmbedUrl, getInstagramEmbedUrl, getYouTubeId } from "@/lib/videoLinks";
 
 // ─── Animation variants ───────────────────────────────────────────────────────
 
@@ -184,9 +185,19 @@ function PromoPanel() {
 
 function Gallery({ product }) {
   const images = [product.image, ...(product.extraImages ?? [])].filter(Boolean);
+  // YouTube and Instagram links are both optional; YouTube wins when both are set.
+  const primaryVideo = getPrimaryVideo(product);
+  const videoEmbedSrc =
+    primaryVideo?.type === "youtube"
+      ? getYouTubeEmbedUrl(primaryVideo.url, { autoplay: true, muted: false, controls: true })
+      : primaryVideo?.type === "instagram"
+      ? getInstagramEmbedUrl(primaryVideo.url)
+      : null;
   const media = [
     ...images.map((src) => ({ type: "image", src })),
-    ...(product.video ? [{ type: "video", src: product.video }] : []),
+    ...(videoEmbedSrc
+      ? [{ type: "video", src: videoEmbedSrc, videoType: primaryVideo.type }]
+      : []),
   ];
 
   const [active, setActive] = useState(0);
@@ -245,13 +256,13 @@ function Gallery({ product }) {
               transition={{ duration: 0.28 }}
               className="absolute inset-0 flex items-center justify-center bg-black"
             >
-              <video
+              <iframe
                 src={activeItem.src}
-                controls
-                autoPlay
-                loop
-                playsInline
-                className="h-full w-full object-contain"
+                title={`${product.name} video`}
+                className="h-full w-full"
+                allow="autoplay; encrypted-media; picture-in-picture"
+                allowFullScreen
+                frameBorder="0"
               />
             </motion.div>
           )}
@@ -296,14 +307,18 @@ function Gallery({ product }) {
                 className="h-full w-full object-contain p-1.5"
               />
             ) : (
-              <div className="relative h-full w-full">
-                <video
-                  src={item.src}
-                  muted
-                  playsInline
-                  preload="metadata"
-                  className="h-full w-full object-cover"
-                />
+              <div className="relative h-full w-full bg-ink">
+                {item.videoType === "youtube" ? (
+                  <img
+                    src={`https://img.youtube.com/vi/${getYouTubeId(primaryVideo.url)}/hqdefault.jpg`}
+                    alt=""
+                    className="h-full w-full object-cover opacity-80"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-white/70">
+                    <Instagram className="h-6 w-6" />
+                  </div>
+                )}
                 <div className="absolute inset-0 flex items-center justify-center bg-black/30">
                   <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/90 shadow">
                     <Play className="h-3 w-3 fill-rust text-rust" />

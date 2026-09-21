@@ -1,7 +1,7 @@
 import { connectDB } from "@/lib/db/mongoose";
 import Product from "@/lib/models/Product";
 import { requireAdmin, ok, err, parseFormData } from "@/lib/apiHelpers";
-import { uploadToCloudinary, uploadVideoToCloudinary } from "@/lib/cloudinary";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 
 export async function GET(request) {
   const { error } = await requireAdmin(request);
@@ -64,14 +64,10 @@ export async function POST(request) {
       }
     }
 
-    // Handle optional product video
-    let videoUrl = null;
-    let videoPublicId = null;
-    if (files.video) {
-      const videoRes = await uploadVideoToCloudinary(files.video.buffer, "dpack/products");
-      videoUrl = videoRes.url;
-      videoPublicId = videoRes.public_id;
-    }
+    // Optional product video links — both are optional; YouTube takes
+    // priority over Instagram wherever the video is displayed.
+    const youtubeUrl = (fields.youtubeUrl || "").trim() || null;
+    const instagramUrl = (fields.instagramUrl || "").trim() || null;
 
     const specs = [].concat(fields.specs || []).filter(Boolean);
     const sizes = [].concat(fields.sizes || []).filter(Boolean);
@@ -93,8 +89,8 @@ export async function POST(request) {
       imagePublicId: public_id,
       extraImages,
       extraImagePublicIds,
-      video: videoUrl,
-      videoPublicId,
+      youtubeUrl,
+      instagramUrl,
       price: parseFloat(fields.price),
       compareAtPrice: fields.compareAtPrice
         ? parseFloat(fields.compareAtPrice)

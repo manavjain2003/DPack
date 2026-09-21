@@ -1,7 +1,7 @@
 import { connectDB } from "@/lib/db/mongoose";
 import Product from "@/lib/models/Product";
 import { requireAdmin, ok, err, parseFormData } from "@/lib/apiHelpers";
-import { uploadToCloudinary, uploadVideoToCloudinary, deleteFromCloudinary } from "@/lib/cloudinary";
+import { uploadToCloudinary, deleteFromCloudinary } from "@/lib/cloudinary";
 
 export async function GET(request, { params }) {
   const { error } = await requireAdmin(request);
@@ -49,20 +49,13 @@ export async function PUT(request, { params }) {
         }
       }
 
-      // Handle video upload/replace
-      if (files.video) {
-        if (product.videoPublicId) {
-          await deleteFromCloudinary(product.videoPublicId, "video");
-        }
-        const videoRes = await uploadVideoToCloudinary(files.video.buffer, "dpack/products");
-        product.video = videoRes.url;
-        product.videoPublicId = videoRes.public_id;
+      // Optional product video links (YouTube / Instagram). Both optional;
+      // an empty string clears the link, undefined leaves it untouched.
+      if (fields.youtubeUrl !== undefined) {
+        product.youtubeUrl = fields.youtubeUrl.trim() || null;
       }
-      // Allow admin to clear the video
-      if (fields.removeVideo === "true" && product.videoPublicId) {
-        await deleteFromCloudinary(product.videoPublicId, "video");
-        product.video = null;
-        product.videoPublicId = null;
+      if (fields.instagramUrl !== undefined) {
+        product.instagramUrl = fields.instagramUrl.trim() || null;
       }
 
       const specs = [].concat(fields.specs || []).filter(Boolean);
@@ -126,10 +119,6 @@ export async function DELETE(request, { params }) {
     for (const pid of product.extraImagePublicIds || []) {
       await deleteFromCloudinary(pid);
     }
-    if (product.videoPublicId) {
-      await deleteFromCloudinary(product.videoPublicId, "video");
-    }
-
     await product.deleteOne();
     return ok({ message: "Product deleted" });
   } catch (e) {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Upload, X, Plus, Trash2, Loader2, Video } from "lucide-react";
+import { Upload, X, Plus, Trash2, Loader2, Youtube, Instagram } from "lucide-react";
 import { categoriesAPI } from "@/lib/apiClient";
 
 const FALLBACK_CATEGORIES = [
@@ -68,48 +68,41 @@ function ImageUploadZone({ label, preview, onFile, onClear }) {
   );
 }
 
-function VideoUploadZone({ preview, onFile, onClear }) {
-  const ref = useRef();
+function VideoLinkFields({ youtubeUrl, instagramUrl, onYoutubeChange, onInstagramChange }) {
+  const bothFilled = youtubeUrl.trim() && instagramUrl.trim();
   return (
-    <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-700">
-        Product Video <span className="text-gray-400 font-normal">(optional — shown on card hover &amp; product page)</span>
-      </label>
-      {preview ? (
-        <div className="relative inline-block">
-          <video
-            src={preview}
-            className="h-32 w-48 rounded-xl border border-gray-200 object-cover bg-black"
-            muted
-            loop
-            playsInline
-            controls
-          />
-          <button
-            type="button"
-            onClick={onClear}
-            className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow"
-          >
-            <X className="h-3 w-3" />
-          </button>
-        </div>
-      ) : (
-        <button
-          type="button"
-          onClick={() => ref.current?.click()}
-          className="flex h-32 w-48 flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 text-gray-400 transition hover:border-rust/50 hover:bg-rust/5 hover:text-rust"
-        >
-          <Video className="h-5 w-5" />
-          <span className="text-xs text-center leading-tight">Upload video<br />(MP4, WebM, MOV)</span>
-        </button>
+    <div className="space-y-4">
+      <div>
+        <label className="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-gray-700">
+          <Youtube className="h-4 w-4 text-gray-400" /> YouTube Video URL
+          <span className="font-normal text-gray-400">(optional)</span>
+        </label>
+        <input
+          type="url"
+          value={youtubeUrl}
+          onChange={(e) => onYoutubeChange(e.target.value)}
+          placeholder="https://www.youtube.com/watch?v=..."
+          className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-rust focus:ring-2 focus:ring-rust/20"
+        />
+      </div>
+      <div>
+        <label className="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-gray-700">
+          <Instagram className="h-4 w-4 text-gray-400" /> Instagram Video URL
+          <span className="font-normal text-gray-400">(optional)</span>
+        </label>
+        <input
+          type="url"
+          value={instagramUrl}
+          onChange={(e) => onInstagramChange(e.target.value)}
+          placeholder="https://www.instagram.com/reel/..."
+          className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-rust focus:ring-2 focus:ring-rust/20"
+        />
+      </div>
+      {bothFilled && (
+        <p className="text-xs text-amber-600">
+          Both links are set — the YouTube video will be shown wherever a product video is displayed.
+        </p>
       )}
-      <input
-        ref={ref}
-        type="file"
-        accept="video/mp4,video/webm,video/quicktime,video/*"
-        className="hidden"
-        onChange={(e) => onFile(e.target.files[0])}
-      />
     </div>
   );
 }
@@ -153,9 +146,8 @@ applications: initial.applications?.length ? initial.applications : [""],
   const [mainPreview, setMainPreview] = useState(initial.image || "");
   const [extraImages, setExtraImages] = useState([]);
   const [extraPreviews, setExtraPreviews] = useState(initial.extraImages || []);
-  const [videoFile, setVideoFile] = useState(null);
-  const [videoPreview, setVideoPreview] = useState(initial.video || "");
-  const [removeVideo, setRemoveVideo] = useState(false);
+  const [youtubeUrl, setYoutubeUrl] = useState(initial.youtubeUrl || "");
+  const [instagramUrl, setInstagramUrl] = useState(initial.instagramUrl || "");
 
   const set = (key, val) => setForm((p) => ({ ...p, [key]: val }));
 
@@ -188,8 +180,8 @@ applications: initial.applications?.length ? initial.applications : [""],
 
     extraImages.forEach((f, i) => fd.append(`extraImage_${i}`, f));
 
-    if (videoFile) fd.append("video", videoFile);
-    if (removeVideo) fd.append("removeVideo", "true");
+    fd.append("youtubeUrl", youtubeUrl.trim());
+    fd.append("instagramUrl", instagramUrl.trim());
 
 const fields = {
   ...form,
@@ -384,22 +376,14 @@ const fields = {
 
       <section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
         <h3 className="mb-5 text-sm font-semibold uppercase tracking-wider text-gray-400">Product Video</h3>
-        <VideoUploadZone
-          preview={videoPreview}
-          onFile={(file) => {
-            if (!file) return;
-            setVideoFile(file);
-            setVideoPreview(URL.createObjectURL(file));
-            setRemoveVideo(false);
-          }}
-          onClear={() => {
-            setVideoFile(null);
-            setVideoPreview("");
-            if (initial.video) setRemoveVideo(true);
-          }}
+        <VideoLinkFields
+          youtubeUrl={youtubeUrl}
+          instagramUrl={instagramUrl}
+          onYoutubeChange={setYoutubeUrl}
+          onInstagramChange={setInstagramUrl}
         />
         <p className="mt-3 text-xs text-gray-400">
-          This video plays on product card hover and appears in the media gallery on the product detail page. Max recommended size: 50 MB.
+          Paste a YouTube and/or Instagram link instead of uploading a file. The video shows on card hover &amp; the product page. If both are set, YouTube is used.
         </p>
       </section>
 
