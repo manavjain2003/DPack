@@ -114,7 +114,6 @@ function FaqItem({ item, open, onToggle }) {
         <span style={{ fontSize: "14px", fontWeight: 600, color: T.navy, lineHeight: 1.4 }}>
           {item.question}
         </span>
-        {/* Icon */}
         <span
           style={{
             width: "26px",
@@ -300,10 +299,8 @@ function QueryFormPanel() {
           <Textarea name="message" required rows={4} placeholder="Tell us about your packaging requirement — product type, quantity, and timeline." value={form.message} onChange={handleChange} focusHandlers={focusHandlers} />
         </Field>
 
-        {/* Divider */}
         <div style={{ height: "1px", background: T.border, margin: "4px 0" }} />
 
-        {/* Footer row */}
         <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
           <button
             type="submit"
@@ -354,7 +351,6 @@ function QueryFormPanel() {
           )}
         </div>
 
-        {/* Footnote */}
         <p style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px", color: T.muted, margin: 0 }}>
           <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: T.amber, flexShrink: 0 }} />
           We typically respond within one business day. No spam, ever.
@@ -366,11 +362,9 @@ function QueryFormPanel() {
   );
 }
 
-// ─── Combined section ─────────────────────────────────────────────
 export default function FaqQuerySection() {
   return (
     <section style={{ background: T.cream, padding: "72px 24px" }}>
-      {/* Section header */}
       <div style={{ textAlign: "center", marginBottom: "52px" }}>
         <EyebrowRule label="Support and contact" />
         <h1
@@ -391,7 +385,6 @@ export default function FaqQuerySection() {
         </p>
       </div>
 
-      {/* Two-column layout */}
       <div
         style={{
           maxWidth: "1200px",
@@ -402,18 +395,15 @@ export default function FaqQuerySection() {
           alignItems: "start",
         }}
       >
-        {/* Left — FAQ */}
         <div>
           <FaqPanel />
         </div>
 
-        {/* Right — Form */}
         <div style={{ position: "sticky", top: "24px" }}>
           <QueryFormPanel />
         </div>
       </div>
 
-      {/* Responsive override via a style tag */}
       <style>{`
         @media (max-width: 860px) {
           .faq-query-grid { grid-template-columns: 1fr !important; }

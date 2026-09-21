@@ -10,25 +10,16 @@ import {
 } from "framer-motion";
 import { ArrowRight, PackageCheck, ShieldCheck, Truck } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 const SLIDES = [
-  {
-    src: "https://pub-6773b48348124a078cb55322f384ad44.r2.dev/dpack/categories/23f7d221-5342-425a-9a87-494f785201fd",
-    alt: "Dunnage Bags",
-    title: "Dunnage Bags",
-    subtitle: "Versatile inflatable air bags suitable for securing and protecting various types of cargo.",
-  },
-  {
-    src: "https://www.dpackshop.com/cdn/shop/files/Cambelt_25mm_5Mtr_5.png?v=1742965832&width=990",
-    alt: "Column Air Bags",
-    title: "Column Air Bags",
-    subtitle: "Inflatable columns that cradle every corner",
-  },
+  
   {
     src: "https://pub-6773b48348124a078cb55322f384ad44.r2.dev/dpack/categories/1d9a1ea2-907b-44b1-aed9-853006a04587",
     alt: "Packaging Air Bags",
     title: "Packaging Air Bags",
-    subtitle: "Protective air bags designed to safeguard trolley bags etc. from scratches and impact.",
+    subtitle:
+      "Protective air bags designed to safeguard trolley bags etc. from scratches and impact.",
   },
 ];
 
@@ -48,9 +39,162 @@ const item = {
 
 const slideVariants = {
   enter: { opacity: 0, scale: 0.96 },
-  center: { opacity: 1, scale: 1, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
+  center: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+  },
   exit: { opacity: 0, scale: 1.03, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } },
 };
+
+
+const boxBodyVariants = {
+  hidden: { opacity: 0, scale: 0.55, y: 18 },
+  open: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+
+const flapGroupVariants = {
+  hidden: {},
+  open: {
+    transition: { delayChildren: 0.6, staggerChildren: 0.16 },
+  },
+};
+
+const flapVariants = {
+  hidden: { opacity: 0, scale: 0.35, rotate: -18, y: -16 },
+  open: {
+    opacity: 1,
+    scale: 1,
+    rotate: 0,
+    y: 0,
+    transition: { duration: 0.55, ease: [0.34, 1.35, 0.64, 1] },
+  },
+};
+
+// function OpeningBox({ open, onOpened }) {
+//   return (
+//     <svg
+//       xmlns="http://www.w3.org/2000/svg"
+//       viewBox="120 80 760 760"
+//       width="380"
+//       height="380"
+//       className="block"
+//       aria-hidden="true"
+//     >
+//       <defs>
+//         <clipPath id="heroBoxClip">
+//           <rect width="1000" height="1000" x="0" y="0" />
+//         </clipPath>
+//       </defs>
+
+//       <g clipPath="url(#heroBoxClip)">
+//         {/* Box body (the four main cardboard faces) appears first, alone */}
+//         <g transform="matrix(1,0,0,1,218.513,247.222)">
+//           <motion.g
+//             variants={boxBodyVariants}
+//             initial="hidden"
+//             animate={open ? "open" : "hidden"}
+//             style={{ transformOrigin: "280px 245px" }}
+//           >
+//             <g transform="matrix(1,0,0,1,145.086,205.302)">
+//               <path
+//                 fill="#AB7843"
+//                 d="M-144.836,-128.163 C-144.836,-128.163 -144.836,205.052 -144.836,205.052 C-144.836,205.052 144.836,62.593 144.836,62.593 C144.836,62.593 144.836,-205.052 144.836,-205.052 C144.836,-205.052 -144.836,-128.163 -144.836,-128.163z"
+//               />
+//             </g>
+//             <g transform="matrix(1,0,0,1,420.469,174.903)">
+//               <path
+//                 fill="#DBA96F"
+//                 d="M-130.546,-174.653 C-130.546,-174.653 130.546,-130.882 130.546,-130.882 C130.546,-130.882 130.546,174.653 130.546,174.653 C130.546,174.653 -130.546,92.992 -130.546,92.992 C-130.546,92.992 -130.546,-174.653 -130.546,-174.653z"
+//               />
+//             </g>
+//             <g transform="matrix(1,0,0,1,417.556,292.851)">
+//               <path
+//                 fill="#C58D52"
+//                 d="M-133.459,-145.222 C-133.459,-145.222 -133.459,248.83 -133.459,248.83 C-133.459,248.83 133.459,56.704 133.459,56.704 C133.459,56.704 133.459,-248.83 133.459,-248.83 C133.459,-248.83 -133.459,-145.222 -133.459,-145.222z"
+//               />
+//             </g>
+//             <g transform="matrix(1,0,0,1,142.173,309.411)">
+//               <path
+//                 fill="#D4A46E"
+//                 d="M-141.923,-232.272 C-141.923,-232.272 141.923,-161.78 141.923,-161.78 C141.923,-161.78 141.923,232.271 141.923,232.271 C141.923,232.271 -141.923,100.943 -141.923,100.943 C-141.923,100.943 -141.923,-232.272 -141.923,-232.272z"
+//               />
+//             </g>
+//           </motion.g>
+//         </g>
+
+//         <motion.g
+//           variants={flapGroupVariants}
+//           initial="hidden"
+//           animate={open ? "open" : "hidden"}
+//           onAnimationComplete={(definition) => {
+//             if (definition === "open") onOpened?.();
+//           }}
+//         >
+//           {/* Thin top flap */}
+//           <g transform="matrix(1,0,0,1,508.186,154.659)">
+//             <motion.g variants={flapVariants} style={{ transformOrigin: "179px 68px" }}>
+//               <g transform="matrix(1,0,0,1,179.374,68.417)">
+//                 <path
+//                   fill="#ECCAA1"
+//                   d="M-179.124,24.396 C-179.124,24.396 -319.616,36.118 -319.616,36.118 C-319.616,36.118 -46.657,90.398 -46.657,90.398 C-46.657,90.398 81.968,68.167 81.968,68.167 C81.968,68.167 -179.124,24.396 -179.124,24.396z"
+//                 />
+//               </g>
+//             </motion.g>
+//           </g>
+
+//           {/* Left flap */}
+//           <g transform="matrix(1,0,0,1,115.037,175.664)">
+//             <motion.g variants={flapVariants} style={{ transformOrigin: "197px 74px" }}>
+//               <g transform="matrix(1,0,0,1,196.824,74.474)">
+//                 <path
+//                   fill="#DCB587"
+//                   d="M-93.098,74.223 C-93.098,74.223 196.574,-2.665 196.574,-2.665 C196.574,-2.665 172.43,-129.137 172.43,-129.137 C172.43,-129.137 -120.287,-57.072 -120.287,-57.072 C-120.287,-57.072 -93.098,74.223 -93.098,74.223z"
+//                 />
+//               </g>
+//             </motion.g>
+//           </g>
+
+//           {/* Bottom-left flap */}
+//           <g transform="matrix(1,0,0,1,138.336,324.111)">
+//             <motion.g variants={flapVariants} style={{ transformOrigin: "182px 109px" }}>
+//               <g transform="matrix(1,0,0,1,182.262,109.197)">
+//                 <path
+//                   fill="#EBC494"
+//                   d="M40.513,-161.52 C40.513,-161.52 -101.835,-108.947 -101.835,-108.947 C-101.835,-108.947 182.012,-38.456 182.012,-38.456 C182.012,-38.456 305.669,-107.662 305.669,-107.662 C305.669,-107.662 40.513,-161.52 40.513,-161.52z"
+//                 />
+//               </g>
+//             </motion.g>
+//           </g>
+
+//           {/* Right flap */}
+//           <g transform="matrix(1,0,0,1,502.36,290.993)">
+//             <motion.g variants={flapVariants} style={{ transformOrigin: "177px 118px" }}>
+//               <g transform="matrix(1,0,0,1,176.682,118.125)">
+//                 <path
+//                   fill="#E3B67E"
+//                   d="M-176.432,-14.266 C-176.432,-14.266 90.486,-117.874 90.486,-117.874 C90.486,-117.874 125.47,-244.727 125.47,-244.727 C125.47,-244.727 -137.223,-154.887 -137.223,-154.887 C-137.223,-154.887 -176.432,-14.266 -176.432,-14.266z"
+//                 />
+//               </g>
+//             </motion.g>
+//           </g>
+//         </motion.g>
+//       </g>
+//     </svg>
+//   );
+// }
+<DotLottieReact
+      src="/opening_cardboard_box.json"
+      loop
+      autoplay
+    />
+/* ---------------------------------------------------------------------- */
 
 export default function Hero() {
   const mx = useMotionValue(0);
@@ -92,12 +236,19 @@ export default function Hero() {
     clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
       setIndex((i) => (i + 1) % SLIDES.length);
-    }, 2000);
+    }, 4000);
   };
 
   useEffect(() => {
     startTimer();
     return () => clearInterval(timerRef.current);
+  }, []);
+
+  const [boxOpen, setBoxOpen] = useState(false);
+  const [productOut, setProductOut] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setBoxOpen(true), 550);
+    return () => clearTimeout(t);
   }, []);
 
   const slide = SLIDES[index];
@@ -110,10 +261,8 @@ export default function Hero() {
       <div className="pointer-events-none absolute -left-32 top-10 h-96 w-96 rounded-full bg-rust/15 blur-3xl" />
       <div className="pointer-events-none absolute -right-24 bottom-0 h-[28rem] w-[28rem] rounded-full bg-kraft/20 blur-3xl" />
 
-      <div className="relative mx-auto grid max-w-8xl items-center gap-16 px-5 sm:px-8 lg:grid-cols-[1.05fr_0.95fr]">
+      <div className="relative mx-auto grid max-w-8xl items-center gap-16 px-5 sm:px-8 lg:grid-cols-[1.05fr_1.05fr]">
         <motion.div variants={container} initial="hidden" animate="show">
-         
-
           <motion.h1
             variants={item}
             className="font-display text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-[4.2rem]"
@@ -211,79 +360,107 @@ export default function Hero() {
               transformPerspective: 900,
               transformStyle: "preserve-3d",
             }}
-            className="relative overflow-hidden rounded-[2rem] border border-ink/10 bg-white p-8 shadow-lift sm:p-10"
+            className="relative"
           >
-            <div className="pointer-events-none absolute -right-14 -top-14 h-52 w-52 rounded-full bg-rust/15 blur-3xl" />
-            <div className="bg-grid pointer-events-none absolute inset-0 opacity-60" />
+            <div className="bg-grid pointer-events-none absolute inset-0 -z-10 rounded-[2rem] opacity-40" />
 
-            <div className="relative mx-auto h-72 w-full">
-              <AnimatePresence mode="sync">
-                <motion.img
-                  key={slide.src}
-                  src={slide.src}
-                  alt={slide.alt}
-                  variants={slideVariants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  className="absolute inset-0 mx-auto max-h-72 w-full object-fill"
-                />
-              </AnimatePresence>
-            </div>
-
-            <div className="relative mt-8 flex items-end justify-between">
-              <div>
-                <AnimatePresence mode="wait">
-                  <motion.p
-                    key={slide.title}
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    transition={{ duration: 0.3 }}
-                    className="font-display text-xl font-bold"
-                  >
-                    {slide.title}
-                  </motion.p>
-                </AnimatePresence>
-                <AnimatePresence mode="wait">
-                  <motion.p
-                    key={slide.subtitle}
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    transition={{ duration: 0.3, delay: 0.05 }}
-                    className="mt-1 text-sm text-ink/55"
-                  >
-                    {slide.subtitle}
-                  </motion.p>
-                </AnimatePresence>
-
-                <div className="mt-3 flex gap-1.5">
-                  {SLIDES.map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => {
-                        setIndex(i);
-                        startTimer(); 
-                      }}
-                      aria-label={`Go to slide ${i + 1}`}
-                      className={`h-1.5 rounded-full transition-all duration-300 ${
-                        i === index
-                          ? "w-5 bg-rust"
-                          : "w-1.5 bg-ink/20 hover:bg-ink/40"
-                      }`}
-                    />
-                  ))}
-                </div>
+            <div className="relative mx-auto" style={{ width: 380, height: 260 , marginTop: 120}}>
+              <div className="drop-shadow-[0_18px_30px_rgba(120,75,30,0.25)]">
+               <DotLottieReact
+      src="/opening_cardboard_box.json"
+      loop
+      autoplay
+    />
               </div>
 
-              <Link
-                href="/products"
-                className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-ink text-cream transition-colors hover:bg-rust"
-                aria-label="View product"
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, top: "230px", scale: 0.28 },
+                  out: {
+                    opacity: 1,
+                    top: "-200px",
+                    scale: 1,
+                    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
+                  },
+                }}
+                initial="hidden"
+                animate={productOut ? "out" : "hidden"}
+                style={{
+                  position: "absolute",
+                  left: "50%",
+                  x: "-50%",
+                  transformOrigin: "50% 100%",
+                }}
+                className="z-10 w-[50%] max-w-[280px] rounded-2xl border border-ink/10 bg-white/95 p-4 shadow-lift backdrop-blur"
               >
-                <ArrowRight className="h-5 w-5" />
-              </Link>
+              <div className="relative mx-auto h-28 w-full overflow-hidden rounded-lg bg-cream/70 sm:h-32">
+                <AnimatePresence mode="sync">
+                  <motion.img
+                    key={slide.src}
+                    src={slide.src}
+                    alt={slide.alt}
+                    variants={slideVariants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    className="absolute inset-0 h-full w-full object-fill p-2"
+                  />
+                </AnimatePresence>
+              </div>
+
+              <div className="relative mt-3 flex items-end justify-between gap-2">
+                <div>
+                  <AnimatePresence mode="wait">
+                    <motion.p
+                      key={slide.title}
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -6 }}
+                      transition={{ duration: 0.3 }}
+                      className="font-display text-sm font-bold"
+                    >
+                      {slide.title}
+                    </motion.p>
+                  </AnimatePresence>
+                  <AnimatePresence mode="wait">
+                    <motion.p
+                      key={slide.subtitle}
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -6 }}
+                      transition={{ duration: 0.3, delay: 0.05 }}
+                      className="mt-1 text-[11px] leading-snug text-ink/55 line-clamp-2"
+                    >
+                      {slide.subtitle}
+                    </motion.p>
+                  </AnimatePresence>
+
+                  {/* <div className="mt-2 flex gap-1.5">
+                    {SLIDES.map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => {
+                          setIndex(i);
+                          startTimer();
+                        }}
+                        aria-label={`Go to slide ${i + 1}`}
+                        className={`h-1.5 rounded-full transition-all duration-300 ${
+                          i === index ? "w-4 bg-rust" : "w-1.5 bg-ink/20 hover:bg-ink/40"
+                        }`}
+                      />
+                    ))}
+                  </div> */}
+                </div>
+
+                <Link
+                  href="/products"
+                  className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink text-cream transition-colors hover:bg-rust"
+                  aria-label="View product"
+                >
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+              </motion.div>
             </div>
           </motion.div>
 

@@ -26,7 +26,12 @@ function Counter({ value, suffix }) {
 
 export default function Stats() {
   return (
-    <section className="bg-[#fef3e2] py-24 sm:py-28">
+    <section
+      className="py-24 sm:py-28"
+      style={{
+        background: "linear-gradient(135deg, #fff4d6 0%, #ffe8b0 40%, #ffd98a 100%)",
+      }}
+    >
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -40,46 +45,43 @@ export default function Stats() {
             relative
             overflow-hidden
             rounded-[2.5rem]
-            bg-[#fffbf2]
+            bg-[#1a1410]
             px-8
             py-16
-            shadow-[0_20px_50px_rgba(184,92,0,0.12)]
+            shadow-[0_20px_60px_rgba(160,80,0,0.22)]
             sm:px-14
             border
-            border-[#f5d98b]
+            border-[#3a2e1e]
           "
         >
-          {/* Top-left amber glow */}
           <div
             className="
               pointer-events-none
               absolute
-              -left-20
-              -top-24
-              h-72
-              w-72
+              -left-24
+              -top-28
+              h-80
+              w-80
               rounded-full
-              bg-[#f5a623]/20
+              bg-[#e8a830]/18
               blur-3xl
             "
           />
 
-          {/* Bottom-right terracotta glow */}
           <div
             className="
               pointer-events-none
               absolute
-              -bottom-24
-              -right-16
-              h-72
-              w-72
+              -bottom-28
+              -right-20
+              h-80
+              w-80
               rounded-full
-              bg-[#e05c2a]/12
+              bg-[#c86428]/14
               blur-3xl
             "
           />
 
-          {/* Eyebrow */}
           <div className="relative mb-12 max-w-2xl">
             <p
               className="
@@ -91,10 +93,10 @@ export default function Stats() {
                 font-bold
                 uppercase
                 tracking-[0.28em]
-                text-[#b85c00]
+                text-[#e8a830]
               "
             >
-              <span className="h-px w-8 bg-[#b85c00]" />
+              <span className="h-px w-8 bg-[#e8a830]" />
               The catalogue in numbers
             </p>
 
@@ -104,7 +106,7 @@ export default function Stats() {
                 text-3xl
                 font-bold
                 tracking-tight
-                text-[#1c1008]
+                text-[#f5ede0]
                 sm:text-4xl
               "
             >
@@ -112,7 +114,6 @@ export default function Stats() {
             </h2>
           </div>
 
-          {/* Stats */}
           <div className="relative grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
             {stats.map((s, i) => (
               <motion.div
@@ -124,20 +125,19 @@ export default function Stats() {
                   duration: 0.55,
                   delay: i * 0.1,
                 }}
-                className="border-l-2 border-[#f5a623] pl-6"
+                className="border-l-2 border-[#e8a830] pl-6"
               >
-                <p className="font-display text-5xl font-bold text-[#1c1008]">
+                <p className="font-display text-5xl font-bold text-white">
                   <Counter value={s.value} suffix={s.suffix} />
                 </p>
 
-                <p className="mt-2 text-sm font-medium text-[#8a5a1a]">
+                <p className="mt-2 text-sm font-medium text-[#a08060]">
                   {s.label}
                 </p>
               </motion.div>
             ))}
           </div>
 
-          {/* Bottom accent bar */}
           <div
             className="
               absolute
@@ -147,7 +147,7 @@ export default function Stats() {
               w-full
               bg-gradient-to-r
               from-transparent
-              via-[#f5a623]
+              via-[#e8a830]
               to-transparent
             "
           />

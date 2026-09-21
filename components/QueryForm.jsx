@@ -42,7 +42,6 @@ export default function QueryForm() {
   return (
     <section className="py-20" style={{ backgroundColor: "#F7F4EE" }}>
       <div className="mx-auto max-w-6xl px-6">
-        {/* Header */}
         <div className="text-center">
           <p
             className="mb-3 flex items-center justify-center gap-3 text-[11px] font-bold uppercase tracking-[0.22em]"
@@ -63,14 +62,12 @@ export default function QueryForm() {
           </p>
         </div>
 
-        {/* Card */}
         <form
           onSubmit={handleSubmit}
           className="mt-12 rounded-2xl bg-white p-8 sm:p-10"
           style={{ border: "1.5px solid #DDD8CC" }}
         >
           <div className="grid gap-5 sm:grid-cols-2">
-            {/* Full name */}
             <div className="flex flex-col gap-2">
               <label
                 htmlFor="name"
@@ -102,7 +99,6 @@ export default function QueryForm() {
               />
             </div>
 
-            {/* Email */}
             <div className="flex flex-col gap-2">
               <label
                 htmlFor="email"
@@ -134,7 +130,6 @@ export default function QueryForm() {
               />
             </div>
 
-            {/* Phone */}
             <div className="flex flex-col gap-2">
               <label
                 htmlFor="phone"
@@ -168,7 +163,6 @@ export default function QueryForm() {
               />
             </div>
 
-            {/* Company */}
             <div className="flex flex-col gap-2">
               <label
                 htmlFor="company"
@@ -203,7 +197,6 @@ export default function QueryForm() {
             </div>
           </div>
 
-          {/* Message */}
           <div className="mt-5 flex flex-col gap-2">
             <label
               htmlFor="message"
@@ -235,10 +228,8 @@ export default function QueryForm() {
             />
           </div>
 
-          {/* Divider */}
           <div className="mt-7 h-px" style={{ backgroundColor: "#DDD8CC" }} />
 
-          {/* Footer */}
           <div className="mt-6 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
             <button
               type="submit"
@@ -277,7 +268,6 @@ export default function QueryForm() {
             )}
           </div>
 
-          {/* Footnote */}
           <p className="mt-4 flex items-center gap-2 text-xs" style={{ color: "#6B7A6E" }}>
             <span
               className="h-1.5 w-1.5 rounded-full"

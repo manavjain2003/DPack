@@ -80,7 +80,7 @@ export default function Product360({
 
   return (
     <section ref={sectionRef} className="bg-cream-dark/60 py-24 sm:py-32">
-      <div className="mx-auto grid max-w-8xl gap-16 px-5 sm:px-8 lg:grid-cols-2">
+      <div className="mx-auto grid max-w-8xl px-5 sm:px-8 lg:grid-cols-2">
         <div className="flex h-[60vh] items-center justify-center lg:sticky lg:top-24 lg:h-[75vh]">
           <div
             className="relative flex h-full w-full items-center justify-center"
@@ -188,7 +188,7 @@ export default function Product360({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.6 }}
-              className="max-w-md"
+              className="w-full"
             >
               <span className="mb-4 block font-display text-sm font-bold text-rust">
                 {String(i + 1).padStart(2, "0")}

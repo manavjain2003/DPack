@@ -158,7 +158,6 @@ export default function LoginSidebar() {
               </p>
             </div>
 
-            {/* Required by Firebase's invisible reCAPTCHA verifier */}
             <div id="recaptcha-container" />
           </motion.aside>
         </>

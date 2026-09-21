@@ -63,7 +63,6 @@ export default function AdminLayout({ children }) {
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#F4F6FA]">
-      {/* Sidebar */}
       <aside
         className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-ink text-cream shadow-xl transition-transform duration-300 custom-height
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}

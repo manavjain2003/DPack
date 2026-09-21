@@ -63,7 +63,6 @@ export default function AboutPage() {
         subtitle="From Dpack Solutions to Dpack, backed by 10+ years of experience, we deliver reliable, high-performance packaging solutions that protect, optimize, and add value to your business. We take pride in being a reliable partner for businesses seeking innovative and dependable packaging solutions."
       />
 
-      {/* Intro + image */}
       <section className="pb-20">
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 sm:px-8 md:grid-cols-2">
           <div>
@@ -98,7 +97,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Three pillars */}
       <section className="bg-cream-dark/60 py-20">
         <div className="mx-auto grid max-w-7xl gap-5 px-5 sm:px-8 md:grid-cols-3">
           {pillars.map((v) => (
@@ -113,7 +111,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Why choose */}
       <section className="py-20">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <p className="mb-3 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.28em] text-rust">

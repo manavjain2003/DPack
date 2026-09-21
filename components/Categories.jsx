@@ -141,7 +141,6 @@ function CategoryCircle({ cat }) {
     >
       <Link href={`/categories/${cat.slug}`} className="flex flex-col items-center gap-4">
         <div className="relative">
-          {/* ── Outer thick orange rotating border ── */}
           <div className="absolute -inset-2.5 rounded-full pointer-events-none">
             <div
               className="absolute inset-0 rounded-full animate-[spin_8s_linear_infinite]"
@@ -160,7 +159,6 @@ function CategoryCircle({ cat }) {
             />
           </div>
 
-          {/* ── Second thicker orange ring (opposite direction) ── */}
           <div className="absolute -inset-4 rounded-full pointer-events-none">
             <div
               className="absolute inset-0 rounded-full animate-[spin_12s_linear_infinite_reverse]"
@@ -179,7 +177,6 @@ function CategoryCircle({ cat }) {
             />
           </div>
 
-          {/* ── Soft orange glow / shadow ring ── */}
           <div
             className="absolute -inset-1.5 rounded-full pointer-events-none animate-[spin_10s_linear_infinite]"
             style={{
@@ -191,7 +188,6 @@ function CategoryCircle({ cat }) {
             }}
           />
 
-          {/* Main circle */}
           <div
             className="cat-circle-inner relative flex h-44 w-44 items-center justify-center overflow-hidden rounded-full sm:h-48 sm:w-48"
             style={{
@@ -355,7 +351,6 @@ export default function CategorySection() {
   return (
     <section ref={sectionRef} className="overflow-hidden pt-24 sm:pt-32 bg-slate-50">
       <div className="mx-auto max-w-8xl">
-        {/* Header row */}
         <div className="mb-14 flex flex-wrap items-end justify-between gap-6 px-6">
           <div>
             <div className="mb-4 flex items-center gap-3">
@@ -376,18 +371,11 @@ export default function CategorySection() {
           </div>
         </div>
 
-        {/*
-          Carousel row: left arrow | 5-column grid | right arrow
-          The arrows sit in the same flex row as the grid so they appear
-          centred vertically on either side of the circles.
-        */}
         <div className="flex items-center gap-4 px-6">
-          {/* Left arrow — always rendered, invisible when only 1 page */}
           <div className={totalPages > 1 ? "shrink-0" : "shrink-0 invisible"}>
             <ArrowBtn dir="left" onClick={goPrev} disabled={!canPrev} />
           </div>
 
-          {/* Grid — always 5 columns */}
           <div className="relative min-w-0 flex-1 overflow-hidden">
             <AnimatePresence mode="wait">
               <motion.div
@@ -406,13 +394,11 @@ export default function CategorySection() {
             </AnimatePresence>
           </div>
 
-          {/* Right arrow */}
           <div className={totalPages > 1 ? "shrink-0" : "shrink-0 invisible"}>
             <ArrowBtn dir="right" onClick={goNext} disabled={!canNext} />
           </div>
         </div>
 
-        {/* Dot pagination */}
         {totalPages > 1 && (
           <div className="mt-6 flex justify-center gap-1.5">
             {Array.from({ length: totalPages }).map((_, i) => (

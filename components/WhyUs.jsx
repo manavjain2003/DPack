@@ -97,7 +97,6 @@ export default function WhyUs() {
       className="bg-gray-50 py-24 sm:py-32"
     >
       <div className="mx-auto grid max-w-8xl gap-14 px-5 sm:px-8 lg:grid-cols-[0.9fr_1.1fr]">
-        {/* Left sticky column */}
         <div ref={stickyRef} className="lg:sticky lg:top-32 lg:self-start">
           <motion.p
             initial={{ opacity: 0, y: 16 }}
@@ -149,7 +148,6 @@ export default function WhyUs() {
           </motion.div>
         </div>
 
-        {/* Right cards grid */}
         <div className="grid gap-5 sm:grid-cols-2">
           {features.map((f, i) => (
             <motion.div

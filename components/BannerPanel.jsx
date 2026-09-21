@@ -7,32 +7,34 @@ import { ArrowRight, Package, FileText } from "lucide-react";
 const PANELS = [
   {
     id: "products",
-    image: "/packing banner.webp", 
+    image: "/bg1.webp",
+    heading: "Protective Packaging Solutions",
+    description: "Air dunnage bags engineered to secure any load — from pallets to heavy machinery.",
     cta: {
       label: "Explore our products",
       href: "/products",
       Icon: Package,
-      variant: "light", 
+      variant: "light",
     },
-   overlay: "bg-gradient-to-t from-ink/70 via-ink/50 to-transparent",
-    align: "bottom-left",
+    overlay: "bg-gradient-to-t from-black/75 via-black/40 to-black/20",
   },
   {
     id: "bulk",
-    image: "dunnage bag banner.webp", 
+    image: "/bg2.webp",
+    heading: "Bulk Orders Made Simple",
+    description: "Custom quantities, fast lead times, and pricing that scales with your packing line.",
     cta: {
       label: "Get a bulk quote",
       href: "/contact",
       Icon: FileText,
-      variant: "rust", // rust-coloured button
+      variant: "rust",
     },
-    overlay: "bg-gradient-to-t from-ink/70 via-ink/50 to-transparent",
-    align: "bottom-left",
+    overlay: "bg-gradient-to-t from-black/75 via-black/40 to-black/20",
   },
 ];
 
 function BannerPanel({ panel, index }) {
-  const { image, eyebrow, cta, overlay } = panel;
+  const { image, heading, description, cta, overlay } = panel;
 
   return (
     <motion.div
@@ -43,19 +45,40 @@ function BannerPanel({ panel, index }) {
       className="group relative overflow-hidden rounded-2xl"
       style={{ minHeight: 420 }}
     >
-      {/* Background image */}
       <img
         src={image}
-        alt={eyebrow}
+        alt={heading}
         className="absolute inset-0 h-full w-full object-fill transition-transform duration-700 ease-out group-hover:scale-[1.03]"
       />
+      <div className={`pointer-events-none absolute inset-0 ${overlay}`} />
 
-<div className={`pointer-events-none absolute inset-x-0 bottom-0 h-[38%] ${overlay}`} />
+      <div
+        className="relative flex h-full flex-col justify-between p-7 sm:p-9"
+        style={{ minHeight: 420 }}
+      >
+        <div className="max-w-[70%] mt-12">
+          <motion.h3
+            initial={{ opacity: 0, y: -12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: index * 0.1 + 0.15 }}
+            className="text-xl font-bold leading-snug text-white sm:text-2xl"
+          >
+            {heading}
+          </motion.h3>
 
-      <div className="relative flex h-full flex-col justify-end p-7 sm:p-9" style={{ minHeight: 420 }}>
+          <motion.p
+            initial={{ opacity: 0, y: -8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: index * 0.1 + 0.25 }}
+            className="mt-2 text-sm leading-relaxed text-white/75 sm:text-[15px]"
+          >
+            {description}
+          </motion.p>
+        </div>
 
-
-        <div className="mt-6">
+        <div>
           <Link
             href={cta.href}
             className={`group/btn inline-flex items-center gap-2 rounded-full px-6 py-3 text-[13.5px] font-bold transition-all duration-300 hover:-translate-y-0.5 ${

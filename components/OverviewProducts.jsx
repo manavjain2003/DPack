@@ -133,7 +133,6 @@ export default function OverviewProducts({ products }) {
         </AnimatePresence>
       </div>
 
-      {/* View all button — only when this tab has more than 8 products */}
       <AnimatePresence>
         {!isTransitioning && hasMore && (
           <motion.div

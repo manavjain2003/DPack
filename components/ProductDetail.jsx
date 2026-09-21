@@ -129,14 +129,12 @@ const PROMO_STATS = [
 function PromoPanel() {
   return (
     <div className="relative flex h-full min-h-[360px] flex-col justify-between overflow-hidden rounded-2xl border border-ink/8 bg-[#F3EEE8] p-7">
-      {/* Full container background image */}
       <img
         src="/promo.jpg"
         alt="Safely packaged products"
         className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
       />
 
-      {/* Optional overlay for better text readability */}
       <div className="pointer-events-none absolute inset-0 z-[1] bg-white/20" />
 
       <div className="relative z-10 max-w-[220px]">

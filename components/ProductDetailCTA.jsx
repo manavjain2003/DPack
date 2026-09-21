@@ -19,7 +19,6 @@ export default function ProductCTA() {
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           className="relative overflow-hidden rounded-[2.5rem] px-8 py-16 text-center shadow-[0_20px_50px_rgba(27,58,92,0.3)] sm:px-14 sm:py-20"
         >
-          {/* Background image */}
           <div
             className="pointer-events-none absolute inset-0"
             style={{
@@ -29,10 +28,8 @@ export default function ProductCTA() {
             }}
           />
 
-          {/* Dark overlay to maintain text contrast */}
           <div className="pointer-events-none absolute inset-0 bg-[#1b3a5c]/75" />
 
-          {/* Dot grid overlay */}
           <div
             className="pointer-events-none absolute inset-0 opacity-100"
             style={{
@@ -42,10 +39,8 @@ export default function ProductCTA() {
             }}
           />
 
-          {/* Top-left sky glow */}
           <div className="pointer-events-none absolute -left-16 -top-20 h-64 w-64 rounded-full bg-[#4a9edd]/20 blur-3xl" />
 
-          {/* Bottom-right teal glow */}
           <div className="pointer-events-none absolute -bottom-20 -right-16 h-64 w-64 rounded-full bg-[#1ee8b0]/15 blur-3xl" />
 
           <div className="relative">

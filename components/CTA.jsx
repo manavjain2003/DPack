@@ -104,7 +104,6 @@ function QuoteModal({ onClose }) {
           position:     "relative",
         }}
       >
-        {/* Close button */}
         <button
           onClick={onClose}
           aria-label="Close"
@@ -136,7 +135,6 @@ function QuoteModal({ onClose }) {
           <X size={15} />
         </button>
 
-        {/* Modal header */}
         <div style={{ marginBottom: "24px" }}>
           <p style={{
             display:       "flex",
@@ -161,10 +159,8 @@ function QuoteModal({ onClose }) {
           </p>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
-            {/* Full name */}
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={{ fontSize: "12px", fontWeight: 600, color: T.navy }}>Full name</label>
               <input
@@ -174,7 +170,6 @@ function QuoteModal({ onClose }) {
                 style={fieldStyle} {...fo}
               />
             </div>
-            {/* Email */}
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={{ fontSize: "12px", fontWeight: 600, color: T.navy }}>Email address</label>
               <input
@@ -184,7 +179,6 @@ function QuoteModal({ onClose }) {
                 style={fieldStyle} {...fo}
               />
             </div>
-            {/* Phone */}
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={{ fontSize: "12px", fontWeight: 600, color: T.navy }}>
                 Phone <span style={{ fontWeight: 400, color: T.muted }}>optional</span>
@@ -196,7 +190,6 @@ function QuoteModal({ onClose }) {
                 style={fieldStyle} {...fo}
               />
             </div>
-            {/* Company */}
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={{ fontSize: "12px", fontWeight: 600, color: T.navy }}>
                 Company <span style={{ fontWeight: 400, color: T.muted }}>optional</span>
@@ -210,7 +203,6 @@ function QuoteModal({ onClose }) {
             </div>
           </div>
 
-          {/* Message */}
           <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
             <label style={{ fontSize: "12px", fontWeight: 600, color: T.navy }}>Your requirement</label>
             <textarea
@@ -222,10 +214,8 @@ function QuoteModal({ onClose }) {
             />
           </div>
 
-          {/* Divider */}
           <div style={{ height: "1px", background: T.border }} />
 
-          {/* Footer */}
           <div style={{ display: "flex", alignItems: "center", gap: "14px", flexWrap: "wrap" }}>
             <button
               type="submit"

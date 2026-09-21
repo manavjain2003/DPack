@@ -134,7 +134,6 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Desktop Nav Links */}
         <ul className="hidden items-center gap-8 md:flex">
           {links.map((link) => {
             const active = pathname === link.href;
@@ -165,7 +164,6 @@ export default function Navbar() {
 
           <div className="hidden items-center gap-1 sm:gap-2 md:flex">
 
-            {/* Search */}
             <div className="relative">
               <AnimatePresence mode="wait">
                 {!searchOpen ? (
@@ -295,7 +293,6 @@ export default function Navbar() {
 
             <WishlistNavButton />
 
-            {/* Cart */}
             <Link
               href="/cart"
               aria-label={`Shopping Cart, ${cartCount} items`}
@@ -338,7 +335,6 @@ export default function Navbar() {
               </AnimatePresence>
             </Link>
 
-            {/* Account */}
             <div className="relative">
               {!isLoggedIn ? (
                 <button
@@ -424,7 +420,6 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Mobile hamburger */}
           <button
             onClick={() => setOpen((v) => !v)}
             className="grid h-10 w-10 place-items-center
@@ -440,7 +435,6 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {open && (
           <motion.div
