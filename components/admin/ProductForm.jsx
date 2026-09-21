@@ -383,7 +383,7 @@ const fields = {
           onInstagramChange={setInstagramUrl}
         />
         <p className="mt-3 text-xs text-gray-400">
-          Paste a YouTube and/or Instagram link instead of uploading a file. The video shows on card hover &amp; the product page. If both are set, YouTube is used.
+          The video shows on card hover &amp; the product page.
         </p>
       </section>
 
