@@ -42,6 +42,7 @@ export default function ContactPage() {
         eyebrow="Contact"
         title="Need bulk orders or have queries?"
         subtitle={`Reach out to us at ${EMAIL} — or send a message below and we'll get back with the right packaging solution.`}
+        lottieSrc="/Connect_with_us.lottie"
       />
 
       <section className="pb-24">
@@ -80,17 +81,17 @@ export default function ContactPage() {
         </div>
       </section>
       <h1 className="text-[28px] text-center font-semibold"> Visit our Office in Person Meetings and Consulatation</h1>
-<div className="rounded-3xl overflow-hidden shadow-2xl border m-8">
-  <iframe
-    src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d448464.0016371671!2d77.186946!3d28.581021!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d0514d5bc617f%3A0x956288c4b1ee3c64!2sDpack!5e0!3m2!1sen!2sus!4v1775736735172!5m2!1sen!2sus"
-    width="100%"
-    height="450"
-    style={{ display: "block", border: 0 }}
-    allowFullScreen
-    loading="lazy"
-    referrerPolicy="no-referrer-when-downgrade"
-  />
-</div>
+      <div className="rounded-3xl overflow-hidden shadow-2xl border m-8">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d448464.0016371671!2d77.186946!3d28.581021!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d0514d5bc617f%3A0x956288c4b1ee3c64!2sDpack!5e0!3m2!1sen!2sus!4v1775736735172!5m2!1sen!2sus"
+          width="100%"
+          height="450"
+          style={{ display: "block", border: 0 }}
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        />
+      </div>
       <Footer />
     </main>
   );

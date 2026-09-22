@@ -28,6 +28,7 @@ export default async function ProductsPage() {
         eyebrow="Catalogue"
         title="Products built for damage-free delivery"
         subtitle="From air column bags, gap fillers and air bags to ratchet belts, lashing systems, bubble wrap and packaging tapes — we've got it all under one roof."
+      lottieSrc="/Forklift_loading_truck.lottie"
       />
       <section className="pb-24">
         <div className="mx-auto max-w-8xl px-5 sm:px-8">

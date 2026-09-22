@@ -20,7 +20,8 @@ export default function AboutPage() {
         eyebrow="About us"
         title="10+ Years of Industry Experience"
         subtitle="From Dpack Solutions to Dpack, backed by 10+ years of experience, we deliver reliable, high-performance packaging solutions that protect, optimize, and add value to your business. We take pride in being a reliable partner for businesses seeking innovative and dependable packaging solutions."
-      />
+        lottieSrc="/Search.lottie"
+     />
 
       <AboutContent />
 
