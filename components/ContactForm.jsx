@@ -56,7 +56,6 @@ export default function ContactForm() {
         setSubmitted(true);
         setForm({ name: "", email: "", phone: "", message: "" });
 
-        // hide thank-you message after 3 seconds
         setTimeout(() => {
           setSubmitted(false);
         }, 3000);
@@ -76,7 +75,7 @@ export default function ContactForm() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-[2rem] border border-ink/10 bg-cream-dark/40 p-7 shadow-card sm:p-9 text-center"
+        className="rounded-[2rem] border border-ink/10 lighting p-7 shadow-card sm:p-9 text-center"
       >
         <h3 className="font-display text-2xl font-bold text-rust">
           🎉 Thank You!
@@ -98,7 +97,7 @@ export default function ContactForm() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.6 }}
-      className="rounded-[2rem] border border-ink/10 bg-cream-dark/40 p-7 shadow-card sm:p-9"
+      className="rounded-[2rem] border border-ink/10 bg-cream-dark/40 p-7 shadow-card sm:p-9 "
     >
       <h3 className="font-display text-2xl font-bold">Send us a message</h3>
       <p className="mt-1.5 text-sm text-ink/55">
@@ -141,7 +140,7 @@ export default function ContactForm() {
           onChange={onChange}
           placeholder="What do you ship, and what do you need packed?"
           rows={5}
-          className={`${inputCls} resize-none sm:col-span-2`}
+          className={`${inputCls} resize-none sm:col-span-2 h-[280px]`}
         />
       </div>
 

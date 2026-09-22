@@ -23,41 +23,26 @@ const staggerContainer = {
   },
 };
 
-/* ---------- Pillars data ---------- */
-/* accent alternates rust / steel so the three cards read as a
-   deliberate pair-plus-one, not a rainbow of unrelated colors. */
 const pillars = [
   {
-    title: "Our Journey",
-    text: "Over the years, D Pack has built a strong reputation as a trusted Packaging Air Bag Manufacturer, Supplier, and Wholesaler. Driven by innovation and consistency, we have expanded our product range from Air Column Packaging Rolls to advanced Air Tube Bag Packaging, serving multiple industries with reliable solutions.",
-    accent: "rust",
-    icon: (
-      <path
-        d="M12 3v2M12 19v2M3 12h2M19 12h2M7 7l9 3-3 9-9-3 3-9Z"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    ),
-  },
-  {
-    title: "Customer Commitment",
-    text: "Customer satisfaction is at the core of our business. We work closely with our clients to understand their needs and deliver customized packaging solutions that improve product safety and efficiency. Our commitment to quality and service helps us build long-term relationships.",
-    accent: "steel",
-    icon: (
-      <path
-        d="M8.5 14.5 4 10l2.5-2.5L10 11M15.5 9.5 20 14l-2.5 2.5L14 13M9 15l2 2a2 2 0 0 0 2.8 0l4-4M7 9l4-4a2 2 0 0 1 2.8 0l1.2 1.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    ),
-  },
-  {
-    title: "Quality Standards",
-    text: "We follow strict quality control processes to ensure every product meets high-performance standards. Our Packaging Air Bags, including Air Cushion Bags, Dunnage Bags, and Air Column Bags, are made using premium materials and advanced technology to ensure durability and reliability.",
+    title: "Our Mission",
+    text: "To deliver high-performance, eco-friendly packaging solutions that protect products at every stage of transit. We are committed to quality, reliability, and service — helping businesses of all sizes package smarter and ship with confidence.",
     accent: "rust",
     icon: (
       <path
         d="M12 3.5 5 6v5.5c0 4.4 3 7.9 7 9 4-1.1 7-4.6 7-9V6l-7-2.5Z M9 12l2 2 4-4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    ),
+  },
+  {
+    title: "Our Vision",
+    text: "To be the most trusted name in protective packaging worldwide — driving the industry forward through continuous innovation, sustainable materials, and solutions that set a new standard for product safety and operational efficiency.",
+    accent: "steel",
+    icon: (
+      <path
+        d="M2 12a10 10 0 1 0 20 0 10 10 0 0 0-20 0ZM12 8v4l3 3"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -256,17 +241,17 @@ function PillarsSection() {
       <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
         <div className="mb-10 flex items-end justify-between gap-6">
           <div>
-            <p className="mb-3 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.28em] text-rust">
-              <span ref={lineRef} className="h-px w-8 origin-left bg-rust" />
-              Our foundation
-            </p>
-            <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-              The principles behind every bag we make
-            </h2>
+         <p className="mb-3 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.28em] text-rust">
+  <span ref={lineRef} className="h-px w-8 origin-left bg-rust" />
+  Mission &amp; Vision
+</p>
+<h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
+  Where we stand and where we're headed
+</h2>
           </div>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-3">
+        <div className="grid gap-5 md:grid-cols-2">
           {pillars.map((p) => {
             const a = accentStyles[p.accent];
             return (
@@ -431,9 +416,22 @@ export default function AboutContent() {
   return (
     <>
       {/* Who we are */}
-      <section className="pb-20">
+      <section className="pb-20 pt-8">
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 sm:px-8 md:grid-cols-2">
           <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 30 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0 }}
+            viewport={{ once: false, margin: "-80px" }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+            className="overflow-hidden rounded-3xl border border-ink/10 bg-white p-5 shadow-sm lg:h-[460px]"
+          >
+            <img
+              src="https://packingairbag.com/check/bg1.webp"
+              alt="Dpack dunnage air bags — packaging solutions"
+              className="h-full w-full rounded-2xl object-cover transition-transform duration-500 hover:scale-105"
+            />
+          </motion.div>
+             <motion.div
             variants={staggerContainer}
             initial="hidden"
             whileInView="visible"
@@ -478,20 +476,6 @@ export default function AboutContent() {
               packaging process and support your business growth. At Dpack, your
               trust drives us to continuously innovate and improve.
             </motion.p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 30 }}
-            whileInView={{ opacity: 1, scale: 1, y: 0 }}
-            viewport={{ once: false, margin: "-80px" }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-            className="overflow-hidden rounded-3xl border border-ink/10 bg-white p-5 shadow-sm lg:h-[460px]"
-          >
-            <img
-              src="https://packingairbag.com/check/bg1.webp"
-              alt="Dpack dunnage air bags — packaging solutions"
-              className="h-full w-full rounded-2xl object-cover transition-transform duration-500 hover:scale-105"
-            />
           </motion.div>
         </div>
       </section>
