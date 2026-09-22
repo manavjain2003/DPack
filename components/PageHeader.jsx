@@ -18,13 +18,14 @@ export default function PageHeader({
         <>
           <div className="absolute inset-0">
             <Image
-              src={backgroundImage}
-              alt="contact"
-              fill
-              priority
-              className="object-cover"
-              sizes="90vw"
-            />
+  src={backgroundImage}
+  alt="contact"
+  width={1920}
+  height={800}
+  priority
+  className="object-cover h-[70%] w-full"
+  sizes="100vw"
+/>
           </div>
           <div
             className="absolute inset-0 bg-cream/80"
@@ -38,7 +39,7 @@ export default function PageHeader({
 
       <div className="pointer-events-none absolute inset-0 bg-grid opacity-40" />
 
-      <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
+      <div className="relative mx-auto max-w-7xl px-5 sm:px-8 bottom-fix">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
           <div>
             <motion.p

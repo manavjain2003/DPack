@@ -249,41 +249,41 @@ export default function Hero() {
             <div className="bg-grid pointer-events-none absolute inset-0 -z-10 rounded-[2rem] opacity-40" />
 
             <div className="relative mx-auto" style={{ width: 660, height: 420, marginTop: 180 }}>
-             <div className="drop-shadow-[0_20px_36px_rgba(120,75,30,0.28)] relative z-10">
-  <DotLottieReact
-    src="/opening_cardboard_box.json"
-    autoplay
-  />
-</div>
+              <div className="drop-shadow-[0_20px_36px_rgba(120,75,30,0.28)] relative z-10">
+                <DotLottieReact
+                  src="/opening_cardboard_box.json"
+                  autoplay
+                />
+              </div>
 
-             <motion.div
-  variants={{
-    hidden: { opacity: 0, top: "120px", scale: 0.1 },   // starts hidden behind/inside box
-    out: {
-      opacity: 1,
-      top: "-210px",
-      scale: [0.1, 1.08, 1],
-      transition: {
-        top: { duration: 0.85, ease: [0.22, 1, 0.36, 1] },
-        opacity: { duration: 0.3, ease: "easeOut" },
-        scale: {
-          duration: 0.85,
-          times: [0, 0.65, 1],
-          ease: [0.34, 1.56, 0.64, 1],
-        },
-      },
-    },
-  }}
-  initial="hidden"
-  animate={productOut ? "out" : "hidden"}
-  style={{
-    position: "absolute",
-    left: "50%",
-    x: "-50%",
-    transformOrigin: "50% 50%",   
-  }}
-  className="z-0 w-[62%] max-w-[230px] rounded-2xl border border-ink/10 bg-white/95 p-4 shadow-lift backdrop-blur"
->
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, top: "120px", scale: 0.1 },
+                  out: {
+                    opacity: 1,
+                    top: "-210px",
+                    scale: [0.1, 1.08, 1],
+                    transition: {
+                      top: { duration: 0.85, ease: [0.22, 1, 0.36, 1] },
+                      opacity: { duration: 0.3, ease: "easeOut" },
+                      scale: {
+                        duration: 0.85,
+                        times: [0, 0.65, 1],
+                        ease: [0.34, 1.56, 0.64, 1],
+                      },
+                    },
+                  },
+                }}
+                initial="hidden"
+                animate={productOut ? "out" : "hidden"}
+                style={{
+                  position: "absolute",
+                  left: "50%",
+                  x: "-50%",
+                  transformOrigin: "50% 50%",
+                }}
+                className="z-0 w-[62%] max-w-[230px] rounded-2xl border border-ink/10 bg-white/95 p-4 shadow-lift backdrop-blur"
+              >
                 <div className="relative flex items-center gap-3">
                   <AnimatePresence mode="wait">
                     <motion.span
