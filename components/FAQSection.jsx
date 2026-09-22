@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 
-// ─── Theme tokens ───────────────────────────────────────────────
 const T = {
   navy:        "#1B2A4A",
   navyHover:   "#22324F",
@@ -21,7 +20,6 @@ const T = {
   error:       "#C0392B",
 };
 
-// ─── FAQ data ────────────────────────────────────────────────────
 const FAQS = [
   {
     question: "What are Packaging Air Bags and how do they work?",
@@ -55,7 +53,6 @@ const FAQS = [
   },
 ];
 
-// ─── Shared style helpers ─────────────────────────────────────────
 const eyebrowStyle = {
   display: "flex",
   alignItems: "center",
@@ -79,7 +76,6 @@ function EyebrowRule({ label, align = "center" }) {
   );
 }
 
-// ─── FAQ accordion item ───────────────────────────────────────────
 function FaqItem({ item, open, onToggle }) {
   return (
     <div
@@ -161,7 +157,6 @@ function FaqItem({ item, open, onToggle }) {
   );
 }
 
-// ─── FAQ panel ────────────────────────────────────────────────────
 function FaqPanel() {
   const [openIndex, setOpenIndex] = useState(0);
   const toggle = (i) => setOpenIndex((cur) => (cur === i ? -1 : i));
@@ -187,7 +182,6 @@ function FaqPanel() {
   );
 }
 
-// ─── Form field helper ────────────────────────────────────────────
 function Field({ label, optional, children }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
@@ -223,7 +217,6 @@ function Textarea({ focusHandlers, ...props }) {
   return <textarea style={{ ...sharedInputStyle, resize: "none" }} {...focusHandlers} {...props} />;
 }
 
-// ─── Query form panel ─────────────────────────────────────────────
 const initialForm = { name: "", email: "", phone: "", company: "", message: "" };
 
 function QueryFormPanel() {

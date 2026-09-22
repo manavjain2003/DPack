@@ -49,8 +49,6 @@ export async function PUT(request, { params }) {
         }
       }
 
-      // Optional product video links (YouTube / Instagram). Both optional;
-      // an empty string clears the link, undefined leaves it untouched.
       if (fields.youtubeUrl !== undefined) {
         product.youtubeUrl = fields.youtubeUrl.trim() || null;
       }

@@ -64,8 +64,6 @@ export async function POST(request) {
       }
     }
 
-    // Optional product video links — both are optional; YouTube takes
-    // priority over Instagram wherever the video is displayed.
     const youtubeUrl = (fields.youtubeUrl || "").trim() || null;
     const instagramUrl = (fields.instagramUrl || "").trim() || null;
 

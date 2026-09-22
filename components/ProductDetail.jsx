@@ -36,7 +36,6 @@ import { addToCart } from "@/lib/cartBus";
 import { useAuth } from "@/app/context/AuthContext";
 import { getPrimaryVideo, getYouTubeEmbedUrl, getInstagramEmbedUrl, getYouTubeId } from "@/lib/videoLinks";
 
-// ─── Animation variants ───────────────────────────────────────────────────────
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -57,7 +56,6 @@ const staggerContainer = {
   },
 };
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function formatPrice(price) {
   if (price == null) return null;
@@ -101,7 +99,6 @@ function buildSpecRows(product) {
   return rows;
 }
 
-// ─── Static data ─────────────────────────────────────────────────────────────
 
 const TRUST_BADGES = [
   { Icon: CreditCard, text: "Secure Payments" },
@@ -138,7 +135,6 @@ const PROMO_STATS = [
   { value: "Pan India", label: "Delivery"            },
 ];
 
-// ─── Components ──────────────────────────────────────────────────────────────
 
 function PromoPanel() {
   return (

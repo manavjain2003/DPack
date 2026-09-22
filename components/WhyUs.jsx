@@ -43,9 +43,20 @@ const features = [
 export default function WhyUs() {
   const sectionRef = useRef(null);
   const stickyRef = useRef(null);
+  const cardsRef = useRef([]);
+  cardsRef.current = [];
+
+  const addCardRef = (el) => {
+    if (el && !cardsRef.current.includes(el)) {
+      cardsRef.current.push(el);
+    }
+  };
 
   useEffect(() => {
+    const cleanupFns = [];
+
     const ctx = gsap.context(() => {
+      // Sticky column parallax
       gsap.to(stickyRef.current, {
         y: -60,
         ease: "none",
@@ -57,6 +68,56 @@ export default function WhyUs() {
         },
       });
 
+      // --- Card entrance: staggered 3D flip-in with perspective ---
+      cardsRef.current.forEach((card, i) => {
+        gsap.set(card, { transformPerspective: 800 });
+
+        gsap.fromTo(
+          card,
+          {
+            opacity: 0,
+            y: 70,
+            rotateX: -25,
+            scale: 0.9,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            rotateX: 0,
+            scale: 1,
+            duration: 0.9,
+            ease: "power3.out",
+            delay: i * 0.12,
+            scrollTrigger: {
+              trigger: card,
+              start: "top 85%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
+
+        // Shine sweep across each card, replayed on every scroll-in
+        const shine = card.querySelector(".card-shine");
+        if (shine) {
+          gsap.fromTo(
+            shine,
+            { xPercent: -150 },
+            {
+              xPercent: 150,
+              duration: 1.1,
+              ease: "power2.inOut",
+              delay: i * 0.12 + 0.35,
+              scrollTrigger: {
+                trigger: card,
+                start: "top 85%",
+                toggleActions: "play none none reverse",
+              },
+            }
+          );
+        }
+      });
+
+      // --- Icon pop-in + idle float ---
       const icons = gsap.utils.toArray(".whyus-icon");
       icons.forEach((icon, i) => {
         gsap.fromTo(
@@ -68,7 +129,7 @@ export default function WhyUs() {
             opacity: 1,
             duration: 0.6,
             ease: "back.out(2.2)",
-            delay: i * 0.05,
+            delay: i * 0.05 + 0.2,
             scrollTrigger: {
               trigger: icon,
               start: "top 88%",
@@ -86,16 +147,58 @@ export default function WhyUs() {
           }
         );
       });
+
+      // --- Magnetic tilt on hover (desktop only) ---
+      const isDesktop = window.matchMedia("(hover: hover)").matches;
+      if (isDesktop) {
+        cardsRef.current.forEach((card) => {
+          const xTo = gsap.quickTo(card, "rotateY", {
+            duration: 0.5,
+            ease: "power3.out",
+          });
+          const yTo = gsap.quickTo(card, "rotateX", {
+            duration: 0.5,
+            ease: "power3.out",
+          });
+          const liftTo = gsap.quickTo(card, "y", {
+            duration: 0.5,
+            ease: "power3.out",
+          });
+
+          const handleMove = (e) => {
+            const rect = card.getBoundingClientRect();
+            const px = (e.clientX - rect.left) / rect.width - 0.5;
+            const py = (e.clientY - rect.top) / rect.height - 0.5;
+            xTo(px * 14);
+            yTo(py * -14);
+            liftTo(-8);
+          };
+
+          const handleLeave = () => {
+            xTo(0);
+            yTo(0);
+            liftTo(0);
+          };
+
+          card.addEventListener("mousemove", handleMove);
+          card.addEventListener("mouseleave", handleLeave);
+
+          cleanupFns.push(() => {
+            card.removeEventListener("mousemove", handleMove);
+            card.removeEventListener("mouseleave", handleLeave);
+          });
+        });
+      }
     }, sectionRef);
 
-    return () => ctx.revert();
+    return () => {
+      cleanupFns.forEach((fn) => fn());
+      ctx.revert();
+    };
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      className="bg-gray-50 py-24 sm:py-32"
-    >
+    <section ref={sectionRef} className="bg-gray-50 py-24 sm:py-32">
       <div className="mx-auto grid max-w-8xl gap-14 px-5 sm:px-8 lg:grid-cols-[0.9fr_1.1fr]">
         <div ref={stickyRef} className="lg:sticky lg:top-32 lg:self-start">
           <motion.p
@@ -148,29 +251,41 @@ export default function WhyUs() {
           </motion.div>
         </div>
 
-        <div className="grid gap-5 sm:grid-cols-2">
+        <div className="grid gap-5 sm:grid-cols-2" style={{ perspective: 1000 }}>
           {features.map((f, i) => (
-            <motion.div
+            <div
               key={f.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.55, delay: i * 0.08 }}
-              whileHover={{ y: -6 }}
-              className={`rounded-3xl border border-ink/10 bg-white p-7 shadow-sm transition-shadow duration-300 hover:shadow-card light-gold ${
+              ref={addCardRef}
+              className={`group relative overflow-hidden rounded-3xl border border-ink/10 bg-white p-7 shadow-sm transition-shadow duration-300 hover:shadow-card light-gold will-change-transform ${
                 i % 2 === 1 ? "sm:translate-y-8" : ""
               }`}
+              style={{ transformStyle: "preserve-3d" }}
             >
-              <span className="whyus-icon mb-5 grid h-12 w-12 place-items-center rounded-2xl bg-rust/10 text-rust">
+              {/* animated shine sweep */}
+              <span
+                className="card-shine pointer-events-none absolute inset-y-0 left-0 w-1/3 -skew-x-12 bg-gradient-to-r from-transparent via-white/60 to-transparent"
+                aria-hidden="true"
+              />
+
+              {/* subtle number watermark for a stylish touch */}
+              <span className="pointer-events-none absolute -right-2 -top-4 font-display text-7xl font-black text-ink/[0.04] select-none">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+
+              <span className="whyus-icon relative z-10 mb-5 grid h-12 w-12 place-items-center rounded-2xl bg-rust/10 text-rust transition-colors duration-300 group-hover:bg-rust group-hover:text-white">
                 <f.icon className="h-6 w-6" strokeWidth={1.8} />
               </span>
-              <h3 className="font-display text-lg font-bold text-ink">
+
+              <h3 className="relative z-10 font-display text-lg font-bold text-ink">
                 {f.title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-ink/60">
+              <p className="relative z-10 mt-2 text-sm leading-relaxed text-ink/60">
                 {f.text}
               </p>
-            </motion.div>
+
+              {/* accent underline that grows on hover */}
+              <span className="relative z-10 mt-4 block h-0.5 w-8 origin-left scale-x-100 bg-rust/30 transition-all duration-300 group-hover:w-14 group-hover:bg-rust" />
+            </div>
           ))}
         </div>
       </div>

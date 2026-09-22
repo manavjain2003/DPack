@@ -22,12 +22,10 @@ export default function AdminLayout({ children }) {
   const router = useRouter();
   const { user, hydrated, isLoggedIn, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  // Extra safety: don't redirect until we've waited at least one render
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     if (!hydrated) return;
-    // Give one tick after hydration before deciding
     const t = setTimeout(() => setReady(true), 100);
     return () => clearTimeout(t);
   }, [hydrated]);
@@ -39,7 +37,6 @@ export default function AdminLayout({ children }) {
     }
   }, [ready, isLoggedIn, user, router]);
 
-  // While waiting for hydration or auth check — show spinner, not redirect
   if (!hydrated || !ready) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#F4F6FA]">
@@ -49,7 +46,6 @@ export default function AdminLayout({ children }) {
     );
   }
 
-  // After hydration — not logged in or not admin
   if (!isLoggedIn || user?.role !== "admin") {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#F4F6FA]">

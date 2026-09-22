@@ -22,7 +22,6 @@ const T = {
 const BG_IMAGE =
   "https://www.instantcustomboxes.com/wp-content/uploads/2023/02/ICB-BANNER-8-Feb-1-scaled.webp?lm=6AA1BDF0";
 
-// ── Quote Modal ────────────────────────────────────────────────────
 const initialForm = { name: "", email: "", phone: "", company: "", message: "" };
 
 function QuoteModal({ onClose }) {
@@ -46,7 +45,6 @@ function QuoteModal({ onClose }) {
     }
   };
 
-  // Shared focus/blur handlers for field highlight
   const fo = {
     onFocus: (e) => {
       e.target.style.borderColor     = T.amber;

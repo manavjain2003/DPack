@@ -19,7 +19,7 @@ export async function POST(request) {
     await Otp.create({ mobile: cleaned, otp });
 
 
-    console.log(`[DEV] OTP for ${cleaned}: ${otp}`); // Remove in production
+    console.log(`[DEV] OTP for ${cleaned}: ${otp}`); 
 
     return ok({
       message: "OTP sent successfully",

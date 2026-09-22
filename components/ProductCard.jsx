@@ -25,10 +25,6 @@ function ProductCard({ product, index = 0 }) {
   const href = product.slug ? `/products/${product.slug}` : null;
   const outOfStock = product.trackInventory !== false && (product.stock ?? 0) <= 0;
 
-  // Product video is an admin-supplied YouTube and/or Instagram link.
-  // YouTube takes priority whenever both are present. Only YouTube can be
-  // muted/looped inline via iframe for the hover preview; an Instagram-only
-  // link just shows a "Watch on Instagram" hint instead of an inline preview.
   const primaryVideo = getPrimaryVideo(product);
   const hasVideo = Boolean(primaryVideo);
   const hoverEmbedUrl =
