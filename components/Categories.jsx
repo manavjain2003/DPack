@@ -140,8 +140,8 @@ function CategoryCircle({ cat }) {
       }}
     >
       <Link href={`/categories/${cat.slug}`} className="flex flex-col items-center gap-4">
-        <div className="relative">
-          <div className="absolute -inset-2.5 rounded-full pointer-events-none">
+        <div className="relative" style={{ border: `1.5px solid ${cat.border}`, borderRadius: "9999px" }}>
+          <div className="absolute -inset-1 rounded-full pointer-events-none">
             <div
               className="absolute inset-0 rounded-full animate-[spin_8s_linear_infinite]"
               style={{
@@ -159,7 +159,8 @@ function CategoryCircle({ cat }) {
             />
           </div>
 
-          <div className="absolute -inset-4 rounded-full pointer-events-none">
+          <div className="absolute -inset-2 rounded-full pointer-events-none">
+
             <div
               className="absolute inset-0 rounded-full animate-[spin_12s_linear_infinite_reverse]"
               style={{
@@ -178,7 +179,7 @@ function CategoryCircle({ cat }) {
           </div>
 
           <div
-            className="absolute -inset-1.5 rounded-full pointer-events-none animate-[spin_10s_linear_infinite]"
+            className="absolute -inset-0.5 rounded-full pointer-events-none animate-[spin_10s_linear_infinite]"
             style={{
               boxShadow: `
                 0 0 0 1.5px rgba(226, 89, 27, 0.25),
@@ -191,7 +192,8 @@ function CategoryCircle({ cat }) {
           <div
             className="cat-circle-inner relative flex h-44 w-44 items-center justify-center overflow-hidden rounded-full sm:h-48 sm:w-48"
             style={{
-              border: `1.5px solid ${cat.border}`,
+              
+              background: cat.bg,
               boxShadow: `0 6px 28px 0 ${cat.tint}28, inset 0 1.5px 0 rgba(255,255,255,0.92)`,
             }}
           >
@@ -199,8 +201,14 @@ function CategoryCircle({ cat }) {
               ref={imgRef}
               src={cat.image}
               alt={cat.label}
-              className="absolute inset-0 z-0 h-full w-full rounded-full object-cover"
-              style={{ willChange: "transform" }}
+              className="absolute z-0 rounded-full object-cover"
+              style={{
+                top: "-2px",
+                left: "-2px",
+                width: "calc(100% + 4px)",
+                height: "calc(100% + 4px)",
+                willChange: "transform",
+              }}
             />
 
             <div
@@ -209,6 +217,7 @@ function CategoryCircle({ cat }) {
               style={{ border: `2px solid ${cat.tint}`, opacity: 0 }}
             />
 
+            {/* This is washing out the image */}
             <div
               className="pointer-events-none absolute inset-0 rounded-full"
               style={{
@@ -269,7 +278,7 @@ export default function CategorySection() {
           setPage(0);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const totalPages = Math.ceil(categories.length / PAGE_SIZE);

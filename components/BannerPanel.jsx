@@ -62,7 +62,7 @@ function BannerPanel({ panel, index }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: index * 0.1 + 0.15 }}
-            className="text-xl font-bold leading-snug text-white sm:text-2xl"
+            className="text-xl font-bold leading-snug text-white sm:text-3xl"
           >
             {heading}
           </motion.h3>
@@ -72,7 +72,7 @@ function BannerPanel({ panel, index }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: index * 0.1 + 0.25 }}
-            className="mt-2 text-sm leading-relaxed text-white/75 sm:text-[15px]"
+            className="mt-2 text-sm leading-relaxed text-white/75 sm:text-[18px]"
           >
             {description}
           </motion.p>

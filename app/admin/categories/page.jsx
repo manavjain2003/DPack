@@ -169,7 +169,7 @@ function NewCategoryForm({ onCreated, onCancel }) {
 
         <div>
           <label className="mb-1.5 block text-sm font-medium text-gray-700">
-            Image (optional)
+            Image
           </label>
           <input
             ref={fileRef}
