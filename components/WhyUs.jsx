@@ -157,7 +157,7 @@ export default function WhyUs() {
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.55, delay: i * 0.08 }}
               whileHover={{ y: -6 }}
-              className={`rounded-3xl border border-ink/10 bg-white p-7 shadow-sm transition-shadow duration-300 hover:shadow-card ${
+              className={`rounded-3xl border border-ink/10 bg-white p-7 shadow-sm transition-shadow duration-300 hover:shadow-card light-gold ${
                 i % 2 === 1 ? "sm:translate-y-8" : ""
               }`}
             >

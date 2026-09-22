@@ -79,7 +79,7 @@ export default function Product360({
   }, []);
 
   return (
-    <section ref={sectionRef} className="bg-cream-dark/60 py-24 sm:py-32">
+    <section ref={sectionRef} className="bg-cream-dark/60 py-14 sm:py-12">
       <div className="mx-auto grid max-w-8xl px-5 sm:px-8 lg:grid-cols-2">
         <div className="flex h-[60vh] items-center justify-center lg:sticky lg:top-24 lg:h-[75vh]">
           <div
@@ -158,7 +158,7 @@ export default function Product360({
           </div>
         </div>
 
-        <div className="flex flex-col gap-16 py-8 lg:gap-16 lg:py-8">
+        <div className="flex flex-col gap-4 py-8 lg:gap-6 lg:py-8">
           <div>
             <motion.p
               initial={{ opacity: 0, y: 16 }}

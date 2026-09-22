@@ -8,18 +8,25 @@ import {
   useTransform,
   AnimatePresence,
 } from "framer-motion";
-import { ArrowRight, PackageCheck, ShieldCheck, Truck } from "lucide-react";
+import {
+  ArrowRight,
+  PackageCheck,
+  ShieldCheck,
+  Truck,
+  Wind,
+  Layers,
+  Ruler,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 const SLIDES = [
-  
   {
-    src: "https://pub-6773b48348124a078cb55322f384ad44.r2.dev/dpack/categories/2cced03d-febd-42bf-a9e7-7b1c31ae9ee6",
-    alt: "Packaging Air Bags",
+    icon: Wind,
     title: "Packaging Air Bags",
     subtitle:
       "Protective air bags designed to safeguard trolley bags etc. from scratches and impact.",
+    features: ["Impact-absorbing", "Reusable", "Custom sizing"],
   },
 ];
 
@@ -36,17 +43,6 @@ const item = {
     transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
   },
 };
-
-const slideVariants = {
-  enter: { opacity: 0, scale: 0.96 },
-  center: {
-    opacity: 1,
-    scale: 1,
-    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
-  },
-  exit: { opacity: 0, scale: 1.03, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } },
-};
-
 
 const boxBodyVariants = {
   hidden: { opacity: 0, scale: 0.55, y: 18 },
@@ -286,51 +282,52 @@ export default function Hero() {
     x: "-50%",
     transformOrigin: "50% 50%",   
   }}
-  className="z-0 w-[55%] max-w-[200px] rounded-2xl border border-ink/10 bg-white/95 p-4 shadow-lift backdrop-blur"
+  className="z-0 w-[62%] max-w-[230px] rounded-2xl border border-ink/10 bg-white/95 p-4 shadow-lift backdrop-blur"
 >
-                <div className="relative mx-auto h-28 w-full overflow-hidden rounded-lg bg-cream/70 sm:h-32">
-                  <AnimatePresence mode="sync">
-                    <motion.img
-                      key={slide.src}
-                      src={slide.src}
-                      alt={slide.alt}
-                      variants={slideVariants}
-                      initial="enter"
-                      animate="center"
-                      exit="exit"
-                      className="absolute inset-0 h-full w-full object-fill p-2"
-                    />
+                <div className="relative flex items-center gap-3">
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={slide.title}
+                      initial={{ opacity: 0, scale: 0.7, rotate: -8 }}
+                      animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                      exit={{ opacity: 0, scale: 0.7 }}
+                      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                      className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-rust/10 text-rust"
+                    >
+                      <slide.icon className="h-5 w-5" />
+                    </motion.span>
+                  </AnimatePresence>
+
+                  <AnimatePresence mode="wait">
+                    <motion.p
+                      key={slide.title}
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -6 }}
+                      transition={{ duration: 0.3 }}
+                      className="font-display text-sm font-bold leading-snug"
+                    >
+                      {slide.title}
+                    </motion.p>
                   </AnimatePresence>
                 </div>
 
-                <div className="relative mt-3 flex items-end justify-between gap-2">
-                  <div>
-                    <AnimatePresence mode="wait">
-                      <motion.p
-                        key={slide.title}
-                        initial={{ opacity: 0, y: 6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -6 }}
-                        transition={{ duration: 0.3 }}
-                        className="font-display text-sm font-bold"
-                      >
-                        {slide.title}
-                      </motion.p>
-                    </AnimatePresence>
-                    <AnimatePresence mode="wait">
-                      <motion.p
-                        key={slide.subtitle}
-                        initial={{ opacity: 0, y: 6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -6 }}
-                        transition={{ duration: 0.3, delay: 0.05 }}
-                        className="mt-1 text-[11px] leading-snug text-ink/55 line-clamp-2"
-                      >
-                        {slide.subtitle}
-                      </motion.p>
-                    </AnimatePresence>
+                <AnimatePresence mode="wait">
+                  <motion.p
+                    key={slide.subtitle}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.3, delay: 0.05 }}
+                    className="relative mt-3 text-[11px] leading-relaxed text-ink/55"
+                  >
+                    {slide.subtitle}
+                  </motion.p>
+                </AnimatePresence>
 
-                    {/* <div className="mt-2 flex gap-1.5">
+
+                <div className="relative mt-4 flex items-center justify-between gap-2 border-t border-ink/10 pt-3">
+                  {/* <div className="flex gap-1.5">
                       {SLIDES.map((_, i) => (
                         <button
                           key={i}
@@ -345,7 +342,9 @@ export default function Hero() {
                         />
                       ))}
                     </div> */}
-                  </div>
+                  <span className="text-[10px] font-semibold uppercase tracking-wide text-ink/40">
+                    14+ categories
+                  </span>
 
                   <Link
                     href="/products"
