@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { RefreshCw, Upload, X, Loader2, ImageOff, Plus, Pencil, Trash2, Check } from "lucide-react";
+import { RefreshCw, Upload, X, Loader2, ImageOff, Plus, Pencil, Trash2, Check, ArrowRight } from "lucide-react";
 import { adminAPI } from "@/lib/apiClient";
 import ConfirmModal from "@/components/admin/ConfirmModal";
 
