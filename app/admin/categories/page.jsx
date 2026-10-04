@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { RefreshCw, Upload, X, Loader2, ImageOff, Plus, Pencil, Trash2, Check } from "lucide-react";
 import { adminAPI } from "@/lib/apiClient";
+import ConfirmModal from "@/components/admin/ConfirmModal";
 
 function CategoryCard({ category, onUploaded, onImageRemoved, onRenamed, onDeleted }) {
   const fileRef = useRef(null);
@@ -10,6 +11,8 @@ function CategoryCard({ category, onUploaded, onImageRemoved, onRenamed, onDelet
   const [preview, setPreview] = useState(null);
   const [editing, setEditing] = useState(false);
   const [draftName, setDraftName] = useState(category.name);
+  const [uploadError, setUploadError] = useState("");
+  const [modal, setModal] = useState(null); // "rename" | "delete" | "image" | null
 
   const pickFile = () => fileRef.current?.click();
 
@@ -18,6 +21,7 @@ function CategoryCard({ category, onUploaded, onImageRemoved, onRenamed, onDelet
     if (!file) return;
 
     setPreview(URL.createObjectURL(file));
+    setUploadError("");
     setBusy(true);
     try {
       const formData = new FormData();
@@ -26,7 +30,7 @@ function CategoryCard({ category, onUploaded, onImageRemoved, onRenamed, onDelet
       const res = await adminAPI.uploadCategoryImage(formData);
       onUploaded(category.name, res.category.image);
     } catch (err) {
-      alert("Failed to upload: " + err.message);
+      setUploadError(err.message || "Failed to upload image");
     } finally {
       setBusy(false);
       setPreview(null);
@@ -39,54 +43,33 @@ function CategoryCard({ category, onUploaded, onImageRemoved, onRenamed, onDelet
     setEditing(true);
   };
 
-  const handleRename = async () => {
+  // Opens the confirm dialog (no-op if the name didn't change)
+  const requestRename = () => {
     const next = draftName.trim();
     if (!next) return;
     if (next === category.name) {
       setEditing(false);
       return;
     }
-    const msg = category.productCount
-      ? `Rename "${category.name}" to "${next}"? This also updates ${category.productCount} product${category.productCount === 1 ? "" : "s"} and changes the category URL.`
-      : `Rename "${category.name}" to "${next}"?`;
-    if (!confirm(msg)) return;
-
-    setBusy(true);
-    try {
-      const res = await adminAPI.renameCategory(category.name, next);
-      onRenamed(category.name, { name: next, slug: res.category?.slug });
-      setEditing(false);
-    } catch (err) {
-      alert("Failed to rename: " + err.message);
-    } finally {
-      setBusy(false);
-    }
+    setModal("rename");
   };
 
-  const handleRemoveImage = async () => {
-    if (!confirm(`Remove the image for "${category.name}"? It'll fall back to the default.`)) return;
-    setBusy(true);
-    try {
-      await adminAPI.removeCategoryImage(category.name);
-      onImageRemoved(category.name);
-    } catch (err) {
-      alert("Failed: " + err.message);
-    } finally {
-      setBusy(false);
-    }
+  // The modal calls these; throwing keeps it open and shows the error inline.
+  const doRename = async () => {
+    const next = draftName.trim();
+    const res = await adminAPI.renameCategory(category.name, next);
+    onRenamed(category.name, { name: next, slug: res.category?.slug });
+    setEditing(false);
   };
 
-  const handleDelete = async () => {
-    if (!confirm(`Delete the category "${category.name}"? This can't be undone.`)) return;
-    setBusy(true);
-    try {
-      await adminAPI.deleteCategory(category.name);
-      onDeleted(category.name);
-    } catch (err) {
-      alert(err.message);
-    } finally {
-      setBusy(false);
-    }
+  const doRemoveImage = async () => {
+    await adminAPI.removeCategoryImage(category.name);
+    onImageRemoved(category.name);
+  };
+
+  const doDelete = async () => {
+    await adminAPI.deleteCategory(category.name);
+    onDeleted(category.name);
   };
 
   const displayImage = preview || category.image;
@@ -111,7 +94,7 @@ function CategoryCard({ category, onUploaded, onImageRemoved, onRenamed, onDelet
         {category.image && !editing && (
           <button
             type="button"
-            onClick={handleRemoveImage}
+            onClick={() => setModal("image")}
             disabled={busy}
             title="Remove image"
             className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-white/90 text-gray-500 shadow-sm transition-colors hover:text-red-500 disabled:opacity-50"
@@ -133,7 +116,7 @@ function CategoryCard({ category, onUploaded, onImageRemoved, onRenamed, onDelet
               value={draftName}
               onChange={(e) => setDraftName(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter") handleRename();
+                if (e.key === "Enter") requestRename();
                 if (e.key === "Escape") setEditing(false);
               }}
               autoFocus
@@ -142,7 +125,7 @@ function CategoryCard({ category, onUploaded, onImageRemoved, onRenamed, onDelet
             />
             <button
               type="button"
-              onClick={handleRename}
+              onClick={requestRename}
               disabled={busy || !draftName.trim()}
               title="Save"
               className="grid h-8 w-8 place-items-center rounded-lg bg-rust text-white hover:bg-rust/90 disabled:opacity-50"
@@ -167,6 +150,8 @@ function CategoryCard({ category, onUploaded, onImageRemoved, onRenamed, onDelet
             </p>
           </div>
         )}
+
+        {uploadError && <p className="mt-2 text-xs text-red-600">{uploadError}</p>}
 
         <input
           ref={fileRef}
@@ -197,7 +182,7 @@ function CategoryCard({ category, onUploaded, onImageRemoved, onRenamed, onDelet
           </button>
           <button
             type="button"
-            onClick={handleDelete}
+            onClick={() => setModal("delete")}
             disabled={busy || !canDelete}
             title={
               canDelete
@@ -210,6 +195,54 @@ function CategoryCard({ category, onUploaded, onImageRemoved, onRenamed, onDelet
           </button>
         </div>
       </div>
+
+      <ConfirmModal
+        open={modal === "rename"}
+        onClose={() => setModal(null)}
+        onConfirm={doRename}
+        variant="primary"
+        icon={Pencil}
+        title="Rename category?"
+        description={
+          category.productCount
+            ? `${category.productCount} product${category.productCount === 1 ? " is" : "s are"} in this category and will be updated too.`
+            : "No products use this category yet."
+        }
+        confirmLabel="Rename"
+      >
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 rounded-xl border border-gray-100 bg-gray-50 px-3 py-2.5 text-sm">
+            <span className="min-w-0 truncate text-gray-400 line-through">{category.name}</span>
+            <ArrowRight className="h-3.5 w-3.5 shrink-0 text-gray-400" />
+            <span className="min-w-0 truncate font-semibold text-gray-900">{draftName.trim()}</span>
+          </div>
+          <p className="text-xs text-gray-500">
+            The category page URL will change, so old links to it will stop working.
+          </p>
+        </div>
+      </ConfirmModal>
+
+      <ConfirmModal
+        open={modal === "image"}
+        onClose={() => setModal(null)}
+        onConfirm={doRemoveImage}
+        variant="danger"
+        icon={ImageOff}
+        title="Remove category image?"
+        description={`"${category.name}" will fall back to the default image on the homepage. The category and its products are not affected.`}
+        confirmLabel="Remove image"
+      />
+
+      <ConfirmModal
+        open={modal === "delete"}
+        onClose={() => setModal(null)}
+        onConfirm={doDelete}
+        variant="danger"
+        icon={Trash2}
+        title={`Delete "${category.name}"?`}
+        description="This permanently removes the category and its image. This action can't be undone."
+        confirmLabel="Delete category"
+      />
     </div>
   );
 }
