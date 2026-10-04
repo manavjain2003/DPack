@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { RefreshCw, Upload, X, Loader2, ImageOff, Plus } from "lucide-react";
+import { RefreshCw, Upload, X, Loader2, ImageOff, Plus, Pencil, Trash2, Check } from "lucide-react";
 import { adminAPI } from "@/lib/apiClient";
 
-function CategoryCard({ category, onUploaded, onDeleted }) {
+function CategoryCard({ category, onUploaded, onImageRemoved, onRenamed, onDeleted }) {
   const fileRef = useRef(null);
   const [busy, setBusy] = useState(false);
   const [preview, setPreview] = useState(null);
+  const [editing, setEditing] = useState(false);
+  const [draftName, setDraftName] = useState(category.name);
 
   const pickFile = () => fileRef.current?.click();
 
@@ -32,16 +34,41 @@ function CategoryCard({ category, onUploaded, onDeleted }) {
     }
   };
 
-  const handleDelete = async () => {
-    const message = category.inUse
-      ? `Remove the image for "${category.name}"? It'll fall back to the default — the category stays since products still use it.`
-      : `Delete "${category.name}"? No products use it yet, so this removes it entirely.`;
-    if (!confirm(message)) return;
+  const startEdit = () => {
+    setDraftName(category.name);
+    setEditing(true);
+  };
+
+  const handleRename = async () => {
+    const next = draftName.trim();
+    if (!next) return;
+    if (next === category.name) {
+      setEditing(false);
+      return;
+    }
+    const msg = category.productCount
+      ? `Rename "${category.name}" to "${next}"? This also updates ${category.productCount} product${category.productCount === 1 ? "" : "s"} and changes the category URL.`
+      : `Rename "${category.name}" to "${next}"?`;
+    if (!confirm(msg)) return;
 
     setBusy(true);
     try {
+      const res = await adminAPI.renameCategory(category.name, next);
+      onRenamed(category.name, { name: next, slug: res.category?.slug });
+      setEditing(false);
+    } catch (err) {
+      alert("Failed to rename: " + err.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleRemoveImage = async () => {
+    if (!confirm(`Remove the image for "${category.name}"? It'll fall back to the default.`)) return;
+    setBusy(true);
+    try {
       await adminAPI.removeCategoryImage(category.name);
-      onDeleted(category.name, category.inUse);
+      onImageRemoved(category.name);
     } catch (err) {
       alert("Failed: " + err.message);
     } finally {
@@ -49,7 +76,21 @@ function CategoryCard({ category, onUploaded, onDeleted }) {
     }
   };
 
+  const handleDelete = async () => {
+    if (!confirm(`Delete the category "${category.name}"? This can't be undone.`)) return;
+    setBusy(true);
+    try {
+      await adminAPI.deleteCategory(category.name);
+      onDeleted(category.name);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const displayImage = preview || category.image;
+  const canDelete = !category.inUse;
 
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white">
@@ -67,6 +108,17 @@ function CategoryCard({ category, onUploaded, onDeleted }) {
             No products yet
           </span>
         )}
+        {category.image && !editing && (
+          <button
+            type="button"
+            onClick={handleRemoveImage}
+            disabled={busy}
+            title="Remove image"
+            className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-white/90 text-gray-500 shadow-sm transition-colors hover:text-red-500 disabled:opacity-50"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        )}
         {busy && (
           <div className="absolute inset-0 grid place-items-center bg-white/70">
             <Loader2 className="h-6 w-6 animate-spin text-rust" />
@@ -75,7 +127,46 @@ function CategoryCard({ category, onUploaded, onDeleted }) {
       </div>
 
       <div className="p-4">
-        <p className="truncate text-sm font-semibold text-gray-900">{category.name}</p>
+        {editing ? (
+          <div className="flex items-center gap-1.5">
+            <input
+              value={draftName}
+              onChange={(e) => setDraftName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleRename();
+                if (e.key === "Escape") setEditing(false);
+              }}
+              autoFocus
+              disabled={busy}
+              className="min-w-0 flex-1 rounded-lg border border-gray-200 px-2.5 py-1.5 text-sm outline-none focus:border-rust focus:ring-2 focus:ring-rust/20"
+            />
+            <button
+              type="button"
+              onClick={handleRename}
+              disabled={busy || !draftName.trim()}
+              title="Save"
+              className="grid h-8 w-8 place-items-center rounded-lg bg-rust text-white hover:bg-rust/90 disabled:opacity-50"
+            >
+              <Check className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setEditing(false)}
+              disabled={busy}
+              title="Cancel"
+              className="grid h-8 w-8 place-items-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        ) : (
+          <div>
+            <p className="truncate text-sm font-semibold text-gray-900">{category.name}</p>
+            <p className="mt-0.5 text-xs text-gray-400">
+              {category.productCount || 0} product{category.productCount === 1 ? "" : "s"}
+            </p>
+          </div>
+        )}
 
         <input
           ref={fileRef}
@@ -95,17 +186,28 @@ function CategoryCard({ category, onUploaded, onDeleted }) {
             <Upload className="h-3.5 w-3.5" />
             {category.image ? "Replace" : "Upload"}
           </button>
-          {(category.image || !category.inUse) && (
-            <button
-              type="button"
-              onClick={handleDelete}
-              disabled={busy}
-              title={category.inUse ? "Remove image" : "Delete category"}
-              className="flex items-center justify-center rounded-xl border border-gray-200 px-3 py-2 text-xs font-medium text-red-500 transition-colors hover:border-red-300 hover:bg-red-50 disabled:opacity-50"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={startEdit}
+            disabled={busy || editing}
+            title="Rename category"
+            className="flex items-center justify-center rounded-xl border border-gray-200 px-3 py-2 text-xs font-medium text-gray-600 transition-colors hover:border-rust hover:text-rust disabled:opacity-50"
+          >
+            <Pencil className="h-3.5 w-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={handleDelete}
+            disabled={busy || !canDelete}
+            title={
+              canDelete
+                ? "Delete category"
+                : `Can't delete — ${category.productCount} product(s) use it`
+            }
+            className="flex items-center justify-center rounded-xl border border-gray-200 px-3 py-2 text-xs font-medium text-red-500 transition-colors hover:border-red-300 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-gray-200 disabled:hover:bg-transparent"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
         </div>
       </div>
     </div>
@@ -236,17 +338,25 @@ export default function AdminCategoriesPage() {
     setCategories((prev) => prev.map((c) => (c.name === name ? { ...c, image } : c)));
   };
 
-  const handleDeleted = (name, wasInUse) => {
-    if (wasInUse) {
-      setCategories((prev) => prev.map((c) => (c.name === name ? { ...c, image: null } : c)));
-    } else {
-      setCategories((prev) => prev.filter((c) => c.name !== name));
-    }
+  const handleImageRemoved = (name) => {
+    setCategories((prev) => prev.map((c) => (c.name === name ? { ...c, image: null } : c)));
+  };
+
+  const handleRenamed = (oldName, { name, slug }) => {
+    setCategories((prev) =>
+      prev
+        .map((c) => (c.name === oldName ? { ...c, name, slug: slug || c.slug } : c))
+        .sort((a, b) => a.name.localeCompare(b.name))
+    );
+  };
+
+  const handleDeleted = (name) => {
+    setCategories((prev) => prev.filter((c) => c.name !== name));
   };
 
   const handleCreated = (category) => {
     setCategories((prev) =>
-      [...prev.filter((c) => c.name !== category.name), { ...category, inUse: false }].sort(
+      [...prev.filter((c) => c.name !== category.name), { productCount: 0, ...category, inUse: false }].sort(
         (a, b) => a.name.localeCompare(b.name)
       )
     );
@@ -259,7 +369,7 @@ export default function AdminCategoriesPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
           <p className="mt-1 text-sm text-gray-500">
-            Create categories and set the image shown for each on the homepage
+            Create, rename and delete categories, and set the image shown for each on the homepage
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -301,6 +411,8 @@ export default function AdminCategoriesPage() {
               key={c.name}
               category={c}
               onUploaded={handleUploaded}
+              onImageRemoved={handleImageRemoved}
+              onRenamed={handleRenamed}
               onDeleted={handleDeleted}
             />
           ))}
