@@ -5,12 +5,13 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, Package, Layers, Users, LogOut, Menu, X,
-  ChevronRight, BarChart3, Grid3x3,
+  ChevronRight, BarChart3, Grid3x3, ShoppingCart,
 } from "lucide-react";
 import { useAuth } from "@/app/context/AuthContext";
      
 const NAV = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
   { href: "/admin/products", label: "Products", icon: Package },
   { href: "/admin/categories", label: "Categories", icon: Grid3x3 },
   { href: "/admin/inventory", label: "Inventory", icon: Layers },
@@ -56,6 +57,13 @@ export default function AdminLayout({ children }) {
   }
 
   const handleLogout = () => { logout(); router.push("/"); };
+
+  const segments = pathname.split("/").filter(Boolean).slice(1);
+  const crumbs = segments.map((seg, i) => ({
+    href: "/admin/" + segments.slice(0, i + 1).join("/"),
+    isId: /^[a-f0-9]{24}$/i.test(seg),
+    label: /^[a-f0-9]{24}$/i.test(seg) ? `#${seg.slice(-8).toUpperCase()}` : seg,
+  }));
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#F4F6FA]">
@@ -132,14 +140,16 @@ export default function AdminLayout({ children }) {
           </button>
           <nav className="flex items-center gap-1.5 text-sm text-gray-500">
             <Link href="/admin" className="hover:text-gray-900">Admin</Link>
-            {pathname !== "/admin" && (
-              <>
+            {crumbs.map((c, i) => (
+              <span key={c.href} className="flex items-center gap-1.5">
                 <ChevronRight className="h-3.5 w-3.5" />
-                <span className="font-medium text-gray-900 capitalize">
-                  {pathname.split("/").pop()}
-                </span>
-              </>
-            )}
+                {i === crumbs.length - 1 || c.isId ? (
+                  <span className={i === crumbs.length - 1 ? "font-medium text-gray-900 capitalize" : "font-mono text-xs"}>{c.label}</span>
+                ) : (
+                  <Link href={c.href} className="capitalize hover:text-gray-900">{c.label}</Link>
+                )}
+              </span>
+            ))}
           </nav>
           <div className="ml-auto flex items-center gap-3">
             <span className="text-xs text-gray-400">Hello Mr. Admin</span>

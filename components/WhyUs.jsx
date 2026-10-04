@@ -56,7 +56,6 @@ export default function WhyUs() {
     const cleanupFns = [];
 
     const ctx = gsap.context(() => {
-      // Sticky column parallax
       gsap.to(stickyRef.current, {
         y: -60,
         ease: "none",
@@ -68,7 +67,6 @@ export default function WhyUs() {
         },
       });
 
-      // --- Card entrance: staggered 3D flip-in with perspective ---
       cardsRef.current.forEach((card, i) => {
         gsap.set(card, { transformPerspective: 800 });
 
@@ -96,7 +94,6 @@ export default function WhyUs() {
           }
         );
 
-        // Shine sweep across each card, replayed on every scroll-in
         const shine = card.querySelector(".card-shine");
         if (shine) {
           gsap.fromTo(
@@ -117,7 +114,6 @@ export default function WhyUs() {
         }
       });
 
-      // --- Icon pop-in + idle float ---
       const icons = gsap.utils.toArray(".whyus-icon");
       icons.forEach((icon, i) => {
         gsap.fromTo(
@@ -148,7 +144,6 @@ export default function WhyUs() {
         );
       });
 
-      // --- Magnetic tilt on hover (desktop only) ---
       const isDesktop = window.matchMedia("(hover: hover)").matches;
       if (isDesktop) {
         cardsRef.current.forEach((card) => {
@@ -261,13 +256,11 @@ export default function WhyUs() {
               }`}
               style={{ transformStyle: "preserve-3d" }}
             >
-              {/* animated shine sweep */}
               <span
                 className="card-shine pointer-events-none absolute inset-y-0 left-0 w-1/3 -skew-x-12 bg-gradient-to-r from-transparent via-white/60 to-transparent"
                 aria-hidden="true"
               />
 
-              {/* subtle number watermark for a stylish touch */}
               <span className="pointer-events-none absolute -right-2 -top-4 font-display text-7xl font-black text-ink/[0.04] select-none">
                 {String(i + 1).padStart(2, "0")}
               </span>
@@ -283,7 +276,6 @@ export default function WhyUs() {
                 {f.text}
               </p>
 
-              {/* accent underline that grows on hover */}
               <span className="relative z-10 mt-4 block h-0.5 w-8 origin-left scale-x-100 bg-rust/30 transition-all duration-300 group-hover:w-14 group-hover:bg-rust" />
             </div>
           ))}

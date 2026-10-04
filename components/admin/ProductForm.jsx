@@ -131,6 +131,10 @@ export default function ProductForm({ initial = {}, onSubmit, loading, submitLab
     stock: initial.stock ?? 0,
     lowStockThreshold: initial.lowStockThreshold ?? 10,
     trackInventory: initial.trackInventory !== false,
+    weight: initial.weight ?? "",
+    length: initial.length ?? "",
+    breadth: initial.breadth ?? "",
+    height: initial.height ?? "",
     featured: initial.featured || false,
     isActive: initial.isActive !== false,
     metaTitle: initial.metaTitle || "",
@@ -439,6 +443,32 @@ const fields = {
               <span className="text-sm text-gray-700">Track inventory</span>
             </label>
           </div>
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+        <h3 className="mb-1 text-sm font-semibold uppercase tracking-wider text-gray-400">Shipping</h3>
+        <p className="mb-5 text-xs text-gray-400">
+          Packed size of a single unit. Used to pre-fill the parcel when you create a Shiprocket shipment.
+        </p>
+        <div className="grid gap-5 sm:grid-cols-4">
+          {[
+            { key: "weight", label: "Weight (kg)", step: "0.01" },
+            { key: "length", label: "Length (cm)", step: "0.1" },
+            { key: "breadth", label: "Breadth (cm)", step: "0.1" },
+            { key: "height", label: "Height (cm)", step: "0.1" },
+          ].map(({ key, label, step }) => (
+            <div key={key}>
+              <label className="mb-1.5 block text-sm font-medium text-gray-700">{label}</label>
+              <input
+                type="number" min="0" step={step}
+                value={form[key]}
+                onChange={(e) => set(key, e.target.value)}
+                placeholder="Optional"
+                className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-rust focus:ring-2 focus:ring-rust/20"
+              />
+            </div>
+          ))}
         </div>
       </section>
 

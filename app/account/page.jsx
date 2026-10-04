@@ -1,12 +1,90 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { User, Mail, Phone, MapPin, Building2, ReceiptText, Loader2, CheckCircle2, Package } from "lucide-react";
+import { User, Mail, Phone, MapPin, Building2, ReceiptText, Loader2, CheckCircle2, Package, Truck, ExternalLink } from "lucide-react";
 import { useAuth } from "@/app/context/AuthContext";
 import { userAPI, ordersAPI } from "@/lib/apiClient";
 import { formatINR } from "@/lib/cartBus";
+import OrderTimeline from "@/components/OrderTimeline";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+
+function TrackOrder({ order }) {
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState(null);
+  const [error, setError] = useState("");
+
+  // Only paid orders that have been handed to the courier have tracking
+  if (order.paymentStatus !== "paid" || !order.shipment?.awbCode) return null;
+
+  const toggle = async () => {
+    const next = !open;
+    setOpen(next);
+    if (next && !data) {
+      setLoading(true);
+      setError("");
+      try {
+        const res = await ordersAPI.track(order._id);
+        setData(res.tracking);
+      } catch (e) {
+        setError(e.message || "Could not load tracking");
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  return (
+    <div className="w-full">
+      <button
+        type="button"
+        onClick={toggle}
+        className="flex items-center gap-2 text-xs font-semibold text-rust hover:underline"
+      >
+        <Truck className="h-3.5 w-3.5" />
+        {open ? "Hide tracking" : "Track order"}
+      </button>
+
+      {open && (
+        <div className="mt-3 rounded-xl border border-gray-100 bg-gray-50 p-4">
+          {loading ? (
+            <div className="flex items-center gap-2 text-sm text-gray-400">
+              <Loader2 className="h-4 w-4 animate-spin" /> Fetching latest status…
+            </div>
+          ) : error ? (
+            <p className="text-sm text-red-600">{error}</p>
+          ) : data ? (
+            <>
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-2 text-xs text-gray-500">
+                <span>
+                  {data.courierName || "Courier"} · AWB{" "}
+                  <span className="font-mono text-gray-700">{data.awbCode}</span>
+                </span>
+                {data.currentStatus && (
+                  <span className="rounded-full bg-white px-2.5 py-0.5 font-semibold capitalize text-gray-700 ring-1 ring-gray-200">
+                    {data.currentStatus.toLowerCase()}
+                  </span>
+                )}
+              </div>
+              <OrderTimeline events={data.events} />
+              {data.trackingUrl && (
+                <a
+                  href={data.trackingUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-gray-600 hover:text-gray-900"
+                >
+                  Open courier tracking page <ExternalLink className="h-3 w-3" />
+                </a>
+              )}
+            </>
+          ) : null}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function AccountPage() {
   const { user, setUser, isLoggedIn, hydrated } = useAuth();
@@ -159,6 +237,7 @@ export default function AccountPage() {
                           {formatINR(o.total)}
                         </span>
                       </div>
+                      <TrackOrder order={o} />
                     </li>
                   ))}
                 </ul>

@@ -72,7 +72,6 @@ function QuoteModal({ onClose }) {
   };
 
   return (
-    // Backdrop — stops scroll, centres modal
     <div
       onClick={onClose}
       style={{

@@ -4,7 +4,7 @@ import ContactForm from "@/components/ContactForm";
 import Footer from "@/components/Footer";
 import { EMAIL } from "@/lib/products";
 import { Mail, Truck, Timer, PackageCheck } from "lucide-react";
-import FAQAccordion from "@/components/FAQAccordion"; // ← new client component
+import FAQAccordion from "@/components/FAQAccordion"; 
 
 export const metadata = {
   title: "Contact — Dpack | Bulk Orders & Queries",
@@ -107,7 +107,6 @@ export default function ContactPage() {
                 <h2 className="mb-4 font-display text-xl font-bold text-ink">
                   Frequently Asked Questions
                 </h2>
-                {/* Exclusive accordion */}
                 <FAQAccordion faqs={faqs} />
               </div>
             </div>

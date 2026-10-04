@@ -12,14 +12,14 @@ if (typeof window !== "undefined") {
 }
 
 const PALETTE = [
-  { tint: "#E2591B", border: "#E2591B" }, // orange
-  { tint: "#3B6B99", border: "#3B6B99" }, // blue
-  { tint: "#E0A526", border: "#E0A526" }, // yellow / gold
-  { tint: "#1A1A1A", border: "#1A1A1A" }, // black
-  { tint: "#F2994A", border: "#F2994A" }, // light orange
-  { tint: "#5A8FBF", border: "#5A8FBF" }, // light blue
-  { tint: "#D4A017", border: "#D4A017" }, // deep yellow
-  { tint: "#333333", border: "#333333" }, // soft black
+  { tint: "#E2591B", border: "#E2591B" },
+  { tint: "#3B6B99", border: "#3B6B99" }, 
+  { tint: "#E0A526", border: "#E0A526" }, 
+  { tint: "#1A1A1A", border: "#1A1A1A" }, 
+  { tint: "#F2994A", border: "#F2994A" },
+  { tint: "#5A8FBF", border: "#5A8FBF" }, 
+  { tint: "#D4A017", border: "#D4A017" }, 
+  { tint: "#333333", border: "#333333" }, 
 ];
 
 const DEFAULT_CATEGORY_IMAGE =
@@ -58,12 +58,10 @@ function buildCategories(names, categoryImages = {}) {
 
 const PAGE_SIZE = 5;
 
-/* ----------------------------- Category Card ----------------------------- */
 
 function CategoryCircle({ cat, index }) {
   const cardRef = useRef(null);
 
-  // Tilt / magnetic hover tracking
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
   const rotateX = useSpring(useTransform(my, [-0.5, 0.5], [10, -10]), {
@@ -113,7 +111,6 @@ function CategoryCircle({ cat, index }) {
             style={{ rotateX, rotateY, translateY: lift }}
             className="relative"
           >
-            {/* Rotating conic gradient ring */}
             <motion.div
               className="absolute -inset-[6px] rounded-full opacity-70 group-hover:opacity-100"
               style={{
@@ -124,7 +121,6 @@ function CategoryCircle({ cat, index }) {
               transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
             />
 
-            {/* Static soft base ring */}
             <div
               className="absolute -inset-[6px] rounded-full"
               style={{
@@ -132,7 +128,6 @@ function CategoryCircle({ cat, index }) {
               }}
             />
 
-            {/* Warm white gap */}
             <div
               className="relative rounded-full p-[5px]"
               style={{ background: "#FFFDF9" }}
@@ -153,7 +148,6 @@ function CategoryCircle({ cat, index }) {
                     background: `linear-gradient(180deg, transparent 40%, ${cat.tint}66 100%)`,
                   }}
                 />
-                {/* Sheen sweep on hover */}
                 <motion.div
                   className="pointer-events-none absolute inset-0"
                   initial={{ x: "-120%" }}
@@ -166,7 +160,6 @@ function CategoryCircle({ cat, index }) {
                 />
               </div>
 
-              {/* Arrow badge, appears on hover */}
               <motion.div
                 initial={{ scale: 0, opacity: 0 }}
                 whileHover={{ scale: 1, opacity: 1 }}
@@ -184,7 +177,6 @@ function CategoryCircle({ cat, index }) {
           {cat.label}
         </span>
 
-        {/* Underline grows on hover */}
         <span
           className="block h-[2px] w-0 rounded-full transition-all duration-300 ease-out group-hover:w-8"
           style={{ background: cat.tint, marginTop: "-0.75rem" }}
@@ -194,7 +186,6 @@ function CategoryCircle({ cat, index }) {
   );
 }
 
-/* -------------------------------- Arrow Btn -------------------------------- */
 
 function ArrowBtn({ dir, onClick, disabled }) {
   return (
@@ -215,7 +206,6 @@ function ArrowBtn({ dir, onClick, disabled }) {
   );
 }
 
-/* ------------------------------ Section Root ------------------------------ */
 
 export default function CategorySection() {
   const sectionRef = useRef(null);
@@ -254,7 +244,6 @@ export default function CategorySection() {
 
   const visible = categories.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
 
-  // Heading + underline reveal
   useEffect(() => {
     const ctx = gsap.context(() => {
       const heading = headingRef.current;
@@ -321,7 +310,6 @@ export default function CategorySection() {
           "linear-gradient(180deg, #FFF9EE 0%, #FDF3E0 28%, #FBEFE4 55%, #F3F1EC 100%)",
       }}
     >
-      {/* Soft dot-grid texture for depth */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[0.35]"
@@ -332,7 +320,6 @@ export default function CategorySection() {
         }}
       />
 
-      {/* Decorative background blobs — yellow, orange, blue, soft black */}
       <div
         aria-hidden
         className="pointer-events-none absolute -left-24 -top-24 h-80 w-80 rounded-full opacity-[0.35] blur-3xl"
@@ -374,7 +361,6 @@ export default function CategorySection() {
             </h2>
           </div>
 
-          {/* Progress readout */}
           {totalPages > 1 && (
             <div className="flex items-center gap-3 pb-1 text-sm font-medium text-ink/40">
               <span className="text-ink">{String(page + 1).padStart(2, "0")}</span>

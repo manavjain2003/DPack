@@ -25,7 +25,6 @@ export default function ContactForm() {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    // Phone validation (10 digits) — only if a phone is provided
     if (form.phone && !/^\d{10}$/.test(form.phone.trim())) {
       return alert("Enter a valid 10-digit phone number");
     }
@@ -39,7 +38,7 @@ export default function ContactForm() {
       company: "NA",
       phone: form.phone || "NA",
       product: "Dunnage Bag",
-      place: "NA", // no city field in this form
+      place: "NA",
       message: form.message,
     };
 

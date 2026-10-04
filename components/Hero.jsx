@@ -73,7 +73,6 @@ const flapVariants = {
   },
 };
 
-/* ---------------------------------------------------------------------- */
 
 export default function Hero() {
   const mx = useMotionValue(0);

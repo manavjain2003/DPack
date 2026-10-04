@@ -3,6 +3,11 @@ import Product from "@/lib/models/Product";
 import { requireAdmin, ok, err, parseFormData } from "@/lib/apiHelpers";
 import { uploadToCloudinary } from "@/lib/cloudinary";
 
+const toNum = (v) => {
+  const n = parseFloat(v);
+  return Number.isFinite(n) && n > 0 ? n : null;
+};
+
 export async function GET(request) {
   const { error } = await requireAdmin(request);
   if (error) return error;
@@ -97,6 +102,10 @@ export async function POST(request) {
       stock: parseInt(fields.stock || "0"),
       lowStockThreshold: parseInt(fields.lowStockThreshold || "10"),
       trackInventory: fields.trackInventory !== "false",
+      weight: toNum(fields.weight),
+      length: toNum(fields.length),
+      breadth: toNum(fields.breadth),
+      height: toNum(fields.height),
       isActive: fields.isActive !== "false",
       metaTitle: fields.metaTitle || "",
       metaDescription: fields.metaDescription || "",

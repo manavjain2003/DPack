@@ -230,7 +230,6 @@ function PillarsSection() {
 
   return (
     <section ref={sectionRef} className="relative overflow-hidden bg-cream-dark/60 py-20">
-      {/* faint oversized watermark tying section back to the product */}
       <span
         aria-hidden
         className="pointer-events-none absolute -right-16 top-8 select-none font-display text-[220px] font-bold leading-none text-ink/[0.03]"
@@ -305,9 +304,6 @@ function WhyChooseSection() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Distinct from the pillars' inflate: each card is treated like a
-      // box flap swinging open — rotated flat on its top edge, then
-      // dropping down into place as it individually enters view.
       gsap.set(cardRefs.current, {
         opacity: 0,
         rotateX: -75,
@@ -415,7 +411,6 @@ function WhyChooseSection() {
 export default function AboutContent() {
   return (
     <>
-      {/* Who we are */}
       <section className="pb-20 pt-8">
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 sm:px-8 md:grid-cols-2">
           <motion.div

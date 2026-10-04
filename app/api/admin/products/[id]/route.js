@@ -84,6 +84,12 @@ export async function PUT(request, { params }) {
         product.lowStockThreshold = parseInt(fields.lowStockThreshold);
       if (fields.trackInventory !== undefined)
         product.trackInventory = fields.trackInventory !== "false";
+      for (const k of ["weight", "length", "breadth", "height"]) {
+        if (fields[k] !== undefined) {
+          const n = parseFloat(fields[k]);
+          product[k] = Number.isFinite(n) && n > 0 ? n : null;
+        }
+      }
       if (fields.isActive !== undefined)
         product.isActive = fields.isActive !== "false";
       if (fields.metaTitle !== undefined) product.metaTitle = fields.metaTitle;
